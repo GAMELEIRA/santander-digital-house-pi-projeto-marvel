@@ -13,6 +13,5 @@ class MainActivity : AppCompatActivity() {
             .beginTransaction()
             .replace(R.id.container, MainViewPagerFragment())
             .commit()
-
     }
 }

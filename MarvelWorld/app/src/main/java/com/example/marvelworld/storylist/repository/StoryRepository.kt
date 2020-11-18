@@ -1,4 +1,4 @@
-package com.example.marvelworld.storylist
+package com.example.marvelworld.storylist.repository
 
 import com.example.marvelworld.api.utils.NetworkUtils
 

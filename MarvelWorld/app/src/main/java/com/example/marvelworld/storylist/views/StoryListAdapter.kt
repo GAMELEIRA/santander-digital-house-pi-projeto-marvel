@@ -1,4 +1,4 @@
-package com.example.marvelworld.storylist
+package com.example.marvelworld.storylist.views
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.marvelworld.R
 import com.example.marvelworld.api.utils.NetworkUtils
+import com.example.marvelworld.storylist.models.Story
 import com.squareup.picasso.Picasso
 
 class StoryListAdapter(

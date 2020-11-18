@@ -1,4 +1,4 @@
-package com.example.marvelworld.storylist
+package com.example.marvelworld.storylist.models
 
 import com.example.marvelworld.api.models.*
 import java.util.*

@@ -1,8 +1,9 @@
-package com.example.marvelworld.storylist
+package com.example.marvelworld.storylist.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.liveData
+import com.example.marvelworld.storylist.repository.StoryRepository
 import kotlinx.coroutines.Dispatchers
 
 class StoryViewModel(

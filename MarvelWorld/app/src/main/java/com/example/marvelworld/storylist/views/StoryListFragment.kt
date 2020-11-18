@@ -1,4 +1,4 @@
-package com.example.marvelworld.storylist
+package com.example.marvelworld.storylist.views
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -10,6 +10,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.marvelworld.R
+import com.example.marvelworld.storylist.models.Story
+import com.example.marvelworld.storylist.repository.StoryRepository
+import com.example.marvelworld.storylist.viewmodel.StoryViewModel
 
 class StoryListFragment : Fragment() {
     private val storyList = mutableListOf<Story>()

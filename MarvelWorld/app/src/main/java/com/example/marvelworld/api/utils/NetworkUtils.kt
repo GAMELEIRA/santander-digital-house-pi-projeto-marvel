@@ -6,6 +6,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object NetworkUtils {
     private const val BASE_URL = "https://gateway.marvel.com/"
+    const val NOT_FOUND_IMAGE = "https://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available/detail.jpg"
 
     fun <T> getApiService(clazz: Class<T>): T {
         val okHttpClient = OkHttpClient

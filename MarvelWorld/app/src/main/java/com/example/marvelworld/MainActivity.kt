@@ -2,7 +2,7 @@ package com.example.marvelworld
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.example.marvelworld.storylist.views.StoryListFragment
+import com.example.marvelworld.mainviewpager.views.MainViewPagerFragment
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -11,7 +11,8 @@ class MainActivity : AppCompatActivity() {
 
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.container, StoryListFragment())
+            .replace(R.id.container, MainViewPagerFragment())
             .commit()
+
     }
 }

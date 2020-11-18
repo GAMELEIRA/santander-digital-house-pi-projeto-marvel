@@ -2,7 +2,7 @@ package com.example.marvelworld
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.example.marvelworld.eventlist.views.EventListFragment
+import com.example.marvelworld.serieslist.views.SeriesListFragment
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -11,7 +11,7 @@ class MainActivity : AppCompatActivity() {
 
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.container, EventListFragment())
+            .replace(R.id.container, SeriesListFragment())
             .commit()
     }
 }

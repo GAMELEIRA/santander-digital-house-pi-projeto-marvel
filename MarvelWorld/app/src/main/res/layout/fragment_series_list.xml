@@ -5,16 +5,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#121212"
-    tools:context=".creatorlist.views.CreatorListFragment">
+    tools:context=".serieslist.views.SeriesListFragment">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_creator_list"
+        android:id="@+id/recycler_series_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:listitem="@layout/creator_list_item" />
+        tools:listitem="@layout/series_list_item" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

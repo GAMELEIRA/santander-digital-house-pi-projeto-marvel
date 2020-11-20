@@ -10,4 +10,6 @@
     <string name="image_for_story_list_item">Image for story list item</string>
     <string name="button_for_setting_resource_as_favorite">Button for setting resource as favorite</string>
     <string name="button_for_sharing_resource">Button for sharing resource</string>
+    <string name="image_for_resource_details">Image for resource details</string>
+    <string name="button_for_revealing_urls_associated_to_the_resource">Button for revealing urls associated to the resource</string>
 </resources>

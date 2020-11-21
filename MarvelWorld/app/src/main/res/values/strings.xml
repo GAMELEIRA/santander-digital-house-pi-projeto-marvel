@@ -7,4 +7,5 @@
     <string name="image_for_creator_list_item">Image for creator list item</string>
     <string name="image_for_series_list_item">Image for series list item</string>
     <string name="image_for_event_list_item">Image for event list item</string>
+    <string name="image_for_story_list_item">Image for story list item</string>
 </resources>

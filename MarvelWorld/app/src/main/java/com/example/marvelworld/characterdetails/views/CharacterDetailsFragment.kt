@@ -12,9 +12,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.marvelworld.R
 import com.example.marvelworld.characterdetails.repository.CharacterDetailsRepository
 import com.example.marvelworld.characterdetails.viewmodel.CharacterDetailsViewModel
-import com.example.marvelworld.reusablecomponents.ExpandableCardUtils
-import com.example.marvelworld.reusablecomponents.HorizontalListUtils
-import com.example.marvelworld.reusablecomponents.OnHorizontalListItemClickListener
+import com.example.marvelworld.reusablecomponents.expandablecard.ExpandableCardUtils
+import com.example.marvelworld.reusablecomponents.horizontallist.HorizontalListUtils
+import com.example.marvelworld.reusablecomponents.horizontallist.OnHorizontalListItemClickListener
 
 
 class CharacterDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
@@ -39,7 +39,7 @@ class CharacterDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
 
         characterDetailsViewModel.getCharacter(characterId)
             .observe(viewLifecycleOwner, Observer { character ->
-                ExpandableCardUtils.initCard(view, character)
+                ExpandableCardUtils.initCard(view, character, childFragmentManager)
             })
 
         characterDetailsViewModel.getCharacterComics(characterId)

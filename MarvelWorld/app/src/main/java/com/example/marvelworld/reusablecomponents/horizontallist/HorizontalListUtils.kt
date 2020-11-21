@@ -1,4 +1,4 @@
-package com.example.marvelworld.reusablecomponents
+package com.example.marvelworld.reusablecomponents.horizontallist
 
 import android.graphics.Rect
 import android.view.View

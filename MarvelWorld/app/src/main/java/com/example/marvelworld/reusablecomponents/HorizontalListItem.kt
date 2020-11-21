@@ -1,5 +1,3 @@
 package com.example.marvelworld.reusablecomponents
 
-interface HorizontalListItem {
-    val name: String
-}
+open class HorizontalListItem(val name: String)

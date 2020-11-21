@@ -1,7 +1,6 @@
 package com.example.marvelworld.characterlist.models
 
 import com.example.marvelworld.api.models.*
-import java.io.Serializable
 import java.util.*
 
 data class Character(
@@ -16,4 +15,4 @@ data class Character(
     val stories: StoryList,
     val events: EventList,
     val series: SeriesList
-) : Serializable
+)

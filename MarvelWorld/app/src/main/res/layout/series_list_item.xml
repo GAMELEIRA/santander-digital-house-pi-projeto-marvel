@@ -17,10 +17,10 @@
         android:orientation="vertical">
 
         <ImageView
-            android:id="@+id/img_comic_list_item"
+            android:id="@+id/img_series_list_item"
             android:layout_width="match_parent"
             android:layout_height="250dp"
-            android:contentDescription="@string/image_for_comic_list_item"
+            android:contentDescription="@string/image_for_series_list_item"
             android:scaleType="centerCrop"
             tools:srcCompat="@drawable/ic_launcher_background" />
 
@@ -31,7 +31,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/title_comic_list_item"
+                android:id="@+id/title_series_list_item"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
@@ -39,7 +39,7 @@
                 android:textColor="#fff"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                tools:text="Comic title" />
+                tools:text="Series title" />
         </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

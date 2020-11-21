@@ -20,7 +20,7 @@
             android:id="@+id/img_event_list_item"
             android:layout_width="match_parent"
             android:layout_height="250dp"
-            android:contentDescription="@string/image_for_creator_list_item"
+            android:contentDescription="@string/image_for_event_list_item"
             android:scaleType="centerCrop"
             tools:srcCompat="@drawable/ic_launcher_background" />
 
@@ -39,7 +39,7 @@
                 android:textColor="#fff"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                tools:text="Character name" />
+                tools:text="Event title" />
         </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

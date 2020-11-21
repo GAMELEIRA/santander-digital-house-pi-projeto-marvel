@@ -5,4 +5,6 @@
     <string name="image_from_character_list_item">Image from character list item</string>
     <string name="image_for_comic_list_item">Image for comic list item</string>
     <string name="image_for_creator_list_item">Image for creator list item</string>
+    <string name="image_for_series_list_item">Image for series list item</string>
+    <string name="image_for_event_list_item">Image for event list item</string>
 </resources>

@@ -2,7 +2,7 @@ package com.example.marvelworld
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.example.marvelworld.storylist.StoryListFragment
+import com.example.marvelworld.storylist.views.StoryListFragment
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

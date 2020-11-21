@@ -7,8 +7,11 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.example.marvelworld.R
-import com.example.marvelworld.characterlist.models.Character
+import com.example.marvelworld.characterdetails.repository.CharacterDetailsRepository
+import com.example.marvelworld.characterdetails.viewmodel.CharacterDetailsViewModel
 import com.example.marvelworld.reusablecomponents.ExpandableCardUtils
 import com.example.marvelworld.reusablecomponents.HorizontalListUtils
 import com.example.marvelworld.reusablecomponents.OnHorizontalListItemClickListener
@@ -27,45 +30,61 @@ class CharacterDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val character = arguments?.get("CHARACTER") as Character
+        val characterId = requireArguments().getInt("CHARACTER_ID")
 
-        ExpandableCardUtils.initCard(view, character)
+        val characterDetailsViewModel = ViewModelProvider(
+            this,
+            CharacterDetailsViewModel.CharacterDetailsViewModelFactory(CharacterDetailsRepository())
+        ).get(CharacterDetailsViewModel::class.java)
 
-        val comicSummaryList = character.comics.items
-        val comicList = view.findViewById<LinearLayout>(R.id.comic_list)
-        HorizontalListUtils.initHorizontalList(
-            comicList,
-            comicSummaryList,
-            "Comics:",
-            this
-        )
+        characterDetailsViewModel.getCharacter(characterId)
+            .observe(viewLifecycleOwner, Observer { character ->
+                ExpandableCardUtils.initCard(view, character)
+            })
 
-        val storySummaryList = character.stories.items
-        val storyList = view.findViewById<LinearLayout>(R.id.story_list)
-        HorizontalListUtils.initHorizontalList(
-            storyList,
-            storySummaryList,
-            "Stories:",
-            this
-        )
+        characterDetailsViewModel.getCharacterComics(characterId)
+            .observe(viewLifecycleOwner, Observer {
+                val comicList = view.findViewById<LinearLayout>(R.id.comic_list)
+                HorizontalListUtils.initHorizontalList(
+                    comicList,
+                    it,
+                    "Comics:",
+                    this
+                )
+            })
 
-        val eventSummaryList = character.events.items
-        val eventList = view.findViewById<LinearLayout>(R.id.event_list)
-        HorizontalListUtils.initHorizontalList(
-            eventList,
-            eventSummaryList,
-            "Events:",
-            this
-        )
+        characterDetailsViewModel.getCharacterEvents(characterId)
+            .observe(viewLifecycleOwner, Observer {
+                val comicList = view.findViewById<LinearLayout>(R.id.event_list)
+                HorizontalListUtils.initHorizontalList(
+                    comicList,
+                    it,
+                    "Events:",
+                    this
+                )
+            })
 
-        val seriesSummaryList = character.series.items
-        val seriesList = view.findViewById<LinearLayout>(R.id.series_list)
-        HorizontalListUtils.initHorizontalList(
-            seriesList,
-            seriesSummaryList,
-            "Series:",
-            this
-        )
+        characterDetailsViewModel.getCharacterSeries(characterId)
+            .observe(viewLifecycleOwner, Observer {
+                val comicList = view.findViewById<LinearLayout>(R.id.series_list)
+                HorizontalListUtils.initHorizontalList(
+                    comicList,
+                    it,
+                    "Series:",
+                    this
+                )
+            })
+
+        characterDetailsViewModel.getCharacterStories(characterId)
+            .observe(viewLifecycleOwner, Observer {
+                val comicList = view.findViewById<LinearLayout>(R.id.story_list)
+                HorizontalListUtils.initHorizontalList(
+                    comicList,
+                    it,
+                    "Stories:",
+                    this
+                )
+            })
     }
 
     override fun onHorizontalListItemClick(position: Int) {

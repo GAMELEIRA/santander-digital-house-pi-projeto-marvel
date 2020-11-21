@@ -52,7 +52,7 @@ class CharacterListFragment : Fragment(), OnCharacterClickListener {
     }
 
     override fun onCharacterClick(position: Int) {
-        val bundle = bundleOf("CHARACTER" to characterList[position])
+        val bundle = bundleOf("CHARACTER_ID" to characterList[position].id)
         findNavController().navigate(R.id.characterDetailsFragment, bundle)
     }
 }

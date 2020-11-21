@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/mainViewPagerFragment">
+
+    <fragment
+        android:id="@+id/characterDetailsFragment"
+        android:name="com.example.marvelworld.characterdetails.views.CharacterDetailsFragment"
+        android:label="fragment_character_details"
+        tools:layout="@layout/fragment_character_details" />
+    <fragment
+        android:id="@+id/mainViewPagerFragment"
+        android:name="com.example.marvelworld.mainviewpager.views.MainViewPagerFragment"
+        android:label="fragment_main_view_pager"
+        tools:layout="@layout/fragment_main_view_pager" >
+        <action
+            android:id="@+id/action_mainViewPagerFragment_to_characterDetailsFragment"
+            app:destination="@id/characterDetailsFragment" />
+    </fragment>
+</navigation>

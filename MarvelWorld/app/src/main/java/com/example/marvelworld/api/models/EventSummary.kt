@@ -1,6 +1,8 @@
 package com.example.marvelworld.api.models
 
-data class EventSummary (
+import com.example.marvelworld.reusablecomponents.HorizontalListItem
+
+data class EventSummary(
     val resourceURI: String,
-    val name: String
-)
+    override val name: String
+) : HorizontalListItem

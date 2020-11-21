@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/expandable_card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="@color/dark_grey"
+    app:cardCornerRadius="0dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/expandable_card_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/image_for_resource_details"
+            android:scaleType="centerCrop"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_launcher_background" />
+
+        <ImageButton
+            android:id="@+id/expandable_card_info_button"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/info_button"
+            android:contentDescription="@string/button_for_revealing_urls_associated_to_the_resource"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/expandable_card_title_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/expandable_card_image">
+
+            <TextView
+                android:id="@+id/expandable_card_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:drawableStartCompat="@drawable/ic_baseline_keyboard_arrow_down_24"
+                tools:text="Resource Title" />
+
+            <ImageButton
+                android:id="@+id/favorite_button"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/ic_baseline_star_border_24"
+                android:contentDescription="@string/button_for_setting_resource_as_favorite"
+                app:backgroundTint="@color/white" />
+
+            <ImageButton
+                android:id="@+id/share_button"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="@drawable/ic_baseline_share_24"
+                android:contentDescription="@string/button_for_sharing_resource"
+                app:backgroundTint="@color/white" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/expandable_card_description_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="8dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/expandable_card_title_layout">
+
+            <TextView
+                android:id="@+id/expandable_card_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                tools:text="Resource Description" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

@@ -12,4 +12,5 @@
     <string name="button_for_sharing_resource">Button for sharing resource</string>
     <string name="image_for_resource_details">Image for resource details</string>
     <string name="button_for_revealing_urls_associated_to_the_resource">Button for revealing urls associated to the resource</string>
+    <string name="button_for_closing_urls_dialog">Button for closing urls dialog</string>
 </resources>

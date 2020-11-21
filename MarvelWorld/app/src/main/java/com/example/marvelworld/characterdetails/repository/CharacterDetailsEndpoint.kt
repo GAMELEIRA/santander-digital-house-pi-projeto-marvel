@@ -16,12 +16,12 @@ interface CharacterDetailsEndpoint {
     @GET("/v1/public/characters/{characterId}/comics")
     suspend fun getCharacterComics(@Path("characterId") characterId: Int): DataWrapper<Comic>
 
+    @GET("/v1/public/characters/{characterId}/stories")
+    suspend fun getCharacterStories(@Path("characterId") characterId: Int): DataWrapper<Story>
+
     @GET("/v1/public/characters/{characterId}/events")
     suspend fun getCharacterEvents(@Path("characterId") characterId: Int): DataWrapper<Event>
 
     @GET("/v1/public/characters/{characterId}/series")
     suspend fun getCharacterSeries(@Path("characterId") characterId: Int): DataWrapper<Series>
-
-    @GET("/v1/public/characters/{characterId}/stories")
-    suspend fun getCharacterStories(@Path("characterId") characterId: Int): DataWrapper<Story>
 }

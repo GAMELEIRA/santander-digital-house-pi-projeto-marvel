@@ -1,58 +1,68 @@
-package com.example.marvelworld.characterdetails.views
+package com.example.marvelworld.storydetails.views
 
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.marvelworld.R
-import com.example.marvelworld.characterdetails.repository.CharacterDetailsRepository
-import com.example.marvelworld.characterdetails.viewmodel.CharacterDetailsViewModel
 import com.example.marvelworld.reusablecomponents.expandablecard.Card
 import com.example.marvelworld.reusablecomponents.expandablecard.ExpandableCardUtils
 import com.example.marvelworld.reusablecomponents.horizontallist.HorizontalListItem
 import com.example.marvelworld.reusablecomponents.horizontallist.HorizontalListUtils
 import com.example.marvelworld.reusablecomponents.horizontallist.OnHorizontalListItemClickListener
+import com.example.marvelworld.storydetails.repository.StoryDetailsRepository
+import com.example.marvelworld.storydetails.viewmodel.StoryDetailsViewModel
 
-
-class CharacterDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
+class StoryDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_character_details, container, false)
+        return inflater.inflate(R.layout.fragment_story_details, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val characterId = requireArguments().getInt("CHARACTER_ID")
+        val storyId = requireArguments().getInt("STORY_ID")
 
-        val characterDetailsViewModel = ViewModelProvider(
+        val storyDetailsViewModel = ViewModelProvider(
             this,
-            CharacterDetailsViewModel.CharacterDetailsViewModelFactory(CharacterDetailsRepository())
-        ).get(CharacterDetailsViewModel::class.java)
+            StoryDetailsViewModel.StoryDetailsViewModelFactory(StoryDetailsRepository())
+        ).get(StoryDetailsViewModel::class.java)
 
-        characterDetailsViewModel.getCharacter(characterId)
-            .observe(viewLifecycleOwner, Observer { character ->
+        storyDetailsViewModel.getStory(storyId)
+            .observe(viewLifecycleOwner, Observer { story ->
                 val card = Card(
-                    character.name,
-                    character.thumbnail.getImagePath(),
-                    character.description,
-                    character.urls
+                    story.title,
+                    story.thumbnail?.getImagePath(),
+                    story.description,
+                    null
                 )
                 ExpandableCardUtils.initCard(view, card, childFragmentManager)
             })
 
-        characterDetailsViewModel.getCharacterComics(characterId)
+        storyDetailsViewModel.getStoryCharacters(storyId)
+            .observe(viewLifecycleOwner, Observer {
+                val characterList = view.findViewById<LinearLayout>(R.id.character_list)
+                HorizontalListUtils.initHorizontalList(
+                    characterList,
+                    it,
+                    "Characters:",
+                    this
+                )
+            })
+
+        storyDetailsViewModel.getStoryComics(storyId)
             .observe(viewLifecycleOwner, Observer {
                 val comicList = view.findViewById<LinearLayout>(R.id.comic_list)
                 HorizontalListUtils.initHorizontalList(
@@ -63,35 +73,35 @@ class CharacterDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
                 )
             })
 
-        characterDetailsViewModel.getCharacterEvents(characterId)
+        storyDetailsViewModel.getStoryEvents(storyId)
             .observe(viewLifecycleOwner, Observer {
-                val comicList = view.findViewById<LinearLayout>(R.id.event_list)
+                val eventList = view.findViewById<LinearLayout>(R.id.event_list)
                 HorizontalListUtils.initHorizontalList(
-                    comicList,
+                    eventList,
                     it,
                     "Events:",
                     this
                 )
             })
 
-        characterDetailsViewModel.getCharacterSeries(characterId)
+        storyDetailsViewModel.getStorySeries(storyId)
             .observe(viewLifecycleOwner, Observer {
-                val comicList = view.findViewById<LinearLayout>(R.id.series_list)
+                val seriesList = view.findViewById<LinearLayout>(R.id.series_list)
                 HorizontalListUtils.initHorizontalList(
-                    comicList,
+                    seriesList,
                     it,
                     "Series:",
                     this
                 )
             })
 
-        characterDetailsViewModel.getCharacterStories(characterId)
+        storyDetailsViewModel.getStoryCreators(storyId)
             .observe(viewLifecycleOwner, Observer {
-                val comicList = view.findViewById<LinearLayout>(R.id.story_list)
+                val creatorList = view.findViewById<LinearLayout>(R.id.creator_list)
                 HorizontalListUtils.initHorizontalList(
-                    comicList,
+                    creatorList,
                     it,
-                    "Stories:",
+                    "Creators:",
                     this
                 )
             })
@@ -100,6 +110,10 @@ class CharacterDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
     override fun onHorizontalListItemClick(item: HorizontalListItem) {
         val bundle = bundleOf()
         when (item.type) {
+            HorizontalListUtils.CHARACTER -> {
+                bundle.putInt("CHARACTER_ID", item.id)
+                findNavController().navigate(R.id.characterDetailsFragment, bundle)
+            }
             HorizontalListUtils.COMIC -> {
                 bundle.putInt("COMIC_ID", item.id)
                 findNavController().navigate(R.id.comicDetailsFragment, bundle)
@@ -111,10 +125,6 @@ class CharacterDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
             HorizontalListUtils.SERIES -> {
                 bundle.putInt("SERIES_ID", item.id)
                 findNavController().navigate(R.id.seriesDetailsFragment, bundle)
-            }
-            HorizontalListUtils.STORY -> {
-                bundle.putInt("STORY_ID", item.id)
-                findNavController().navigate(R.id.storyDetailsFragment, bundle)
             }
             else -> Toast.makeText(this.context, "cliquei", Toast.LENGTH_SHORT).show()
         }

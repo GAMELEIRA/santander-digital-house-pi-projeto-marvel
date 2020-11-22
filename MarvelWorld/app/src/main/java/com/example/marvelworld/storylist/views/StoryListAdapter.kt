@@ -9,7 +9,8 @@ import com.example.marvelworld.R
 import com.example.marvelworld.storylist.models.Story
 
 class StoryListAdapter(
-    private val storyList: List<Story>
+    private val storyList: List<Story>,
+    private val onStoryClickListener: OnStoryClickListener
 ) : RecyclerView.Adapter<StoryListAdapter.StoryViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StoryViewHolder {
@@ -22,7 +23,7 @@ class StoryListAdapter(
 
     override fun onBindViewHolder(holder: StoryViewHolder, position: Int) {
         val story = storyList[position]
-        holder.bind(story)
+        holder.bind(story, onStoryClickListener)
     }
 
     override fun getItemCount() = storyList.size
@@ -30,8 +31,12 @@ class StoryListAdapter(
     class StoryViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val title: TextView = view.findViewById(R.id.story_list_item_title)
 
-        fun bind(story: Story) {
+        fun bind(story: Story, onStoryClickListener: OnStoryClickListener) {
             title.text = story.title
+
+            itemView.setOnClickListener {
+                onStoryClickListener.onStoryClick(adapterPosition)
+            }
         }
     }
 }

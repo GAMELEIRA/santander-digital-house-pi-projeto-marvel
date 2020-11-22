@@ -19,6 +19,9 @@
         <action
             android:id="@+id/action_characterDetailsFragment_to_seriesDetailsFragment"
             app:destination="@id/seriesDetailsFragment" />
+        <action
+            android:id="@+id/action_characterDetailsFragment_to_storyDetailsFragment"
+            app:destination="@id/storyDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/mainViewPagerFragment"
@@ -37,6 +40,9 @@
         <action
             android:id="@+id/action_mainViewPagerFragment_to_seriesDetailsFragment"
             app:destination="@id/seriesDetailsFragment" />
+        <action
+            android:id="@+id/action_mainViewPagerFragment_to_storyDetailsFragment"
+            app:destination="@id/storyDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/comicDetailsFragment"
@@ -46,6 +52,9 @@
         <action
             android:id="@+id/action_comicDetailsFragment_to_eventDetailsFragment"
             app:destination="@id/eventDetailsFragment" />
+        <action
+            android:id="@+id/action_comicDetailsFragment_to_storyDetailsFragment"
+            app:destination="@id/storyDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/eventDetailsFragment"
@@ -55,6 +64,9 @@
         <action
             android:id="@+id/action_eventDetailsFragment_to_seriesDetailsFragment"
             app:destination="@id/seriesDetailsFragment" />
+        <action
+            android:id="@+id/action_eventDetailsFragment_to_storyDetailsFragment"
+            app:destination="@id/storyDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/seriesDetailsFragment"
@@ -69,6 +81,27 @@
             app:destination="@id/comicDetailsFragment" />
         <action
             android:id="@+id/action_seriesDetailsFragment_to_eventDetailsFragment"
+            app:destination="@id/eventDetailsFragment" />
+        <action
+            android:id="@+id/action_seriesDetailsFragment_to_storyDetailsFragment"
+            app:destination="@id/storyDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/storyDetailsFragment"
+        android:name="com.example.marvelworld.storydetails.views.StoryDetailsFragment"
+        android:label="fragment_story_details"
+        tools:layout="@layout/fragment_story_details" >
+        <action
+            android:id="@+id/action_storyDetailsFragment_to_characterDetailsFragment"
+            app:destination="@id/characterDetailsFragment" />
+        <action
+            android:id="@+id/action_storyDetailsFragment_to_seriesDetailsFragment"
+            app:destination="@id/seriesDetailsFragment" />
+        <action
+            android:id="@+id/action_storyDetailsFragment_to_comicDetailsFragment"
+            app:destination="@id/comicDetailsFragment" />
+        <action
+            android:id="@+id/action_storyDetailsFragment_to_eventDetailsFragment"
             app:destination="@id/eventDetailsFragment" />
     </fragment>
 </navigation>

@@ -43,6 +43,9 @@
         <action
             android:id="@+id/action_mainViewPagerFragment_to_storyDetailsFragment"
             app:destination="@id/storyDetailsFragment" />
+        <action
+            android:id="@+id/action_mainViewPagerFragment_to_creatorDetailsFragment"
+            app:destination="@id/creatorDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/comicDetailsFragment"
@@ -55,6 +58,9 @@
         <action
             android:id="@+id/action_comicDetailsFragment_to_storyDetailsFragment"
             app:destination="@id/storyDetailsFragment" />
+        <action
+            android:id="@+id/action_comicDetailsFragment_to_creatorDetailsFragment"
+            app:destination="@id/creatorDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/eventDetailsFragment"
@@ -67,6 +73,9 @@
         <action
             android:id="@+id/action_eventDetailsFragment_to_storyDetailsFragment"
             app:destination="@id/storyDetailsFragment" />
+        <action
+            android:id="@+id/action_eventDetailsFragment_to_creatorDetailsFragment"
+            app:destination="@id/creatorDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/seriesDetailsFragment"
@@ -85,6 +94,9 @@
         <action
             android:id="@+id/action_seriesDetailsFragment_to_storyDetailsFragment"
             app:destination="@id/storyDetailsFragment" />
+        <action
+            android:id="@+id/action_seriesDetailsFragment_to_creatorDetailsFragment"
+            app:destination="@id/creatorDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/storyDetailsFragment"
@@ -103,5 +115,26 @@
         <action
             android:id="@+id/action_storyDetailsFragment_to_eventDetailsFragment"
             app:destination="@id/eventDetailsFragment" />
+        <action
+            android:id="@+id/action_storyDetailsFragment_to_creatorDetailsFragment"
+            app:destination="@id/creatorDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/creatorDetailsFragment"
+        android:name="com.example.marvelworld.creatordetails.views.CreatorDetailsFragment"
+        android:label="fragment_creator_details"
+        tools:layout="@layout/fragment_creator_details" >
+        <action
+            android:id="@+id/action_creatorDetailsFragment_to_seriesDetailsFragment"
+            app:destination="@id/seriesDetailsFragment" />
+        <action
+            android:id="@+id/action_creatorDetailsFragment_to_comicDetailsFragment"
+            app:destination="@id/comicDetailsFragment" />
+        <action
+            android:id="@+id/action_creatorDetailsFragment_to_eventDetailsFragment"
+            app:destination="@id/eventDetailsFragment" />
+        <action
+            android:id="@+id/action_creatorDetailsFragment_to_storyDetailsFragment"
+            app:destination="@id/storyDetailsFragment" />
     </fragment>
 </navigation>

@@ -7,4 +7,9 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="ImageDialogFragment" parent="Theme.MaterialComponents.Light.Dialog">
+        <item name="android:windowNoTitle">false</item>
+
+    </style>
+
 </resources>

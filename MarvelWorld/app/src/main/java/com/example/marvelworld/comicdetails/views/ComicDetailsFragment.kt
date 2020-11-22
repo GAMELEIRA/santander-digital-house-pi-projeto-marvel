@@ -6,13 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.marvelworld.R
+import com.example.marvelworld.api.models.Image
 import com.example.marvelworld.comicdetails.respository.ComicDetailsRepository
 import com.example.marvelworld.comicdetails.viewmodel.ComicDetailsViewModel
 import com.example.marvelworld.reusablecomponents.expandablecard.Card
@@ -47,7 +47,8 @@ class ComicDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
             .observe(viewLifecycleOwner, Observer { comic ->
                 val card = Card(
                     comic.title,
-                    comic.thumbnail.getImagePath(),
+                    comic.thumbnail.getImagePath(Image.DETAIL),
+                    comic.thumbnail.getImagePath(Image.FULL_SIZE),
                     comic.description,
                     comic.urls
                 )
@@ -59,7 +60,7 @@ class ComicDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
                 }?.date
 
                 if (date != null) {
-                    publishDate.text = SimpleDateFormat("MMMMM dd, yyyy", Locale.US)
+                    publishDate.text = SimpleDateFormat("MMMM dd, yyyy", Locale.ROOT)
                         .format(date)
                         .toString()
                 } else {

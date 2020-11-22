@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.marvelworld.R
+import com.example.marvelworld.api.models.Image
 import com.example.marvelworld.eventlist.models.Event
 import com.squareup.picasso.Picasso
 
@@ -37,7 +38,7 @@ class EventListAdapter(
 
         @SuppressLint("SetTextI18n")
         fun bind(event: Event, onEventClickListener: OnEventClickListener) {
-            val path = event.thumbnail.getImagePath()
+            val path = event.thumbnail.getImagePath(Image.PORTRAIT_UNCANNY)
             Picasso.get().load(path).into(image)
             title.text = event.title
 

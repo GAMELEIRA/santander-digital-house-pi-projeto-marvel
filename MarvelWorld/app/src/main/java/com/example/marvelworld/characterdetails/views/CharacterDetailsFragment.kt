@@ -12,6 +12,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.marvelworld.R
+import com.example.marvelworld.api.models.Image
 import com.example.marvelworld.characterdetails.repository.CharacterDetailsRepository
 import com.example.marvelworld.characterdetails.viewmodel.CharacterDetailsViewModel
 import com.example.marvelworld.reusablecomponents.expandablecard.Card
@@ -45,7 +46,8 @@ class CharacterDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
             .observe(viewLifecycleOwner, Observer { character ->
                 val card = Card(
                     character.name,
-                    character.thumbnail.getImagePath(),
+                    character.thumbnail.getImagePath(Image.DETAIL),
+                    character.thumbnail.getImagePath(Image.FULL_SIZE),
                     character.description,
                     character.urls
                 )

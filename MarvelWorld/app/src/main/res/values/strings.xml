@@ -14,4 +14,6 @@
     <string name="button_for_revealing_urls_associated_to_the_resource">Button for revealing urls associated to the resource</string>
     <string name="button_for_closing_urls_dialog">Button for closing urls dialog</string>
     <string name="published">Published:</string>
+    <string name="expanded_resource_image">Expanded resource image</string>
+    <string name="button_for_closing_image_dialog">Button for closing image dialog</string>
 </resources>

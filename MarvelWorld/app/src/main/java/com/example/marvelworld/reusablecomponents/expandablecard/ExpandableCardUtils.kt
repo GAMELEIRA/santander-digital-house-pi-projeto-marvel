@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.transition.AutoTransition
 import androidx.transition.TransitionManager
 import com.example.marvelworld.R
+import com.example.marvelworld.reusablecomponents.imagedialog.ImageDialogFragment
 import com.example.marvelworld.reusablecomponents.urlsdialog.UrlsBottomDialogFragment
 import com.google.android.material.card.MaterialCardView
 import com.squareup.picasso.Picasso
@@ -31,8 +32,12 @@ object ExpandableCardUtils {
         } else {
             infoButton.visibility = View.GONE
         }
-        if (card.image != null) {
-            Picasso.get().load(card.image).into(cardImage)
+
+        if (card.imageCard != null) {
+            Picasso.get().load(card.imageCard).into(cardImage)
+            cardImage.setOnClickListener {
+                ImageDialogFragment(card).show(supportFragmentManager, "add_image_dialog")
+            }
         } else {
             cardImage.visibility = View.GONE
         }

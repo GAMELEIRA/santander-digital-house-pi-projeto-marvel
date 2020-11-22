@@ -5,13 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.marvelworld.R
+import com.example.marvelworld.api.models.Image
 import com.example.marvelworld.eventdetails.respository.EventDetailsRepository
 import com.example.marvelworld.eventdetails.viewmodel.EventDetailsViewModel
 import com.example.marvelworld.reusablecomponents.expandablecard.Card
@@ -44,7 +44,8 @@ class EventDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
             .observe(viewLifecycleOwner, Observer { event ->
                 val card = Card(
                     event.title,
-                    event.thumbnail.getImagePath(),
+                    event.thumbnail.getImagePath(Image.DETAIL),
+                    event.thumbnail.getImagePath(Image.FULL_SIZE),
                     event.description,
                     event.urls
                 )

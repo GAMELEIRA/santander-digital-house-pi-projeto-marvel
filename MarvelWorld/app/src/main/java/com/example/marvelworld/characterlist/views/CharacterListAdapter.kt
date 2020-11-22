@@ -7,6 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.marvelworld.R
+import com.example.marvelworld.api.models.Image
 import com.example.marvelworld.characterlist.models.Character
 import com.squareup.picasso.Picasso
 
@@ -35,7 +36,7 @@ class CharacterListAdapter(
         private val title: TextView = view.findViewById(R.id.title_character_list_item)
 
         fun bind(character: Character, onCharacterClickListener: OnCharacterClickListener) {
-            val path = character.thumbnail.getImagePath()
+            val path = character.thumbnail.getImagePath(Image.PORTRAIT_UNCANNY)
             Picasso.get().load(path).into(image)
             title.text = character.name
 

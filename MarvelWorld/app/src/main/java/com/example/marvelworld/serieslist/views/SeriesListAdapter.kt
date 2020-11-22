@@ -7,6 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.marvelworld.R
+import com.example.marvelworld.api.models.Image
 import com.example.marvelworld.serieslist.models.Series
 import com.squareup.picasso.Picasso
 
@@ -35,7 +36,7 @@ class SeriesListAdapter(
         private val title: TextView = view.findViewById(R.id.title_series_list_item)
 
         fun bind(series: Series, onSeriesClickListener: OnSeriesClickListener) {
-            val path = series.thumbnail.getImagePath()
+            val path = series.thumbnail.getImagePath(Image.PORTRAIT_UNCANNY)
             Picasso.get().load(path).into(image)
             title.text = series.title
 

@@ -1,3 +1,3 @@
 package com.example.marvelworld.reusablecomponents.horizontallist
 
-open class HorizontalListItem(val name: String)
+data class HorizontalListItem(val id: Int, val name: String, val type: Int)

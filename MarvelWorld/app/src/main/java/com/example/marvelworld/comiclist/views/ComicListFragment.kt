@@ -5,8 +5,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.marvelworld.R
@@ -14,7 +16,7 @@ import com.example.marvelworld.comiclist.models.Comic
 import com.example.marvelworld.comiclist.repository.ComicRepository
 import com.example.marvelworld.comiclist.viewmodel.ComicViewModel
 
-class ComicListFragment : Fragment() {
+class ComicListFragment : Fragment(), OnComicClickListener {
     private val comicList = mutableListOf<Comic>()
 
     override fun onCreateView(
@@ -30,7 +32,7 @@ class ComicListFragment : Fragment() {
 
         val recycler = view.findViewById<RecyclerView>(R.id.recycler_comic_list)
         val manager = GridLayoutManager(view.context, 2)
-        val comicListAdapter = ComicListAdapter(comicList)
+        val comicListAdapter = ComicListAdapter(comicList, this)
 
         recycler.apply {
             layoutManager = manager
@@ -47,5 +49,10 @@ class ComicListFragment : Fragment() {
             comicList.addAll(it)
             comicListAdapter.notifyDataSetChanged()
         })
+    }
+
+    override fun onComicClick(position: Int) {
+        val bundle = bundleOf("COMIC_ID" to comicList[position].id)
+        findNavController().navigate(R.id.comicDetailsFragment, bundle)
     }
 }

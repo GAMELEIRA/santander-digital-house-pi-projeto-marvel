@@ -11,7 +11,8 @@ import com.example.marvelworld.comiclist.models.Comic
 import com.squareup.picasso.Picasso
 
 class ComicListAdapter(
-    private val comicList: List<Comic>
+    private val comicList: List<Comic>,
+    private val onComicClickListener: OnComicClickListener
 ) : RecyclerView.Adapter<ComicListAdapter.ComicViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ComicViewHolder {
@@ -24,7 +25,7 @@ class ComicListAdapter(
 
     override fun onBindViewHolder(holder: ComicViewHolder, position: Int) {
         val comic = comicList[position]
-        holder.bind(comic)
+        holder.bind(comic, onComicClickListener)
     }
 
     override fun getItemCount() = comicList.size
@@ -33,10 +34,14 @@ class ComicListAdapter(
         private val image: ImageView = view.findViewById(R.id.img_comic_list_item)
         private val title: TextView = view.findViewById(R.id.title_comic_list_item)
 
-        fun bind(comic: Comic) {
+        fun bind(comic: Comic, onComicClickListener: OnComicClickListener) {
             val path = comic.thumbnail.getImagePath()
             Picasso.get().load(path).into(image)
             title.text = comic.title
+
+            itemView.setOnClickListener {
+                onComicClickListener.onComicClick(adapterPosition)
+            }
         }
     }
 }

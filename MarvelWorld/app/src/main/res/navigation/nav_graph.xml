@@ -18,5 +18,13 @@
         <action
             android:id="@+id/action_mainViewPagerFragment_to_characterDetailsFragment"
             app:destination="@id/characterDetailsFragment" />
+        <action
+            android:id="@+id/action_mainViewPagerFragment_to_comicDetailsFragment"
+            app:destination="@id/comicDetailsFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/comicDetailsFragment"
+        android:name="com.example.marvelworld.comicdetails.ComicDetailsFragment"
+        android:label="fragment_comic_details"
+        tools:layout="@layout/fragment_comic_details" />
 </navigation>

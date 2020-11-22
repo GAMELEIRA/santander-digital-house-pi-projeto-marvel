@@ -1,6 +1,5 @@
 package com.example.marvelworld.serieslist.views
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +11,8 @@ import com.example.marvelworld.serieslist.models.Series
 import com.squareup.picasso.Picasso
 
 class SeriesListAdapter(
-    private val seriesList: List<Series>
+    private val seriesList: List<Series>,
+    private val onSeriesClickListener: OnSeriesClickListener
 ) : RecyclerView.Adapter<SeriesListAdapter.SeriesViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SeriesViewHolder {
@@ -25,7 +25,7 @@ class SeriesListAdapter(
 
     override fun onBindViewHolder(holder: SeriesViewHolder, position: Int) {
         val series = seriesList[position]
-        holder.bind(series)
+        holder.bind(series, onSeriesClickListener)
     }
 
     override fun getItemCount() = seriesList.size
@@ -34,11 +34,14 @@ class SeriesListAdapter(
         private val image: ImageView = view.findViewById(R.id.img_series_list_item)
         private val title: TextView = view.findViewById(R.id.title_series_list_item)
 
-        @SuppressLint("SetTextI18n")
-        fun bind(series: Series) {
+        fun bind(series: Series, onSeriesClickListener: OnSeriesClickListener) {
             val path = series.thumbnail.getImagePath()
             Picasso.get().load(path).into(image)
             title.text = series.title
+
+            itemView.setOnClickListener {
+                onSeriesClickListener.onSeriesClick(adapterPosition)
+            }
         }
     }
 }

@@ -108,6 +108,10 @@ class CharacterDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
                 bundle.putInt("EVENT_ID", item.id)
                 findNavController().navigate(R.id.eventDetailsFragment, bundle)
             }
+            HorizontalListUtils.SERIES -> {
+                bundle.putInt("SERIES_ID", item.id)
+                findNavController().navigate(R.id.seriesDetailsFragment, bundle)
+            }
             else -> Toast.makeText(this.context, "cliquei", Toast.LENGTH_SHORT).show()
         }
     }

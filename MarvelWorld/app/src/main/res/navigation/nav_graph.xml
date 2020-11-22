@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_characterDetailsFragment_to_eventDetailsFragment"
             app:destination="@id/eventDetailsFragment" />
+        <action
+            android:id="@+id/action_characterDetailsFragment_to_seriesDetailsFragment"
+            app:destination="@id/seriesDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/mainViewPagerFragment"
@@ -31,6 +34,9 @@
         <action
             android:id="@+id/action_mainViewPagerFragment_to_eventDetailsFragment"
             app:destination="@id/eventDetailsFragment" />
+        <action
+            android:id="@+id/action_mainViewPagerFragment_to_seriesDetailsFragment"
+            app:destination="@id/seriesDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/comicDetailsFragment"
@@ -45,5 +51,24 @@
         android:id="@+id/eventDetailsFragment"
         android:name="com.example.marvelworld.eventdetails.views.EventDetailsFragment"
         android:label="fragment_event_details"
-        tools:layout="@layout/fragment_event_details" />
+        tools:layout="@layout/fragment_event_details" >
+        <action
+            android:id="@+id/action_eventDetailsFragment_to_seriesDetailsFragment"
+            app:destination="@id/seriesDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/seriesDetailsFragment"
+        android:name="com.example.marvelworld.seriesdetails.views.SeriesDetailsFragment"
+        android:label="fragment_series_details"
+        tools:layout="@layout/fragment_series_details" >
+        <action
+            android:id="@+id/action_seriesDetailsFragment_to_characterDetailsFragment"
+            app:destination="@id/characterDetailsFragment" />
+        <action
+            android:id="@+id/action_seriesDetailsFragment_to_comicDetailsFragment"
+            app:destination="@id/comicDetailsFragment" />
+        <action
+            android:id="@+id/action_seriesDetailsFragment_to_eventDetailsFragment"
+            app:destination="@id/eventDetailsFragment" />
+    </fragment>
 </navigation>

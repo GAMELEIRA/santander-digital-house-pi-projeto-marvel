@@ -1,16 +1,12 @@
 package com.example.marvelworld.storylist.views
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.marvelworld.R
-import com.example.marvelworld.api.utils.NetworkUtils
 import com.example.marvelworld.storylist.models.Story
-import com.squareup.picasso.Picasso
 
 class StoryListAdapter(
     private val storyList: List<Story>
@@ -32,13 +28,9 @@ class StoryListAdapter(
     override fun getItemCount() = storyList.size
 
     class StoryViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val image: ImageView = view.findViewById(R.id.img_story_list_item)
-        private val title: TextView = view.findViewById(R.id.title_story_list_item)
+        private val title: TextView = view.findViewById(R.id.story_list_item_title)
 
-        @SuppressLint("SetTextI18n")
         fun bind(story: Story) {
-            val path = story.thumbnail?.getImagePath() ?: NetworkUtils.NOT_FOUND_IMAGE
-             Picasso.get().load(path).into(image)
             title.text = story.title
         }
     }

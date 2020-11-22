@@ -9,7 +9,14 @@
         android:id="@+id/characterDetailsFragment"
         android:name="com.example.marvelworld.characterdetails.views.CharacterDetailsFragment"
         android:label="fragment_character_details"
-        tools:layout="@layout/fragment_character_details" />
+        tools:layout="@layout/fragment_character_details" >
+        <action
+            android:id="@+id/action_characterDetailsFragment_to_comicDetailsFragment"
+            app:destination="@id/comicDetailsFragment" />
+        <action
+            android:id="@+id/action_characterDetailsFragment_to_eventDetailsFragment"
+            app:destination="@id/eventDetailsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/mainViewPagerFragment"
         android:name="com.example.marvelworld.mainviewpager.views.MainViewPagerFragment"
@@ -21,10 +28,22 @@
         <action
             android:id="@+id/action_mainViewPagerFragment_to_comicDetailsFragment"
             app:destination="@id/comicDetailsFragment" />
+        <action
+            android:id="@+id/action_mainViewPagerFragment_to_eventDetailsFragment"
+            app:destination="@id/eventDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/comicDetailsFragment"
-        android:name="com.example.marvelworld.comicdetails.ComicDetailsFragment"
+        android:name="com.example.marvelworld.comicdetails.views.ComicDetailsFragment"
         android:label="fragment_comic_details"
-        tools:layout="@layout/fragment_comic_details" />
+        tools:layout="@layout/fragment_comic_details" >
+        <action
+            android:id="@+id/action_comicDetailsFragment_to_eventDetailsFragment"
+            app:destination="@id/eventDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/eventDetailsFragment"
+        android:name="com.example.marvelworld.eventdetails.views.EventDetailsFragment"
+        android:label="fragment_event_details"
+        tools:layout="@layout/fragment_event_details" />
 </navigation>

@@ -1,8 +1,9 @@
-package com.example.marvelworld.comicdetails
+package com.example.marvelworld.comicdetails.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.liveData
+import com.example.marvelworld.comicdetails.respository.ComicDetailsRepository
 import com.example.marvelworld.reusablecomponents.horizontallist.HorizontalListItem
 import com.example.marvelworld.reusablecomponents.horizontallist.HorizontalListUtils
 import kotlinx.coroutines.Dispatchers

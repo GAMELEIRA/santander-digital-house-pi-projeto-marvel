@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#020004"
-    tools:context=".comicdetails.views.ComicDetailsFragment">
+    tools:context=".eventdetails.views.EventDetailsFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -26,14 +26,21 @@
             android:layout_marginBottom="8dp" />
 
         <include
-            android:id="@+id/story_list"
+            android:id="@+id/comic_list"
             layout="@layout/horizontal_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp" />
 
         <include
-            android:id="@+id/event_list"
+            android:id="@+id/series_list"
+            layout="@layout/horizontal_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp" />
+
+        <include
+            android:id="@+id/story_list"
             layout="@layout/horizontal_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -45,22 +52,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp" />
-
-        <TextView
-            android:id="@+id/publish_date_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/published"
-            android:textColor="@color/white"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/publish_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:textColor="@color/white"
-            tools:text="November 04, 2020" />
 
         <Button
             android:id="@+id/copyright_link"

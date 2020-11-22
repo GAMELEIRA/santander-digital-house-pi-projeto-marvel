@@ -6,6 +6,7 @@ import androidx.lifecycle.liveData
 import com.example.marvelworld.comiclist.repository.ComicRepository
 import kotlinx.coroutines.Dispatchers
 
+@Suppress("UNCHECKED_CAST")
 class ComicViewModel(
     private val repository: ComicRepository
 ) : ViewModel() {

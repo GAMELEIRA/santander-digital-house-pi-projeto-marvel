@@ -12,7 +12,8 @@ import com.example.marvelworld.creatorlist.models.Creator
 import com.squareup.picasso.Picasso
 
 class CreatorListAdapter(
-    private val creatorList: List<Creator>
+    private val creatorList: List<Creator>,
+    private val onCreatorClickListener: OnCreatorClickListener
 ) : RecyclerView.Adapter<CreatorListAdapter.CreatorViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CreatorViewHolder {
@@ -25,7 +26,7 @@ class CreatorListAdapter(
 
     override fun onBindViewHolder(holder: CreatorViewHolder, position: Int) {
         val comic = creatorList[position]
-        holder.bind(comic)
+        holder.bind(comic, onCreatorClickListener)
     }
 
     override fun getItemCount() = creatorList.size
@@ -35,10 +36,14 @@ class CreatorListAdapter(
         private val title: TextView = view.findViewById(R.id.title_creator_list_item)
 
         @SuppressLint("SetTextI18n")
-        fun bind(creator: Creator) {
+        fun bind(creator: Creator, onCreatorClickListener: OnCreatorClickListener) {
             val path = creator.thumbnail.getImagePath()
             Picasso.get().load(path).into(image)
-            title.text = creator.firstName + " " + creator.lastName
+            title.text = creator.fullName
+
+            itemView.setOnClickListener {
+                onCreatorClickListener.onCreatorClick(adapterPosition)
+            }
         }
     }
 }

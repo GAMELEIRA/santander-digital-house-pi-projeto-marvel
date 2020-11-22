@@ -128,7 +128,10 @@ class ComicDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
                 bundle.putInt("STORY_ID", item.id)
                 findNavController().navigate(R.id.storyDetailsFragment, bundle)
             }
-            else -> Toast.makeText(this.context, "cliquei", Toast.LENGTH_SHORT).show()
+            HorizontalListUtils.CREATOR -> {
+                bundle.putInt("CREATOR_ID", item.id)
+                findNavController().navigate(R.id.creatorDetailsFragment, bundle)
+            }
         }
     }
 }

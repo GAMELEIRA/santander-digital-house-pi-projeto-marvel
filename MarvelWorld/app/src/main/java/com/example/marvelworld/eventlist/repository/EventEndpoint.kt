@@ -8,22 +8,4 @@ import retrofit2.http.Path
 interface EventEndpoint {
     @GET("/v1/public/events")
     suspend fun getEvents(): DataWrapper<Event>
-
-    @GET("/v1/public/events/{eventId}")
-    suspend fun getEvent(@Path("eventId") eventId: Int): DataWrapper<Event>
-
-    @GET("/v1/public/events/{eventId}/characters")
-    suspend fun getEventCharacters(@Path("eventId") eventId: Int): DataWrapper<Event>
-
-    @GET("/v1/public/events/{eventId}/comics")
-    suspend fun getEventComics(@Path("eventId") eventId: Int): DataWrapper<Event>
-
-    @GET("/v1/public/events/{eventId}/creators")
-    suspend fun getEventCreators(@Path("eventId") eventId: Int): DataWrapper<Event>
-
-    @GET("/v1/public/events/{eventId}/series")
-    suspend fun getEventSeries(@Path("eventId") eventId: Int): DataWrapper<Event>
-
-    @GET("/v1/public/events/{eventId}/stories")
-    suspend fun getEventStories(@Path("eventId") eventId: Int): DataWrapper<Event>
 }

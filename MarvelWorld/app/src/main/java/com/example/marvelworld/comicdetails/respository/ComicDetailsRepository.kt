@@ -1,4 +1,4 @@
-package com.example.marvelworld.comicdetails
+package com.example.marvelworld.comicdetails.respository
 
 import com.example.marvelworld.api.utils.NetworkUtils
 

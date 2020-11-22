@@ -28,8 +28,8 @@ class SeriesDetailsViewModel(
         })
     }
 
-    fun getSeriesComics(eventId: Int) = liveData(Dispatchers.IO) {
-        val response = repository.getSeriesComics(eventId)
+    fun getSeriesComics(seriesId: Int) = liveData(Dispatchers.IO) {
+        val response = repository.getSeriesComics(seriesId)
         emit(response.data.results.map { comic ->
             HorizontalListItem(
                 comic.id,
@@ -39,8 +39,8 @@ class SeriesDetailsViewModel(
         })
     }
 
-    fun getSeriesStories(eventId: Int) = liveData(Dispatchers.IO) {
-        val response = repository.getSeriesStories(eventId)
+    fun getSeriesStories(seriesId: Int) = liveData(Dispatchers.IO) {
+        val response = repository.getSeriesStories(seriesId)
         emit(response.data.results.map { story ->
             HorizontalListItem(
                 story.id,
@@ -50,8 +50,8 @@ class SeriesDetailsViewModel(
         })
     }
 
-    fun getSeriesEvents(eventId: Int) = liveData(Dispatchers.IO) {
-        val response = repository.getSeriesEvents(eventId)
+    fun getSeriesEvents(seriesId: Int) = liveData(Dispatchers.IO) {
+        val response = repository.getSeriesEvents(seriesId)
         emit(response.data.results.map { event ->
             HorizontalListItem(
                 event.id,
@@ -61,8 +61,8 @@ class SeriesDetailsViewModel(
         })
     }
 
-    fun getSeriesCreators(eventId: Int) = liveData(Dispatchers.IO) {
-        val response = repository.getSeriesCreators(eventId)
+    fun getSeriesCreators(seriesId: Int) = liveData(Dispatchers.IO) {
+        val response = repository.getSeriesCreators(seriesId)
         emit(response.data.results.map { creator ->
             HorizontalListItem(
                 creator.id,

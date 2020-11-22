@@ -4,9 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.marvelworld.R
@@ -14,7 +16,7 @@ import com.example.marvelworld.storylist.models.Story
 import com.example.marvelworld.storylist.repository.StoryRepository
 import com.example.marvelworld.storylist.viewmodel.StoryViewModel
 
-class StoryListFragment : Fragment() {
+class StoryListFragment : Fragment(), OnStoryClickListener {
     private val storyList = mutableListOf<Story>()
 
     override fun onCreateView(
@@ -30,7 +32,7 @@ class StoryListFragment : Fragment() {
 
         val recycler = view.findViewById<RecyclerView>(R.id.recycler_story_list)
         val manager = LinearLayoutManager(view.context)
-        val storyListAdapter = StoryListAdapter(storyList)
+        val storyListAdapter = StoryListAdapter(storyList, this)
 
         recycler.apply {
             layoutManager = manager
@@ -47,5 +49,10 @@ class StoryListFragment : Fragment() {
             storyList.addAll(it)
             storyListAdapter.notifyDataSetChanged()
         })
+    }
+
+    override fun onStoryClick(position: Int) {
+        val bundle = bundleOf("STORY_ID" to storyList[position].id)
+        findNavController().navigate(R.id.storyDetailsFragment, bundle)
     }
 }

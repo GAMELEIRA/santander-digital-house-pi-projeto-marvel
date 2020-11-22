@@ -22,14 +22,23 @@ object ExpandableCardUtils {
         val cardDescription: TextView = view.findViewById(R.id.expandable_card_description)
         val cardDescriptionLayout: LinearLayout =
             view.findViewById(R.id.expandable_card_description_layout)
-        val urlsBottomDialogFragment = UrlsBottomDialogFragment(card.urls)
 
-        infoButton.setOnClickListener {
-            urlsBottomDialogFragment.show(supportFragmentManager, "add_urls_dialog")
+        if (card.urls != null) {
+            val urlsBottomDialogFragment = UrlsBottomDialogFragment(card.urls)
+            infoButton.setOnClickListener {
+                urlsBottomDialogFragment.show(supportFragmentManager, "add_urls_dialog")
+            }
+        } else {
+            infoButton.visibility = View.GONE
+        }
+        if (card.image != null) {
+            Picasso.get().load(card.image).into(cardImage)
+        } else {
+            cardImage.visibility = View.GONE
         }
 
-        Picasso.get().load(card.image).into(cardImage)
         cardTitle.text = card.title
+
         if (card.description != null && card.description.isNotBlank()) {
             cardDescription.text = card.description
             cardTitle.setOnClickListener {
@@ -37,28 +46,19 @@ object ExpandableCardUtils {
                     TransitionManager.beginDelayedTransition(cardView, AutoTransition())
                     cardDescriptionLayout.visibility = View.VISIBLE
                     cardTitle.setCompoundDrawablesWithIntrinsicBounds(
-                        R.drawable.ic_baseline_keyboard_arrow_up_24,
-                        0,
-                        0,
-                        0
+                        R.drawable.ic_baseline_keyboard_arrow_up_24, 0, 0, 0
                     )
                 } else {
                     TransitionManager.beginDelayedTransition(cardView, AutoTransition())
                     cardDescriptionLayout.visibility = View.GONE
                     cardTitle.setCompoundDrawablesWithIntrinsicBounds(
-                        R.drawable.ic_baseline_keyboard_arrow_down_24,
-                        0,
-                        0,
-                        0
+                        R.drawable.ic_baseline_keyboard_arrow_down_24, 0, 0, 0
                     )
                 }
             }
         } else {
             cardTitle.setCompoundDrawablesWithIntrinsicBounds(
-                0,
-                0,
-                0,
-                0
+                0, 0, 0, 0
             )
         }
     }

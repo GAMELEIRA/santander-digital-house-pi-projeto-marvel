@@ -110,13 +110,17 @@ class EventDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
     override fun onHorizontalListItemClick(item: HorizontalListItem) {
         val bundle = bundleOf()
         when (item.type) {
+            HorizontalListUtils.CHARACTER -> {
+                bundle.putInt("CHARACTER_ID", item.id)
+                findNavController().navigate(R.id.characterDetailsFragment, bundle)
+            }
             HorizontalListUtils.COMIC -> {
                 bundle.putInt("COMIC_ID", item.id)
                 findNavController().navigate(R.id.comicDetailsFragment, bundle)
             }
-            HorizontalListUtils.CHARACTER -> {
-                bundle.putInt("CHARACTER_ID", item.id)
-                findNavController().navigate(R.id.characterDetailsFragment, bundle)
+            HorizontalListUtils.SERIES -> {
+                bundle.putInt("SERIES_ID", item.id)
+                findNavController().navigate(R.id.seriesDetailsFragment, bundle)
             }
             else -> Toast.makeText(this.context, "cliquei", Toast.LENGTH_SHORT).show()
         }

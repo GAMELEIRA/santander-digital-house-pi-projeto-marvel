@@ -1,74 +1,57 @@
-package com.example.marvelworld.comicdetails.views
+package com.example.marvelworld.seriesdetails.views
 
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.TextView
 import android.widget.Toast
 import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.marvelworld.R
-import com.example.marvelworld.comicdetails.respository.ComicDetailsRepository
-import com.example.marvelworld.comicdetails.viewmodel.ComicDetailsViewModel
 import com.example.marvelworld.reusablecomponents.expandablecard.Card
 import com.example.marvelworld.reusablecomponents.expandablecard.ExpandableCardUtils
 import com.example.marvelworld.reusablecomponents.horizontallist.HorizontalListItem
 import com.example.marvelworld.reusablecomponents.horizontallist.HorizontalListUtils
 import com.example.marvelworld.reusablecomponents.horizontallist.OnHorizontalListItemClickListener
-import java.text.SimpleDateFormat
-import java.util.*
+import com.example.marvelworld.seriesdetails.viewmodel.SeriesDetailsViewModel
+import com.example.marvelworld.seriesdetails.respository.SeriesDetailsRepository
 
-class ComicDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
+class SeriesDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_comic_details, container, false)
+        return inflater.inflate(R.layout.fragment_series_details, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val comicId = requireArguments().getInt("COMIC_ID")
+        val seriesId = requireArguments().getInt("SERIES_ID")
 
-        val comicDetailsViewModel = ViewModelProvider(
+        val seriesDetailsViewModel = ViewModelProvider(
             this,
-            ComicDetailsViewModel.ComicDetailsViewModelFactory(ComicDetailsRepository())
-        ).get(ComicDetailsViewModel::class.java)
+            SeriesDetailsViewModel.SeriesDetailsViewModelFactory(SeriesDetailsRepository())
+        ).get(SeriesDetailsViewModel::class.java)
 
-        comicDetailsViewModel.getComic(comicId)
-            .observe(viewLifecycleOwner, Observer { comic ->
+        seriesDetailsViewModel.getOneSeries(seriesId)
+            .observe(viewLifecycleOwner, Observer { series ->
                 val card = Card(
-                    comic.title,
-                    comic.thumbnail.getImagePath(),
-                    comic.description,
-                    comic.urls
+                    series.title,
+                    series.thumbnail.getImagePath(),
+                    series.description,
+                    series.urls
                 )
                 ExpandableCardUtils.initCard(view, card, childFragmentManager)
-
-                val publishDate = view.findViewById<TextView>(R.id.publish_date)
-                val date = comic.dates.find { date ->
-                    date.type == "onsaleDate"
-                }?.date
-
-                if (date != null) {
-                    publishDate.text = SimpleDateFormat("MMMMM dd, yyyy", Locale.US)
-                        .format(date)
-                        .toString()
-                } else {
-                    val publishDateLabel = view.findViewById<TextView>(R.id.publish_date_label)
-                    publishDateLabel.visibility = View.GONE
-                }
             })
 
-        comicDetailsViewModel.getComicCharacters(comicId)
+        seriesDetailsViewModel.getSeriesCharacters(seriesId)
             .observe(viewLifecycleOwner, Observer {
                 val characterList = view.findViewById<LinearLayout>(R.id.character_list)
                 HorizontalListUtils.initHorizontalList(
@@ -79,7 +62,18 @@ class ComicDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
                 )
             })
 
-        comicDetailsViewModel.getComicStories(comicId)
+        seriesDetailsViewModel.getSeriesComics(seriesId)
+            .observe(viewLifecycleOwner, Observer {
+                val comicList = view.findViewById<LinearLayout>(R.id.comic_list)
+                HorizontalListUtils.initHorizontalList(
+                    comicList,
+                    it,
+                    "Comics:",
+                    this
+                )
+            })
+
+        seriesDetailsViewModel.getSeriesStories(seriesId)
             .observe(viewLifecycleOwner, Observer {
                 val storyList = view.findViewById<LinearLayout>(R.id.story_list)
                 HorizontalListUtils.initHorizontalList(
@@ -90,7 +84,7 @@ class ComicDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
                 )
             })
 
-        comicDetailsViewModel.getComicEvents(comicId)
+        seriesDetailsViewModel.getSeriesEvents(seriesId)
             .observe(viewLifecycleOwner, Observer {
                 val eventList = view.findViewById<LinearLayout>(R.id.event_list)
                 HorizontalListUtils.initHorizontalList(
@@ -101,7 +95,7 @@ class ComicDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
                 )
             })
 
-        comicDetailsViewModel.getComicCreators(comicId)
+        seriesDetailsViewModel.getSeriesCreators(seriesId)
             .observe(viewLifecycleOwner, Observer {
                 val creatorList = view.findViewById<LinearLayout>(R.id.creator_list)
                 HorizontalListUtils.initHorizontalList(
@@ -119,6 +113,10 @@ class ComicDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
             HorizontalListUtils.CHARACTER -> {
                 bundle.putInt("CHARACTER_ID", item.id)
                 findNavController().navigate(R.id.characterDetailsFragment, bundle)
+            }
+            HorizontalListUtils.COMIC -> {
+                bundle.putInt("COMIC_ID", item.id)
+                findNavController().navigate(R.id.comicDetailsFragment, bundle)
             }
             HorizontalListUtils.EVENT -> {
                 bundle.putInt("EVENT_ID", item.id)

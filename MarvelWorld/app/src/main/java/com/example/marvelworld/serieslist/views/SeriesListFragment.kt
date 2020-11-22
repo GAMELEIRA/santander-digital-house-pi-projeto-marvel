@@ -5,8 +5,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.marvelworld.R
@@ -14,7 +16,7 @@ import com.example.marvelworld.serieslist.repository.SeriesRepository
 import com.example.marvelworld.serieslist.viewmodel.SeriesViewModel
 import com.example.marvelworld.serieslist.models.Series
 
-class SeriesListFragment : Fragment() {
+class SeriesListFragment : Fragment(), OnSeriesClickListener {
     private val seriesList = mutableListOf<Series>()
 
     override fun onCreateView(
@@ -30,7 +32,7 @@ class SeriesListFragment : Fragment() {
 
         val recycler = view.findViewById<RecyclerView>(R.id.recycler_series_list)
         val manager = GridLayoutManager(view.context, 2)
-        val seriesListAdapter = SeriesListAdapter(seriesList)
+        val seriesListAdapter = SeriesListAdapter(seriesList, this)
 
         recycler.apply {
             layoutManager = manager
@@ -47,5 +49,10 @@ class SeriesListFragment : Fragment() {
             seriesList.addAll(it)
             seriesListAdapter.notifyDataSetChanged()
         })
+    }
+
+    override fun onSeriesClick(position: Int) {
+        val bundle = bundleOf("SERIES_ID" to seriesList[position].id)
+        findNavController().navigate(R.id.seriesDetailsFragment, bundle)
     }
 }

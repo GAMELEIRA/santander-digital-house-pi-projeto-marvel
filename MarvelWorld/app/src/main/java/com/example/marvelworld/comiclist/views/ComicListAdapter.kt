@@ -7,6 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.marvelworld.R
+import com.example.marvelworld.api.models.Image
 import com.example.marvelworld.comiclist.models.Comic
 import com.squareup.picasso.Picasso
 
@@ -35,7 +36,7 @@ class ComicListAdapter(
         private val title: TextView = view.findViewById(R.id.title_comic_list_item)
 
         fun bind(comic: Comic, onComicClickListener: OnComicClickListener) {
-            val path = comic.thumbnail.getImagePath()
+            val path = comic.thumbnail.getImagePath(Image.PORTRAIT_UNCANNY)
             Picasso.get().load(path).into(image)
             title.text = comic.title
 

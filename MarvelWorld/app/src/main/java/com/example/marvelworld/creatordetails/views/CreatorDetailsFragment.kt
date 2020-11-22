@@ -11,6 +11,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.marvelworld.R
+import com.example.marvelworld.api.models.Image
 import com.example.marvelworld.creatordetails.repository.CreatorDetailsRepository
 import com.example.marvelworld.creatordetails.viewmodel.CreatorDetailsViewModel
 import com.example.marvelworld.reusablecomponents.expandablecard.Card
@@ -43,7 +44,8 @@ class CreatorDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
             .observe(viewLifecycleOwner, Observer { creator ->
                 val card = Card(
                     creator.fullName,
-                    creator.thumbnail.getImagePath(),
+                    creator.thumbnail.getImagePath(Image.DETAIL),
+                    creator.thumbnail.getImagePath(Image.FULL_SIZE),
                     null,
                     creator.urls
                 )

@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.marvelworld.R
+import com.example.marvelworld.api.models.Image
 import com.example.marvelworld.creatorlist.models.Creator
 import com.squareup.picasso.Picasso
 
@@ -37,7 +38,7 @@ class CreatorListAdapter(
 
         @SuppressLint("SetTextI18n")
         fun bind(creator: Creator, onCreatorClickListener: OnCreatorClickListener) {
-            val path = creator.thumbnail.getImagePath()
+            val path = creator.thumbnail.getImagePath(Image.PORTRAIT_UNCANNY)
             Picasso.get().load(path).into(image)
             title.text = creator.fullName
 

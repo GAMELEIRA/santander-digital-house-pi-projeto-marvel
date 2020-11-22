@@ -6,12 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.marvelworld.R
+import com.example.marvelworld.api.models.Image
 import com.example.marvelworld.reusablecomponents.expandablecard.Card
 import com.example.marvelworld.reusablecomponents.expandablecard.ExpandableCardUtils
 import com.example.marvelworld.reusablecomponents.horizontallist.HorizontalListItem
@@ -44,7 +44,8 @@ class SeriesDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
             .observe(viewLifecycleOwner, Observer { series ->
                 val card = Card(
                     series.title,
-                    series.thumbnail.getImagePath(),
+                    series.thumbnail.getImagePath(Image.DETAIL),
+                    series.thumbnail.getImagePath(Image.FULL_SIZE),
                     series.description,
                     series.urls
                 )

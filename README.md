@@ -1,1 +1,1 @@
-# projeto-itegrador
+Este repositório têm como objetivo alocar o desenvolvimento do projeto que será entregue para a Digital House. O projeto têm como objetivo consumir a API da Marvel e realizar filtros das HQ'S e gerar leituras com temas similares e a criação de uma lista de favoritos

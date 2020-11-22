@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.liveData
 import com.example.marvelworld.characterdetails.repository.CharacterDetailsRepository
 import com.example.marvelworld.reusablecomponents.horizontallist.HorizontalListItem
+import com.example.marvelworld.reusablecomponents.horizontallist.HorizontalListUtils
 import kotlinx.coroutines.Dispatchers
 
 @Suppress("UNCHECKED_CAST")
@@ -18,22 +19,46 @@ class CharacterDetailsViewModel(
 
     fun getCharacterComics(characterId: Int) = liveData(Dispatchers.IO) {
         val response = repository.getCharacterComics(characterId)
-        emit(response.data.results.map { comic -> HorizontalListItem(comic.title) })
+        emit(response.data.results.map { comic ->
+            HorizontalListItem(
+                comic.id,
+                comic.title,
+                HorizontalListUtils.COMIC
+            )
+        })
     }
 
     fun getCharacterStories(characterId: Int) = liveData(Dispatchers.IO) {
         val response = repository.getCharacterStories(characterId)
-        emit(response.data.results.map { story -> HorizontalListItem(story.title) })
+        emit(response.data.results.map { story ->
+            HorizontalListItem(
+                story.id,
+                story.title,
+                HorizontalListUtils.STORY
+            )
+        })
     }
 
     fun getCharacterEvents(characterId: Int) = liveData(Dispatchers.IO) {
         val response = repository.getCharacterEvents(characterId)
-        emit(response.data.results.map { event -> HorizontalListItem(event.title) })
+        emit(response.data.results.map { event ->
+            HorizontalListItem(
+                event.id,
+                event.title,
+                HorizontalListUtils.EVENT
+            )
+        })
     }
 
     fun getCharacterSeries(characterId: Int) = liveData(Dispatchers.IO) {
         val response = repository.getCharacterSeries(characterId)
-        emit(response.data.results.map { series -> HorizontalListItem(series.title) })
+        emit(response.data.results.map { series ->
+            HorizontalListItem(
+                series.id,
+                series.title,
+                HorizontalListUtils.SERIES
+            )
+        })
     }
 
     class CharacterDetailsViewModelFactory(

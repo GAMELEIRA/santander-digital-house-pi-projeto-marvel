@@ -8,6 +8,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.marvelworld.R
 
 object HorizontalListUtils {
+    const val CHARACTER = 0
+    const val COMIC = 1
+    const val EVENT = 2
+    const val STORY = 3
+    const val SERIES = 4
+    const val CREATOR = 5
+
     fun initHorizontalList(
         view: View,
         list: List<HorizontalListItem>,

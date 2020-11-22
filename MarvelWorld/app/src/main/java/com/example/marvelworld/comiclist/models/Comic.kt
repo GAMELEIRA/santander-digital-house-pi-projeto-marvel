@@ -6,7 +6,7 @@ import java.util.*
 data class Comic(
     val id: Int,
     val title: String,
-    val description: String,
+    val description: String?,
     val modified: Date,
     val resourceURI: String,
     val urls: List<Url>,

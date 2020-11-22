@@ -37,7 +37,7 @@ class HorizontalListAdapter(
         ) {
             title.text = item.name
             itemView.setOnClickListener {
-                onHorizontalListItemClickListener.onHorizontalListItemClick(adapterPosition)
+                onHorizontalListItemClickListener.onHorizontalListItemClick(item)
             }
         }
     }

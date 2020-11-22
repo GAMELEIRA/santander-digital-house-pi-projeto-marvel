@@ -6,13 +6,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.example.marvelworld.R
 import com.example.marvelworld.characterdetails.repository.CharacterDetailsRepository
 import com.example.marvelworld.characterdetails.viewmodel.CharacterDetailsViewModel
+import com.example.marvelworld.reusablecomponents.expandablecard.Card
 import com.example.marvelworld.reusablecomponents.expandablecard.ExpandableCardUtils
+import com.example.marvelworld.reusablecomponents.horizontallist.HorizontalListItem
 import com.example.marvelworld.reusablecomponents.horizontallist.HorizontalListUtils
 import com.example.marvelworld.reusablecomponents.horizontallist.OnHorizontalListItemClickListener
 
@@ -39,7 +43,13 @@ class CharacterDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
 
         characterDetailsViewModel.getCharacter(characterId)
             .observe(viewLifecycleOwner, Observer { character ->
-                ExpandableCardUtils.initCard(view, character, childFragmentManager)
+                val card = Card(
+                    character.name,
+                    character.thumbnail.getImagePath(),
+                    character.description,
+                    character.urls
+                )
+                ExpandableCardUtils.initCard(view, card, childFragmentManager)
             })
 
         characterDetailsViewModel.getCharacterComics(characterId)
@@ -87,7 +97,14 @@ class CharacterDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
             })
     }
 
-    override fun onHorizontalListItemClick(position: Int) {
-        Toast.makeText(this.context, "cliquei", Toast.LENGTH_SHORT).show()
+    override fun onHorizontalListItemClick(item: HorizontalListItem) {
+        val bundle = bundleOf()
+        when (item.type) {
+            HorizontalListUtils.COMIC -> {
+                bundle.putInt("COMIC_ID", item.id)
+                findNavController().navigate(R.id.comicDetailsFragment, bundle)
+            }
+            else -> Toast.makeText(this.context, "cliquei", Toast.LENGTH_SHORT).show()
+        }
     }
 }

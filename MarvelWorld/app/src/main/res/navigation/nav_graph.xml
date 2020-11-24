@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/characterDetailsFragment"
         android:name="com.example.marvelworld.characterdetails.views.CharacterDetailsFragment"
-        android:label="fragment_character_details"
+        android:label="Character"
         tools:layout="@layout/fragment_character_details" >
         <action
             android:id="@+id/action_characterDetailsFragment_to_comicDetailsFragment"
@@ -26,7 +26,7 @@
     <fragment
         android:id="@+id/mainViewPagerFragment"
         android:name="com.example.marvelworld.mainviewpager.views.MainViewPagerFragment"
-        android:label="fragment_main_view_pager"
+        android:label="Home"
         tools:layout="@layout/fragment_main_view_pager" >
         <action
             android:id="@+id/action_mainViewPagerFragment_to_characterDetailsFragment"
@@ -46,11 +46,20 @@
         <action
             android:id="@+id/action_mainViewPagerFragment_to_creatorDetailsFragment"
             app:destination="@id/creatorDetailsFragment" />
+        <action
+            android:id="@+id/action_mainViewPagerFragment_to_myProfileFragment"
+            app:destination="@id/myProfileFragment" />
+        <action
+            android:id="@+id/action_mainViewPagerFragment_to_favoritesFragment"
+            app:destination="@id/favoritesFragment" />
+        <action
+            android:id="@+id/action_mainViewPagerFragment_to_aboutUsFragment"
+            app:destination="@id/aboutUsFragment" />
     </fragment>
     <fragment
         android:id="@+id/comicDetailsFragment"
         android:name="com.example.marvelworld.comicdetails.views.ComicDetailsFragment"
-        android:label="fragment_comic_details"
+        android:label="Comic"
         tools:layout="@layout/fragment_comic_details" >
         <action
             android:id="@+id/action_comicDetailsFragment_to_eventDetailsFragment"
@@ -65,7 +74,7 @@
     <fragment
         android:id="@+id/eventDetailsFragment"
         android:name="com.example.marvelworld.eventdetails.views.EventDetailsFragment"
-        android:label="fragment_event_details"
+        android:label="Event"
         tools:layout="@layout/fragment_event_details" >
         <action
             android:id="@+id/action_eventDetailsFragment_to_seriesDetailsFragment"
@@ -80,7 +89,7 @@
     <fragment
         android:id="@+id/seriesDetailsFragment"
         android:name="com.example.marvelworld.seriesdetails.views.SeriesDetailsFragment"
-        android:label="fragment_series_details"
+        android:label="Series"
         tools:layout="@layout/fragment_series_details" >
         <action
             android:id="@+id/action_seriesDetailsFragment_to_characterDetailsFragment"
@@ -101,7 +110,7 @@
     <fragment
         android:id="@+id/storyDetailsFragment"
         android:name="com.example.marvelworld.storydetails.views.StoryDetailsFragment"
-        android:label="fragment_story_details"
+        android:label="Story"
         tools:layout="@layout/fragment_story_details" >
         <action
             android:id="@+id/action_storyDetailsFragment_to_characterDetailsFragment"
@@ -122,7 +131,7 @@
     <fragment
         android:id="@+id/creatorDetailsFragment"
         android:name="com.example.marvelworld.creatordetails.views.CreatorDetailsFragment"
-        android:label="fragment_creator_details"
+        android:label="Creator"
         tools:layout="@layout/fragment_creator_details" >
         <action
             android:id="@+id/action_creatorDetailsFragment_to_seriesDetailsFragment"
@@ -137,4 +146,19 @@
             android:id="@+id/action_creatorDetailsFragment_to_storyDetailsFragment"
             app:destination="@id/storyDetailsFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/myProfileFragment"
+        android:name="com.example.marvelworld.myprofile.views.MyProfileFragment"
+        android:label="My profile"
+        tools:layout="@layout/fragment_my_profile" />
+    <fragment
+        android:id="@+id/favoritesFragment"
+        android:name="com.example.marvelworld.favorites.views.FavoritesFragment"
+        android:label="Favorites"
+        tools:layout="@layout/fragment_favorites" />
+    <fragment
+        android:id="@+id/aboutUsFragment"
+        android:name="com.example.marvelworld.aboutus.views.AboutUsFragment"
+        android:label="About us"
+        tools:layout="@layout/fragment_about_us" />
 </navigation>

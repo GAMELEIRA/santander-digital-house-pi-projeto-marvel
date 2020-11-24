@@ -16,7 +16,7 @@ import com.example.marvelworld.storylist.models.Story
 import com.example.marvelworld.storylist.repository.StoryRepository
 import com.example.marvelworld.storylist.viewmodel.StoryViewModel
 
-class StoryListFragment : Fragment(), OnStoryClickListener {
+class StoryListFragment(onlyFavorites: Boolean = false) : Fragment(), OnStoryClickListener {
     private val storyList = mutableListOf<Story>()
 
     override fun onCreateView(

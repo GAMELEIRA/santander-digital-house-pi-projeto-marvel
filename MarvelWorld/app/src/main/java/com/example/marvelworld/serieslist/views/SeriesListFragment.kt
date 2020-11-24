@@ -16,7 +16,7 @@ import com.example.marvelworld.serieslist.repository.SeriesRepository
 import com.example.marvelworld.serieslist.viewmodel.SeriesViewModel
 import com.example.marvelworld.serieslist.models.Series
 
-class SeriesListFragment : Fragment(), OnSeriesClickListener {
+class SeriesListFragment(onlyFavorites: Boolean = false) : Fragment(), OnSeriesClickListener {
     private val seriesList = mutableListOf<Series>()
 
     override fun onCreateView(

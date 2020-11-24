@@ -16,7 +16,7 @@ import com.example.marvelworld.creatorlist.viewmodel.CreatorViewModel
 import com.example.marvelworld.creatorlist.models.Creator
 import com.example.marvelworld.creatorlist.respository.CreatorRepository
 
-class CreatorListFragment : Fragment(), OnCreatorClickListener {
+class CreatorListFragment(onlyFavorites: Boolean = false) : Fragment(), OnCreatorClickListener {
     private val creatorList = mutableListOf<Creator>()
 
     override fun onCreateView(

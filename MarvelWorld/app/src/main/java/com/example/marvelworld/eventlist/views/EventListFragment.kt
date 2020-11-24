@@ -18,7 +18,7 @@ import com.example.marvelworld.eventlist.models.Event
 import com.example.marvelworld.reusablecomponents.horizontallist.HorizontalListItem
 import com.example.marvelworld.reusablecomponents.horizontallist.OnHorizontalListItemClickListener
 
-class EventListFragment : Fragment(), OnEventClickListener {
+class EventListFragment(onlyFavorites: Boolean = false) : Fragment(), OnEventClickListener {
     private val eventList = mutableListOf<Event>()
 
     override fun onCreateView(

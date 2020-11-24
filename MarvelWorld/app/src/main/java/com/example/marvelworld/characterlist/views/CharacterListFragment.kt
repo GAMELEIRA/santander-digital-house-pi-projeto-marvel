@@ -16,7 +16,7 @@ import com.example.marvelworld.characterlist.repository.CharacterRepository
 import com.example.marvelworld.characterlist.models.Character
 import com.example.marvelworld.characterlist.viewmodel.CharacterViewModel
 
-class CharacterListFragment : Fragment(), OnCharacterClickListener {
+class CharacterListFragment(onlyFavorites: Boolean = false) : Fragment(), OnCharacterClickListener {
     private val characterList = mutableListOf<Character>()
 
     override fun onCreateView(

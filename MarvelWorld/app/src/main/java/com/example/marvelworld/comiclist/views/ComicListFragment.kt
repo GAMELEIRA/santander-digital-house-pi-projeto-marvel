@@ -16,7 +16,7 @@ import com.example.marvelworld.comiclist.models.Comic
 import com.example.marvelworld.comiclist.repository.ComicRepository
 import com.example.marvelworld.comiclist.viewmodel.ComicViewModel
 
-class ComicListFragment : Fragment(), OnComicClickListener {
+class ComicListFragment(onlyFavorites: Boolean = false): Fragment(), OnComicClickListener {
     private val comicList = mutableListOf<Comic>()
 
     override fun onCreateView(

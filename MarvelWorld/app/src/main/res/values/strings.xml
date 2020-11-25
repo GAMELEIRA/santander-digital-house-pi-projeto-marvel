@@ -31,4 +31,6 @@
     <string name="member_picture">Member picture</string>
     <string name="member_picture_frame">Member picture frame</string>
     <string name="username_mock">Username</string>
+    <string name="marvel">MARVEL</string>
+    <string name="world">WORLD</string>
 </resources>

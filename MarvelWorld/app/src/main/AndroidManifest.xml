@@ -12,13 +12,20 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".home.views.MainActivity"
-            android:screenOrientation="portrait">
+            android:name=".splashscreen.SplashScreen2"
+            android:theme="@style/SplashScreen" />
+        <activity android:name=".splashscreen.SplashScreen1" android:theme="@style/SplashScreen">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".home.views.MainActivity"
+            android:screenOrientation="portrait">
+
         </activity>
     </application>
 

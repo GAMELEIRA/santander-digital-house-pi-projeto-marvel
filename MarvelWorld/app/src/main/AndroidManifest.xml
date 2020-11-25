@@ -12,9 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".splashscreen.SplashScreen2"
+            android:name=".splashscreen.views.SplashScreen2"
             android:theme="@style/SplashScreen" />
-        <activity android:name=".splashscreen.SplashScreen1" android:theme="@style/SplashScreen">
+        <activity android:name=".splashscreen.views.SplashScreen1" android:theme="@style/SplashScreen">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

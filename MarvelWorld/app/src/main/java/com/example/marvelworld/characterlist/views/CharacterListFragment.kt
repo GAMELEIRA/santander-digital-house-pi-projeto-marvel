@@ -1,5 +1,6 @@
 package com.example.marvelworld.characterlist.views
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -15,6 +16,7 @@ import com.example.marvelworld.R
 import com.example.marvelworld.characterlist.repository.CharacterRepository
 import com.example.marvelworld.characterlist.models.Character
 import com.example.marvelworld.characterlist.viewmodel.CharacterViewModel
+import com.example.marvelworld.home.views.OnFilterListener
 
 class CharacterListFragment(onlyFavorites: Boolean = false) : Fragment(), OnCharacterClickListener {
     private val characterList = mutableListOf<Character>()

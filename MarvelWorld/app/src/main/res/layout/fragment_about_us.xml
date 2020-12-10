@@ -14,7 +14,6 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/company_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="32dp"
@@ -76,7 +75,6 @@
                 android:layout_marginEnd="8dp">
 
                 <ImageView
-                    android:id="@+id/member_team_2"
                     android:layout_width="150dp"
                     android:layout_height="150dp"
                     android:contentDescription="@string/member_picture"
@@ -118,7 +116,6 @@
                 android:layout_marginEnd="8dp">
 
                 <ImageView
-                    android:id="@+id/member_team_3"
                     android:layout_width="150dp"
                     android:layout_height="150dp"
                     android:contentDescription="@string/member_picture"

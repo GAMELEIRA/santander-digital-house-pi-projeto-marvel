@@ -6,10 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.marvelworld.R
@@ -45,10 +43,10 @@ class CharacterDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
         ).get(CharacterDetailsViewModel::class.java)
 
         characterDetailsViewModel.getCharacter(characterId)
-            .observe(viewLifecycleOwner, Observer { character ->
+            .observe(viewLifecycleOwner, { character ->
                 val card = Card(
                     character.name,
-                    character.thumbnail.getImagePath(Image.DETAIL),
+                    character.thumbnail.getImagePath(Image.LANDSCAPE_INCREDIBLE),
                     character.thumbnail.getImagePath(Image.FULL_SIZE),
                     character.description,
                     character.urls
@@ -57,7 +55,7 @@ class CharacterDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
             })
 
         characterDetailsViewModel.getCharacterComics(characterId)
-            .observe(viewLifecycleOwner, Observer {
+            .observe(viewLifecycleOwner, {
                 val comicList = view.findViewById<LinearLayout>(R.id.comic_list)
                 HorizontalListUtils.initHorizontalList(
                     comicList,
@@ -68,7 +66,7 @@ class CharacterDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
             })
 
         characterDetailsViewModel.getCharacterEvents(characterId)
-            .observe(viewLifecycleOwner, Observer {
+            .observe(viewLifecycleOwner, {
                 val comicList = view.findViewById<LinearLayout>(R.id.event_list)
                 HorizontalListUtils.initHorizontalList(
                     comicList,
@@ -79,7 +77,7 @@ class CharacterDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
             })
 
         characterDetailsViewModel.getCharacterSeries(characterId)
-            .observe(viewLifecycleOwner, Observer {
+            .observe(viewLifecycleOwner, {
                 val comicList = view.findViewById<LinearLayout>(R.id.series_list)
                 HorizontalListUtils.initHorizontalList(
                     comicList,
@@ -90,7 +88,7 @@ class CharacterDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
             })
 
         characterDetailsViewModel.getCharacterStories(characterId)
-            .observe(viewLifecycleOwner, Observer {
+            .observe(viewLifecycleOwner, {
                 val comicList = view.findViewById<LinearLayout>(R.id.story_list)
                 HorizontalListUtils.initHorizontalList(
                     comicList,
@@ -120,7 +118,6 @@ class CharacterDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
                 bundle.putInt("STORY_ID", item.id)
                 findNavController().navigate(R.id.storyDetailsFragment, bundle)
             }
-            else -> Toast.makeText(this.context, "cliquei", Toast.LENGTH_SHORT).show()
         }
     }
 }

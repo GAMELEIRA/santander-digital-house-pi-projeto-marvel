@@ -2,7 +2,6 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/nav_graph"
     app:startDestination="@id/mainViewPagerFragment">
 
     <fragment
@@ -55,9 +54,6 @@
         <action
             android:id="@+id/action_mainViewPagerFragment_to_aboutUsFragment"
             app:destination="@id/aboutUsFragment" />
-        <action
-            android:id="@+id/action_mainViewPagerFragment_to_filtersFragment"
-            app:destination="@id/filtersFragment" />
     </fragment>
     <fragment
         android:id="@+id/comicDetailsFragment"
@@ -164,8 +160,4 @@
         android:name="com.example.marvelworld.aboutus.views.AboutUsFragment"
         android:label="About us"
         tools:layout="@layout/fragment_about_us" />
-    <fragment
-        android:id="@+id/filtersFragment"
-        android:name="com.example.marvelworld.filters.views.FiltersFragment"
-        android:label="Filters" />
 </navigation>

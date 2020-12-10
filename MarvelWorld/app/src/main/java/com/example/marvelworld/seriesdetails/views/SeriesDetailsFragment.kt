@@ -1,13 +1,12 @@
 package com.example.marvelworld.seriesdetails.views
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.core.os.bundleOf
-import androidx.lifecycle.Observer
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.marvelworld.R
@@ -17,8 +16,8 @@ import com.example.marvelworld.reusablecomponents.expandablecard.ExpandableCardU
 import com.example.marvelworld.reusablecomponents.horizontallist.HorizontalListItem
 import com.example.marvelworld.reusablecomponents.horizontallist.HorizontalListUtils
 import com.example.marvelworld.reusablecomponents.horizontallist.OnHorizontalListItemClickListener
-import com.example.marvelworld.seriesdetails.viewmodel.SeriesDetailsViewModel
 import com.example.marvelworld.seriesdetails.respository.SeriesDetailsRepository
+import com.example.marvelworld.seriesdetails.viewmodel.SeriesDetailsViewModel
 
 class SeriesDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
 
@@ -41,10 +40,10 @@ class SeriesDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
         ).get(SeriesDetailsViewModel::class.java)
 
         seriesDetailsViewModel.getOneSeries(seriesId)
-            .observe(viewLifecycleOwner, Observer { series ->
+            .observe(viewLifecycleOwner, { series ->
                 val card = Card(
                     series.title,
-                    series.thumbnail.getImagePath(Image.DETAIL),
+                    series.thumbnail.getImagePath(Image.LANDSCAPE_INCREDIBLE),
                     series.thumbnail.getImagePath(Image.FULL_SIZE),
                     series.description,
                     series.urls
@@ -53,7 +52,7 @@ class SeriesDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
             })
 
         seriesDetailsViewModel.getSeriesCharacters(seriesId)
-            .observe(viewLifecycleOwner, Observer {
+            .observe(viewLifecycleOwner, {
                 val characterList = view.findViewById<LinearLayout>(R.id.character_list)
                 HorizontalListUtils.initHorizontalList(
                     characterList,
@@ -64,7 +63,7 @@ class SeriesDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
             })
 
         seriesDetailsViewModel.getSeriesComics(seriesId)
-            .observe(viewLifecycleOwner, Observer {
+            .observe(viewLifecycleOwner, {
                 val comicList = view.findViewById<LinearLayout>(R.id.comic_list)
                 HorizontalListUtils.initHorizontalList(
                     comicList,
@@ -75,7 +74,7 @@ class SeriesDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
             })
 
         seriesDetailsViewModel.getSeriesStories(seriesId)
-            .observe(viewLifecycleOwner, Observer {
+            .observe(viewLifecycleOwner, {
                 val storyList = view.findViewById<LinearLayout>(R.id.story_list)
                 HorizontalListUtils.initHorizontalList(
                     storyList,
@@ -86,7 +85,7 @@ class SeriesDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
             })
 
         seriesDetailsViewModel.getSeriesEvents(seriesId)
-            .observe(viewLifecycleOwner, Observer {
+            .observe(viewLifecycleOwner, {
                 val eventList = view.findViewById<LinearLayout>(R.id.event_list)
                 HorizontalListUtils.initHorizontalList(
                     eventList,
@@ -97,7 +96,7 @@ class SeriesDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
             })
 
         seriesDetailsViewModel.getSeriesCreators(seriesId)
-            .observe(viewLifecycleOwner, Observer {
+            .observe(viewLifecycleOwner, {
                 val creatorList = view.findViewById<LinearLayout>(R.id.creator_list)
                 HorizontalListUtils.initHorizontalList(
                     creatorList,

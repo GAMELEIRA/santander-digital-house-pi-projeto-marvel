@@ -28,7 +28,8 @@
         app:layout_constraintEnd_toStartOf="@+id/imageView1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_marvel" />
+        app:srcCompat="@drawable/ic_marvel"
+        android:contentDescription="@string/marvel" />
 
     <ImageView
         android:id="@+id/imageView1"
@@ -39,7 +40,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageView"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_world" />
+        app:srcCompat="@drawable/ic_world"
+        android:contentDescription="@string/world" />
 
     <View
         style="@style/Divider"

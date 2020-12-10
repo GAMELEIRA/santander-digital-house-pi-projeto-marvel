@@ -5,7 +5,6 @@ import com.example.marvelworld.characterlist.models.Character
 import com.example.marvelworld.comiclist.models.Comic
 import com.example.marvelworld.creatorlist.models.Creator
 import com.example.marvelworld.eventlist.models.Event
-import com.example.marvelworld.serieslist.models.Series
 import com.example.marvelworld.storylist.models.Story
 import retrofit2.http.GET
 import retrofit2.http.Path

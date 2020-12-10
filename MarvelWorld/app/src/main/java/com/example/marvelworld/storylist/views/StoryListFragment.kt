@@ -1,23 +1,33 @@
 package com.example.marvelworld.storylist.views
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.marvelworld.R
+import com.example.marvelworld.filters.models.Filter
+import com.example.marvelworld.filters.views.CallbackListener
+import com.example.marvelworld.filters.views.FilterListFragment
 import com.example.marvelworld.storylist.models.Story
 import com.example.marvelworld.storylist.repository.StoryRepository
 import com.example.marvelworld.storylist.viewmodel.StoryViewModel
 
-class StoryListFragment(onlyFavorites: Boolean = false) : Fragment(), OnStoryClickListener {
+class StoryListFragment(
+    onlyFavorites: Boolean = false
+) : Fragment(),
+    OnStoryClickListener,
+    CallbackListener {
+    private lateinit var storyViewModel: StoryViewModel
+    private lateinit var storyListAdapter: StoryListAdapter
+    private lateinit var recycler: RecyclerView
+    private lateinit var filterIcon: MenuItem
     private val storyList = mutableListOf<Story>()
+    private var filter = Filter()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -30,21 +40,23 @@ class StoryListFragment(onlyFavorites: Boolean = false) : Fragment(), OnStoryCli
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val recycler = view.findViewById<RecyclerView>(R.id.recycler_story_list)
+        setHasOptionsMenu(true)
+
+        recycler = view.findViewById(R.id.recycler_story_list)
         val manager = LinearLayoutManager(view.context)
-        val storyListAdapter = StoryListAdapter(storyList, this)
+        storyListAdapter = StoryListAdapter(storyList, this)
 
         recycler.apply {
             layoutManager = manager
             adapter = storyListAdapter
         }
 
-        val storyViewModel = ViewModelProvider(
+        storyViewModel = ViewModelProvider(
             this,
             StoryViewModel.StoryViewModelFactory(StoryRepository())
         ).get(StoryViewModel::class.java)
 
-        storyViewModel.getStories().observe(viewLifecycleOwner, Observer {
+        storyViewModel.getStories().observe(viewLifecycleOwner, {
             storyList.clear()
             storyList.addAll(it)
             storyListAdapter.notifyDataSetChanged()
@@ -54,5 +66,65 @@ class StoryListFragment(onlyFavorites: Boolean = false) : Fragment(), OnStoryCli
     override fun onStoryClick(position: Int) {
         val bundle = bundleOf("STORY_ID" to storyList[position].id)
         findNavController().navigate(R.id.storyDetailsFragment, bundle)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.filter_menu, menu)
+        filterIcon = menu.findItem(R.id.filtersFragment)
+
+        updateFilterIcon()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            filterIcon.itemId -> {
+                FilterListFragment(
+                    hasName = false,
+                    hasTitle = false,
+                    hasCharacter = true,
+                    hasComic = true,
+                    hasEvent = true,
+                    hasSeries = true,
+                    hasCreator = true,
+                    callbackListener = this,
+                    filter = filter
+                ).show(childFragmentManager, "add_filters")
+            }
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onDataReceived(filter: Filter) {
+        this.filter = filter
+
+        updateFilterIcon()
+
+        storyViewModel.applyFilter(this.filter)
+
+        storyViewModel.getStories()
+            .observe(viewLifecycleOwner, {
+                storyList.clear()
+                storyList.addAll(it)
+                storyListAdapter.notifyDataSetChanged()
+            })
+    }
+
+    private fun updateFilterIcon() {
+        if (this.filter.isEmpty()) {
+            filterIcon.icon =
+                ResourcesCompat.getDrawable(
+                    requireContext().resources,
+                    R.drawable.ic_filter_alt_24px,
+                    null
+                )
+        } else {
+            filterIcon.icon =
+                ResourcesCompat.getDrawable(
+                    requireContext().resources,
+                    R.drawable.ic_filter_filled_alt_24px,
+                    null
+                )
+        }
     }
 }

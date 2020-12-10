@@ -5,5 +5,17 @@ import com.example.marvelworld.api.utils.NetworkUtils
 class EventRepository {
     private val eventService = NetworkUtils.getApiService(EventEndpoint::class.java)
 
-    suspend fun getEvents() = eventService.getEvents()
+    suspend fun getEvents(
+        nameStartsWith: String?,
+        characters: List<Int>,
+        comics: List<Int>,
+        events: List<Int>,
+        series: List<Int>
+    ) = eventService.getEvents(
+        nameStartsWith,
+        characters,
+        comics,
+        events,
+        series
+    )
 }

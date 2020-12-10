@@ -3,4 +3,4 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     app:chipBackgroundColor="@color/colorAccent"
     app:closeIconEnabled="true"
-    android:textAppearance="@style/ChipFilterTextApperance" />
+    android:textAppearance="@style/ChipFilterTextAppearanceTheme" />

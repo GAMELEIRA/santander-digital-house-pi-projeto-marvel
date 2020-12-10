@@ -13,12 +13,12 @@ class NetworkInterceptor : Interceptor {
         val originalRequest = chain.request()
 
         val ts = System.currentTimeMillis().toString()
-        val apikey = PUB_API_KEY
+        val apiKey = PUB_API_KEY
         val hashInput = "$ts$PRIV_API_KEY$PUB_API_KEY"
 
         val httpUrl = originalRequest.url().newBuilder()
             .addQueryParameter(TS, ts)
-            .addQueryParameter(API_KEY, apikey)
+            .addQueryParameter(API_KEY, apiKey)
             .addQueryParameter(HASH, hashInput.md5()).build()
 
         val builder = originalRequest.newBuilder().url(httpUrl)

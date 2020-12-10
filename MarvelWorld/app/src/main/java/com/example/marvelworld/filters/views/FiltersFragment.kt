@@ -69,7 +69,7 @@ class FiltersFragment : Fragment() {
                 setChipBackgroundColorResource(R.color.colorPrimary)
                 isCloseIconVisible = true
                 setTextColor(ContextCompat.getColor(view.context, R.color.white))
-                setTextAppearance(R.style.ChipFilterTextApperance)
+                setTextAppearance(R.style.ChipFilterTextAppearanceTheme)
                 tag = selectedCharacters.indexOf(character)
             }
 

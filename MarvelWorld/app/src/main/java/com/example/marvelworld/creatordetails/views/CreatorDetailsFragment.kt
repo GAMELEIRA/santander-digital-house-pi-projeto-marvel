@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.marvelworld.R
@@ -41,10 +40,10 @@ class CreatorDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
         ).get(CreatorDetailsViewModel::class.java)
 
         creatorDetailsViewModel.getCreator(creatorId)
-            .observe(viewLifecycleOwner, Observer { creator ->
+            .observe(viewLifecycleOwner, { creator ->
                 val card = Card(
                     creator.fullName,
-                    creator.thumbnail.getImagePath(Image.DETAIL),
+                    creator.thumbnail.getImagePath(Image.LANDSCAPE_INCREDIBLE),
                     creator.thumbnail.getImagePath(Image.FULL_SIZE),
                     null,
                     creator.urls
@@ -53,7 +52,7 @@ class CreatorDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
             })
 
         creatorDetailsViewModel.getCreatorComics(creatorId)
-            .observe(viewLifecycleOwner, Observer {
+            .observe(viewLifecycleOwner, {
                 val comicList = view.findViewById<LinearLayout>(R.id.comic_list)
                 HorizontalListUtils.initHorizontalList(
                     comicList,
@@ -64,7 +63,7 @@ class CreatorDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
             })
 
         creatorDetailsViewModel.getCreatorEvents(creatorId)
-            .observe(viewLifecycleOwner, Observer {
+            .observe(viewLifecycleOwner, {
                 val eventList = view.findViewById<LinearLayout>(R.id.event_list)
                 HorizontalListUtils.initHorizontalList(
                     eventList,
@@ -75,7 +74,7 @@ class CreatorDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
             })
 
         creatorDetailsViewModel.getCreatorSeries(creatorId)
-            .observe(viewLifecycleOwner, Observer {
+            .observe(viewLifecycleOwner, {
                 val seriesList = view.findViewById<LinearLayout>(R.id.series_list)
                 HorizontalListUtils.initHorizontalList(
                     seriesList,
@@ -86,7 +85,7 @@ class CreatorDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
             })
 
         creatorDetailsViewModel.getCreatorStories(creatorId)
-            .observe(viewLifecycleOwner, Observer {
+            .observe(viewLifecycleOwner, {
                 val storyList = view.findViewById<LinearLayout>(R.id.story_list)
                 HorizontalListUtils.initHorizontalList(
                     storyList,

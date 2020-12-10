@@ -3,18 +3,33 @@ package com.example.marvelworld.storylist.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.liveData
+import com.example.marvelworld.filters.models.Filter
 import com.example.marvelworld.storylist.repository.StoryRepository
 import kotlinx.coroutines.Dispatchers
 
 class StoryViewModel(
     private val repository: StoryRepository
 ) : ViewModel() {
+    private var characters = listOf<Int>()
+    private var comics = listOf<Int>()
+    private var events = listOf<Int>()
+    private var series = listOf<Int>()
+    private var creators = listOf<Int>()
 
     fun getStories() = liveData(Dispatchers.IO) {
-        val response = repository.getStories()
+        val response = repository.getStories(characters, comics, events, series, creators)
         emit(response.data.results)
     }
 
+    fun applyFilter(filter: Filter) {
+        characters = filter.filterMap[Filter.CHARACTER]?.map { c -> c.id } ?: listOf()
+        comics = filter.filterMap[Filter.COMIC]?.map { c -> c.id } ?: listOf()
+        events = filter.filterMap[Filter.EVENT]?.map { e -> e.id } ?: listOf()
+        series = filter.filterMap[Filter.SERIES]?.map { s -> s.id } ?: listOf()
+        creators = filter.filterMap[Filter.CREATOR]?.map { c -> c.id } ?: listOf()
+    }
+
+    @Suppress("UNCHECKED_CAST")
     class StoryViewModelFactory(
         private val repository: StoryRepository
     ) : ViewModelProvider.Factory {

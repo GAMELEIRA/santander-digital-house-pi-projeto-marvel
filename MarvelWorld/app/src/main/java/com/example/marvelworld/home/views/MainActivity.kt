@@ -1,7 +1,6 @@
 package com.example.marvelworld.home.views
 
 import android.os.Bundle
-import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
@@ -14,12 +13,11 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.marvelworld.R
 import com.google.android.material.navigation.NavigationView
 
-class MainActivity : AppCompatActivity(), OnFilterListener {
+class MainActivity : AppCompatActivity() {
     private val navController: NavController by lazy { findNavController(R.id.nav_host_fragment) }
     private val drawerLayout by lazy { findViewById<DrawerLayout>(R.id.drawer_layout) }
     private val navigationView by lazy { findViewById<NavigationView>(R.id.navigationView) }
     private lateinit var appBarConfiguration: AppBarConfiguration
-    private lateinit var filterIcon: MenuItem
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,17 +35,8 @@ class MainActivity : AppCompatActivity(), OnFilterListener {
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.filter_menu, menu)
-        filterIcon = menu!!.findItem(R.id.filtersFragment)
-
-        return true
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            filterIcon.itemId -> navController.navigate(R.id.filtersFragment)
-
             android.R.id.home -> {
                 if (drawerLayout.isDrawerOpen(navigationView)) {
                     drawerLayout.closeDrawer(navigationView)
@@ -58,20 +47,4 @@ class MainActivity : AppCompatActivity(), OnFilterListener {
 
         return super.onOptionsItemSelected(item)
     }
-
-    override fun showFilterIcon() {
-        try {
-            filterIcon.isVisible = true
-        } catch (e: Exception) {
-        }
-    }
-
-    override fun hideFilterIton() {
-        try {
-            filterIcon.isVisible = false
-        } catch (e: Exception) {
-        }
-    }
-
-
 }

@@ -1,19 +1,12 @@
 <resources>
-    <!-- Base application theme. -->
+
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="ImageDialogFragment" parent="Theme.MaterialComponents.Light.Dialog">
-        <item name="android:windowNoTitle">false</item>
-
-    </style>
-
     <style name="SplashScreen" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -26,7 +19,7 @@
         <item name="android:background">@color/white</item>
     </style>
 
-    <style name="ChipFilterTextApperance" parent="TextAppearance.MaterialComponents.Chip">
+    <style name="ChipFilterTextAppearanceTheme" parent="TextAppearance.MaterialComponents.Chip">
         <item name="android:textColor">@color/white</item>
     </style>
 
@@ -39,6 +32,12 @@
     <style name="FilterTextInput">
         <item name="android:background">@color/dark_grey</item>
         <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="DialogTheme" parent="AppTheme">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowIsFloating">false</item>
     </style>
 
 </resources>

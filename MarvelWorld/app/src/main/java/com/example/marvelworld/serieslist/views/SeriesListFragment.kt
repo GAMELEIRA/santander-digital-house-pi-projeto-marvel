@@ -1,23 +1,33 @@
 package com.example.marvelworld.serieslist.views
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
-import androidx.lifecycle.Observer
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.marvelworld.R
+import com.example.marvelworld.filters.models.Filter
+import com.example.marvelworld.filters.views.CallbackListener
+import com.example.marvelworld.filters.views.FilterListFragment
+import com.example.marvelworld.serieslist.models.Series
 import com.example.marvelworld.serieslist.repository.SeriesRepository
 import com.example.marvelworld.serieslist.viewmodel.SeriesViewModel
-import com.example.marvelworld.serieslist.models.Series
 
-class SeriesListFragment(onlyFavorites: Boolean = false) : Fragment(), OnSeriesClickListener {
+class SeriesListFragment(
+    onlyFavorites: Boolean = false
+) : Fragment(),
+    OnSeriesClickListener,
+    CallbackListener {
+    private lateinit var seriesViewModel: SeriesViewModel
+    private lateinit var seriesListAdapter: SeriesListAdapter
+    private lateinit var recycler: RecyclerView
+    private lateinit var filterIcon: MenuItem
     private val seriesList = mutableListOf<Series>()
+    private var filter = Filter()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -30,21 +40,23 @@ class SeriesListFragment(onlyFavorites: Boolean = false) : Fragment(), OnSeriesC
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val recycler = view.findViewById<RecyclerView>(R.id.recycler_series_list)
+        setHasOptionsMenu(true)
+
+        recycler = view.findViewById(R.id.recycler_series_list)
         val manager = GridLayoutManager(view.context, 2)
-        val seriesListAdapter = SeriesListAdapter(seriesList, this)
+        seriesListAdapter = SeriesListAdapter(seriesList, this)
 
         recycler.apply {
             layoutManager = manager
             adapter = seriesListAdapter
         }
 
-        val seriesViewModel = ViewModelProvider(
+        seriesViewModel = ViewModelProvider(
             this,
             SeriesViewModel.SeriesViewModelFactory(SeriesRepository())
         ).get(SeriesViewModel::class.java)
 
-        seriesViewModel.getSeries().observe(viewLifecycleOwner, Observer {
+        seriesViewModel.getSeries().observe(viewLifecycleOwner, {
             seriesList.clear()
             seriesList.addAll(it)
             seriesListAdapter.notifyDataSetChanged()
@@ -54,5 +66,65 @@ class SeriesListFragment(onlyFavorites: Boolean = false) : Fragment(), OnSeriesC
     override fun onSeriesClick(position: Int) {
         val bundle = bundleOf("SERIES_ID" to seriesList[position].id)
         findNavController().navigate(R.id.seriesDetailsFragment, bundle)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.filter_menu, menu)
+        filterIcon = menu.findItem(R.id.filtersFragment)
+
+        updateFilterIcon()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            filterIcon.itemId -> {
+                FilterListFragment(
+                    hasName = false,
+                    hasTitle = true,
+                    hasCharacter = true,
+                    hasComic = true,
+                    hasEvent = true,
+                    hasSeries = false,
+                    hasCreator = true,
+                    callbackListener = this,
+                    filter = filter
+                ).show(childFragmentManager, "add_filters")
+            }
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onDataReceived(filter: Filter) {
+        this.filter = filter
+
+        updateFilterIcon()
+
+        seriesViewModel.applyFilter(this.filter)
+
+        seriesViewModel.getSeries()
+            .observe(viewLifecycleOwner, {
+                seriesList.clear()
+                seriesList.addAll(it)
+                seriesListAdapter.notifyDataSetChanged()
+            })
+    }
+
+    private fun updateFilterIcon() {
+        if (this.filter.isEmpty()) {
+            filterIcon.icon =
+                ResourcesCompat.getDrawable(
+                    requireContext().resources,
+                    R.drawable.ic_filter_alt_24px,
+                    null
+                )
+        } else {
+            filterIcon.icon =
+                ResourcesCompat.getDrawable(
+                    requireContext().resources,
+                    R.drawable.ic_filter_filled_alt_24px,
+                    null
+                )
+        }
     }
 }

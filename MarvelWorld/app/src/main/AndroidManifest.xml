@@ -12,16 +12,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".signup.view.SignUpActivity"
-            android:theme="@style/SplashScreen" />
-        <activity android:name=".signin.view.SignInActivity"
-            android:theme="@style/SplashScreen"/>
+            android:name=".signinsignup.view.SignInSignUpActivity"
+            android:theme="@style/NoActionBar" />
         <activity
             android:name=".splashscreen.views.SplashScreen2"
-            android:theme="@style/SplashScreen" />
+            android:theme="@style/NoActionBar" />
         <activity
             android:name=".splashscreen.views.SplashScreen1"
-            android:theme="@style/SplashScreen">
+            android:theme="@style/NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

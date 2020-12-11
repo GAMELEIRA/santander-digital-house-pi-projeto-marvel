@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.marvelworld.R
 import com.example.marvelworld.characterlist.models.Character
@@ -104,7 +103,7 @@ class FiltersFragment : Fragment() {
             if (msg.what == TRIGGER_AUTO_COMPLETE) {
                 if (characterFilter.text.isNotBlank()) {
                     filtersViewModel.getCharacters(characterFilter.text.toString())
-                        .observe(viewLifecycleOwner, Observer { list ->
+                        .observe(viewLifecycleOwner, { list ->
                             characters.clear()
                             characters.addAll(list)
                             characterSuggestAdapter.setData(list.map { c -> c.name })

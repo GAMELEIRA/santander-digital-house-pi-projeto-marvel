@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:hint="Name"
+            android:hint="@string/name"
             android:textColorHint="@color/light_grey"
             app:hintTextColor="@color/light_grey">
 
@@ -36,7 +36,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:hint="Title"
+            android:hint="@string/title"
             android:textColorHint="@color/light_grey"
             app:hintTextColor="@color/light_grey">
 
@@ -54,7 +54,7 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Character"
+            android:hint="@string/character"
             android:textColorHint="@color/light_grey"
             app:endIconMode="none"
             app:hintTextColor="@color/light_grey">
@@ -81,7 +81,7 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Comic"
+            android:hint="@string/comic"
             android:textColorHint="@color/light_grey"
             app:endIconMode="none"
             app:hintTextColor="@color/light_grey">
@@ -108,7 +108,7 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Event"
+            android:hint="@string/event"
             android:textColorHint="@color/light_grey"
             app:endIconMode="none"
             app:hintTextColor="@color/light_grey">
@@ -135,7 +135,7 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Series"
+            android:hint="@string/series"
             android:textColorHint="@color/light_grey"
             app:endIconMode="none"
             app:hintTextColor="@color/light_grey">
@@ -162,7 +162,7 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Story"
+            android:hint="@string/story"
             android:textColorHint="@color/light_grey"
             app:endIconMode="none"
             app:hintTextColor="@color/light_grey">
@@ -189,7 +189,7 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Creator"
+            android:hint="@string/creator"
             android:textColorHint="@color/light_grey"
             app:endIconMode="none"
             app:hintTextColor="@color/light_grey">

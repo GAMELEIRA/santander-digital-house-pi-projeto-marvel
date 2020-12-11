@@ -6,31 +6,13 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="SplashScreen" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="NoActionBar" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="Divider">
-        <item name="android:layout_width">140dp</item>
-        <item name="color">@color/white</item>
-        <item name="android:layout_height">3dp</item>
-        <item name="android:background">@color/white</item>
-    </style>
-
     <style name="ChipFilterTextAppearanceTheme" parent="TextAppearance.MaterialComponents.Chip">
-        <item name="android:textColor">@color/white</item>
-    </style>
-
-    <style name="FilterTextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu">
-        <item name="android:textColorHint">#32FFFFFF</item>
-        <item name="android:layout_marginBottom">8dp</item>
-        <item name="endIconMode">none</item>
-    </style>
-
-    <style name="FilterTextInput">
-        <item name="android:background">@color/dark_grey</item>
         <item name="android:textColor">@color/white</item>
     </style>
 
@@ -38,6 +20,19 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowFullscreen">false</item>
         <item name="android:windowIsFloating">false</item>
+    </style>
+
+    <style name="SignInInput">
+        <item name="hintTextColor">@color/text_input</item>
+        <item name="android:textColorHint">@color/text_input</item>
+        <item name="boxBackgroundColor">@color/black</item>
+        <item name="boxCornerRadiusBottomEnd">10dp</item>
+        <item name="boxCornerRadiusBottomStart">10dp</item>
+        <item name="boxCornerRadiusTopEnd">10dp</item>
+        <item name="boxCornerRadiusTopStart">10dp</item>
+        <item name="boxBackgroundMode">filled</item>
+        <item name="boxStrokeColor">#00FFFFFF</item>
+        <item name="startIconTintMode">screen</item>
     </style>
 
 </resources>

@@ -1,6 +1,5 @@
 package com.example.marvelworld.characterdetails.views
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +13,6 @@ import com.example.marvelworld.R
 import com.example.marvelworld.api.models.Image
 import com.example.marvelworld.characterdetails.repository.CharacterDetailsRepository
 import com.example.marvelworld.characterdetails.viewmodel.CharacterDetailsViewModel
-import com.example.marvelworld.home.views.OnFilterListener
 import com.example.marvelworld.reusablecomponents.expandablecard.Card
 import com.example.marvelworld.reusablecomponents.expandablecard.ExpandableCardUtils
 import com.example.marvelworld.reusablecomponents.horizontallist.HorizontalListItem

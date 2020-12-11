@@ -7,52 +7,15 @@
     android:background="@color/colorPrimary"
     tools:context=".splashscreen.views.SplashScreen2">
 
-    <View
-        style="@style/Divider"
-        android:layout_marginStart="165dp"
-        android:layout_marginBottom="45dp"
-        android:background="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.462"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.486" />
-
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="147dp"
-        android:layout_height="78dp"
-        android:layout_marginStart="50dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/imageView1"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_marvel"
-        android:contentDescription="@string/marvel" />
-
-    <ImageView
-        android:id="@+id/imageView1"
-        android:layout_width="136dp"
-        android:layout_height="67dp"
-        android:layout_marginEnd="50dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/marvel_world_logo"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageView"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_world"
-        android:contentDescription="@string/world" />
-
-    <View
-        style="@style/Divider"
-        android:layout_marginStart="165dp"
-        android:layout_marginTop="45dp"
-        android:background="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.462"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.513" />
+        app:srcCompat="@drawable/ic_logo" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

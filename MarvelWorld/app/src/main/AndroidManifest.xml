@@ -12,10 +12,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".signup.view.SignUpActivity"
+            android:theme="@style/SplashScreen" />
+        <activity android:name=".signin.view.SignInActivity"
+            android:theme="@style/SplashScreen"/>
+        <activity
             android:name=".splashscreen.views.SplashScreen2"
             android:theme="@style/SplashScreen" />
-        <activity android:name=".splashscreen.views.SplashScreen1" android:theme="@style/SplashScreen">
-
+        <activity
+            android:name=".splashscreen.views.SplashScreen1"
+            android:theme="@style/SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,9 +30,7 @@
         </activity>
         <activity
             android:name=".home.views.MainActivity"
-            android:screenOrientation="portrait">
-
-        </activity>
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

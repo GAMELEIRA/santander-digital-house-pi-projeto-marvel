@@ -9,4 +9,5 @@
     <color name="background">#121212</color>
     <color name="light_grey">#8A8A8A</color>
     <color name="black">#000000</color>
+    <color name="text_input">#BDBDBD</color>
 </resources>

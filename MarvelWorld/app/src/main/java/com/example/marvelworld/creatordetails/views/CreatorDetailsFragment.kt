@@ -57,7 +57,7 @@ class CreatorDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
                 HorizontalListUtils.initHorizontalList(
                     comicList,
                     it,
-                    "Comics:",
+                    getString(R.string.comics),
                     this
                 )
             })
@@ -68,7 +68,7 @@ class CreatorDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
                 HorizontalListUtils.initHorizontalList(
                     eventList,
                     it,
-                    "Events:",
+                    getString(R.string.events),
                     this
                 )
             })
@@ -79,7 +79,7 @@ class CreatorDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
                 HorizontalListUtils.initHorizontalList(
                     seriesList,
                     it,
-                    "Series:",
+                    getString(R.string.series),
                     this
                 )
             })
@@ -90,7 +90,7 @@ class CreatorDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
                 HorizontalListUtils.initHorizontalList(
                     storyList,
                     it,
-                    "Stories:",
+                    getString(R.string.stories),
                     this
                 )
             })

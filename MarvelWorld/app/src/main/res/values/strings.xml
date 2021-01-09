@@ -10,7 +10,7 @@
     <string name="image_for_resource_details">Image for resource details</string>
     <string name="button_for_revealing_urls_associated_to_the_resource">Button for revealing urls associated to the resource</string>
     <string name="button_for_closing_urls_dialog">Button for closing urls dialog</string>
-    <string name="published">Published:</string>
+    <string name="published">Published</string>
     <string name="expanded_resource_image">Expanded resource image</string>
     <string name="button_for_closing_image_dialog">Button for closing image dialog</string>
     <string name="reset_password">RESET PASSWORD</string>
@@ -46,9 +46,14 @@
     <string name="sign_in_with_google">Sign in with google</string>
     <string name="sign_in_with_facebook">Sign in with facebook</string>
     <string name="character">Character</string>
+    <string name="characters">Characters</string>
     <string name="comic">Comic</string>
+    <string name="comics">Comics</string>
     <string name="event">Event</string>
+    <string name="events">Events</string>
     <string name="series">Series</string>
     <string name="story">Story</string>
+    <string name="stories">Stories</string>
     <string name="creator">Creator</string>
+    <string name="creators">Creators</string>
 </resources>

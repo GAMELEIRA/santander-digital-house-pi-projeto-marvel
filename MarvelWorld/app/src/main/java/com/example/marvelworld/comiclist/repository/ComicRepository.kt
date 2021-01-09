@@ -6,12 +6,16 @@ class ComicRepository {
     private val comicService = NetworkUtils.getApiService(ComicEndpoint::class.java)
 
     suspend fun getComics(
+        offset: Int,
+        limit: Int,
         titleStartsWith: String?,
         characters: List<Int>,
         events: List<Int>,
         series: List<Int>,
         creators: List<Int>
     ) = comicService.getComics(
+        offset,
+        limit,
         titleStartsWith,
         characters,
         events,

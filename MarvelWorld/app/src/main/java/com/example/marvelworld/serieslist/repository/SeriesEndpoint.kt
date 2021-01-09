@@ -8,6 +8,8 @@ import retrofit2.http.Query
 interface SeriesEndpoint {
     @GET("/v1/public/series")
     suspend fun getSeries(
+        @Query("offset") offset: Int,
+        @Query("limit") limit: Int,
         @Query("titleStartsWith") titleStartsWith: String?,
         @Query("characters") characters: List<Int>,
         @Query("comics") comics: List<Int>,

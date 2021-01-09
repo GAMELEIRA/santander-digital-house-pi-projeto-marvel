@@ -15,9 +15,16 @@ class EventViewModel(
     private var comics = listOf<Int>()
     private var events = listOf<Int>()
     private var series = listOf<Int>()
+    private var offset = 0
+    private val limit = 20
+    var total = 0
 
     fun getEvents() = liveData(Dispatchers.IO) {
-        val response = repository.getEvents(name, characters, comics, events, series)
+        val response = repository.getEvents(offset, limit, name, characters, comics, events, series)
+
+        offset = response.data.offset + response.data.count
+        total = response.data.total
+
         emit(response.data.results)
     }
 
@@ -27,6 +34,9 @@ class EventViewModel(
         comics = filter.filterMap[Filter.COMIC]?.map { c -> c.id } ?: listOf()
         events = filter.filterMap[Filter.EVENT]?.map { e -> e.id } ?: listOf()
         series = filter.filterMap[Filter.SERIES]?.map { s -> s.id } ?: listOf()
+
+        offset = 0
+        total = 0
     }
 
     class EventViewModelFactory(

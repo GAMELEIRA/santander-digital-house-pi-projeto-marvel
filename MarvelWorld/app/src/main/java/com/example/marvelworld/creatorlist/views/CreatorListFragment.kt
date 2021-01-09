@@ -29,6 +29,7 @@ class CreatorListFragment(
     private lateinit var filterIcon: MenuItem
     private val creatorList = mutableListOf<Creator>()
     private var filter = Filter()
+    private var loading = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -58,11 +59,39 @@ class CreatorListFragment(
             CreatorViewModel.CreatorViewModelFactory(CreatorRepository())
         ).get(CreatorViewModel::class.java)
 
+        if (creatorList.isEmpty()) getCreators()
+
+        initInfiniteScroll()
+    }
+
+    private fun getCreators() {
+        loading = true
         creatorViewModel.getCreators().observe(viewLifecycleOwner, {
-            creatorList.clear()
             creatorList.addAll(it)
             creatorListAdapter.notifyDataSetChanged()
+            loading = false
         })
+    }
+
+    private fun initInfiniteScroll() {
+        recycler.run {
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+
+                    val target = recyclerView.layoutManager as GridLayoutManager
+                    val totalItemCount = target.itemCount
+                    val lastVisible = target.findLastVisibleItemPosition()
+
+                    if (totalItemCount - lastVisible < 10
+                        && totalItemCount < creatorViewModel.total
+                        && !loading
+                    ) {
+                        getCreators()
+                    }
+                }
+            })
+        }
     }
 
     override fun onCreatorClick(position: Int) {
@@ -99,21 +128,14 @@ class CreatorListFragment(
 
     override fun onDataReceived(filter: Filter) {
         this.filter = filter
-
         updateFilterIcon()
-
         creatorViewModel.applyFilter(this.filter)
-
-        creatorViewModel.getCreators()
-            .observe(viewLifecycleOwner, {
-                creatorList.clear()
-                creatorList.addAll(it)
-                creatorListAdapter.notifyDataSetChanged()
-            })
+        creatorList.clear()
+        getCreators()
     }
 
     private fun updateFilterIcon() {
-        if (this.filter.isEmpty()) {
+        if (filter.isEmpty()) {
             filterIcon.icon =
                 ResourcesCompat.getDrawable(
                     requireContext().resources,

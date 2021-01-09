@@ -6,12 +6,16 @@ class SeriesRepository {
     private val seriesService = NetworkUtils.getApiService(SeriesEndpoint::class.java)
 
     suspend fun getSeries(
+        offset: Int,
+        limit: Int,
         titleStartsWith: String?,
         characters: List<Int>,
         comics: List<Int>,
         events: List<Int>,
         creators: List<Int>
     ) = seriesService.getSeries(
+        offset,
+        limit,
         titleStartsWith,
         characters,
         comics,

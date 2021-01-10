@@ -8,6 +8,8 @@ import retrofit2.http.Query
 interface EventEndpoint {
     @GET("/v1/public/events")
     suspend fun getEvents(
+        @Query("offset") offset: Int,
+        @Query("limit") limit: Int,
         @Query("nameStartsWith") nameStartsWith: String?,
         @Query("characters") characters: List<Int>,
         @Query("comics") comics: List<Int>,

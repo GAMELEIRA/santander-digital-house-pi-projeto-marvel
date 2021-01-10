@@ -17,14 +17,19 @@ import com.example.marvelworld.filters.models.Filter
 import com.example.marvelworld.filters.views.CallbackListener
 import com.example.marvelworld.filters.views.FilterListFragment
 
-class CharacterListFragment(onlyFavorites: Boolean = false) : Fragment(), OnCharacterClickListener,
+class CharacterListFragment(
+    onlyFavorites: Boolean = false
+) : Fragment(),
+    OnCharacterClickListener,
     CallbackListener {
+
     private lateinit var characterViewModel: CharacterViewModel
     private lateinit var characterListAdapter: CharacterListAdapter
     private lateinit var recycler: RecyclerView
     private lateinit var filterIcon: MenuItem
     private val characterList = mutableListOf<Character>()
     private var filter = Filter()
+    private var loading = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,11 +58,37 @@ class CharacterListFragment(onlyFavorites: Boolean = false) : Fragment(), OnChar
             CharacterViewModel.CharacterViewModelFactory(CharacterRepository())
         ).get(CharacterViewModel::class.java)
 
-        if (characterList.isEmpty()) {
-            characterViewModel.getCharacters().observe(viewLifecycleOwner, {
-                characterList.clear()
-                characterList.addAll(it)
-                characterListAdapter.notifyDataSetChanged()
+        if (characterList.isEmpty()) getCharacters()
+
+        initInfiniteScroll()
+    }
+
+    private fun getCharacters() {
+        loading = true
+        characterViewModel.getCharacters().observe(viewLifecycleOwner, {
+            characterList.addAll(it)
+            characterListAdapter.notifyDataSetChanged()
+            loading = false
+        })
+    }
+
+    private fun initInfiniteScroll() {
+        recycler.run {
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+
+                    val target = recyclerView.layoutManager as GridLayoutManager
+                    val totalItemCount = target.itemCount
+                    val lastVisible = target.findLastVisibleItemPosition()
+
+                    if (totalItemCount - lastVisible < 10
+                        && totalItemCount < characterViewModel.total
+                        && !loading
+                    ) {
+                        getCharacters()
+                    }
+                }
             })
         }
     }
@@ -96,21 +127,14 @@ class CharacterListFragment(onlyFavorites: Boolean = false) : Fragment(), OnChar
 
     override fun onDataReceived(filter: Filter) {
         this.filter = filter
-
         updateFilterIcon()
-
         characterViewModel.applyFilter(this.filter)
-
-        characterViewModel.getCharacters()
-            .observe(viewLifecycleOwner, {
-                characterList.clear()
-                characterList.addAll(it)
-                characterListAdapter.notifyDataSetChanged()
-            })
+        characterList.clear()
+        getCharacters()
     }
 
     private fun updateFilterIcon() {
-        if (this.filter.isEmpty()) {
+        if (filter.isEmpty()) {
             filterIcon.icon =
                 ResourcesCompat.getDrawable(
                     requireContext().resources,

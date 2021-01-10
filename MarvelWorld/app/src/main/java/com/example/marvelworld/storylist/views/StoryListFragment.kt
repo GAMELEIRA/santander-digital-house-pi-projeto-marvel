@@ -22,12 +22,14 @@ class StoryListFragment(
 ) : Fragment(),
     OnStoryClickListener,
     CallbackListener {
+
     private lateinit var storyViewModel: StoryViewModel
     private lateinit var storyListAdapter: StoryListAdapter
     private lateinit var recycler: RecyclerView
     private lateinit var filterIcon: MenuItem
     private val storyList = mutableListOf<Story>()
     private var filter = Filter()
+    private var loading = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -56,11 +58,39 @@ class StoryListFragment(
             StoryViewModel.StoryViewModelFactory(StoryRepository())
         ).get(StoryViewModel::class.java)
 
+        getStories()
+
+        initInfiniteScroll()
+    }
+
+    private fun getStories() {
+        loading = true
         storyViewModel.getStories().observe(viewLifecycleOwner, {
-            storyList.clear()
             storyList.addAll(it)
             storyListAdapter.notifyDataSetChanged()
+            loading = false
         })
+    }
+
+    private fun initInfiniteScroll() {
+        recycler.run {
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+
+                    val target = recyclerView.layoutManager as LinearLayoutManager
+                    val totalItemCount = target.itemCount
+                    val lastVisible = target.findLastVisibleItemPosition()
+
+                    if (totalItemCount - lastVisible < 10
+                        && totalItemCount < storyViewModel.total
+                        && !loading
+                    ) {
+                        getStories()
+                    }
+                }
+            })
+        }
     }
 
     override fun onStoryClick(position: Int) {
@@ -97,21 +127,14 @@ class StoryListFragment(
 
     override fun onDataReceived(filter: Filter) {
         this.filter = filter
-
         updateFilterIcon()
-
         storyViewModel.applyFilter(this.filter)
-
-        storyViewModel.getStories()
-            .observe(viewLifecycleOwner, {
-                storyList.clear()
-                storyList.addAll(it)
-                storyListAdapter.notifyDataSetChanged()
-            })
+        storyList.clear()
+        getStories()
     }
 
     private fun updateFilterIcon() {
-        if (this.filter.isEmpty()) {
+        if (filter.isEmpty()) {
             filterIcon.icon =
                 ResourcesCompat.getDrawable(
                     requireContext().resources,

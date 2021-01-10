@@ -15,9 +15,16 @@ class SeriesViewModel(
     private var comics = listOf<Int>()
     private var events = listOf<Int>()
     private var creators = listOf<Int>()
+    private var offset = 0
+    private val limit = 20
+    var total = 0
 
     fun getSeries() = liveData(Dispatchers.IO) {
-        val response = repository.getSeries(title, characters, comics, events, creators)
+        val response = repository.getSeries(offset, limit, title, characters, comics, events, creators)
+
+        offset = response.data.offset + response.data.count
+        total = response.data.total
+
         emit(response.data.results)
     }
 
@@ -27,6 +34,9 @@ class SeriesViewModel(
         comics = filter.filterMap[Filter.COMIC]?.map { c -> c.id } ?: listOf()
         events = filter.filterMap[Filter.EVENT]?.map { e -> e.id } ?: listOf()
         creators = filter.filterMap[Filter.CREATOR]?.map { s -> s.id } ?: listOf()
+
+        offset = 0
+        total = 0
     }
 
     @Suppress("UNCHECKED_CAST")

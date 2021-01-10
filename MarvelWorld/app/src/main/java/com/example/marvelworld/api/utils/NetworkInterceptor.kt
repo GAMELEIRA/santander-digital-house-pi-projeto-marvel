@@ -19,7 +19,9 @@ class NetworkInterceptor : Interceptor {
         val httpUrl = originalRequest.url().newBuilder()
             .addQueryParameter(TS, ts)
             .addQueryParameter(API_KEY, apiKey)
-            .addQueryParameter(HASH, hashInput.md5()).build()
+            .addQueryParameter(HASH, hashInput.md5())
+            .addQueryParameter("orderBy", "-modified")
+            .build()
 
         val builder = originalRequest.newBuilder().url(httpUrl)
         val newRequest = builder.build()

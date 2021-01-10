@@ -29,6 +29,7 @@ class EventListFragment(
     private lateinit var filterIcon: MenuItem
     private val eventList = mutableListOf<Event>()
     private var filter = Filter()
+    private var loading = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -58,11 +59,39 @@ class EventListFragment(
             EventViewModel.EventViewModelFactory(EventRepository())
         ).get(EventViewModel::class.java)
 
+        if (eventList.isEmpty()) getEvents()
+
+        initInfiniteScroll()
+    }
+
+    private fun getEvents() {
+        loading = true
         eventViewModel.getEvents().observe(viewLifecycleOwner, {
-            eventList.clear()
             eventList.addAll(it)
             eventListAdapter.notifyDataSetChanged()
+            loading = false
         })
+    }
+
+    private fun initInfiniteScroll() {
+        recycler.run {
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+
+                    val target = recyclerView.layoutManager as GridLayoutManager
+                    val totalItemCount = target.itemCount
+                    val lastVisible = target.findLastVisibleItemPosition()
+
+                    if (totalItemCount - lastVisible < 10
+                        && totalItemCount < eventViewModel.total
+                        && !loading
+                    ) {
+                        getEvents()
+                    }
+                }
+            })
+        }
     }
 
     override fun onEventClick(position: Int) {
@@ -99,21 +128,14 @@ class EventListFragment(
 
     override fun onDataReceived(filter: Filter) {
         this.filter = filter
-
         updateFilterIcon()
-
         eventViewModel.applyFilter(this.filter)
-
-        eventViewModel.getEvents()
-            .observe(viewLifecycleOwner, {
-                eventList.clear()
-                eventList.addAll(it)
-                eventListAdapter.notifyDataSetChanged()
-            })
+        eventList.clear()
+        getEvents()
     }
 
     private fun updateFilterIcon() {
-        if (this.filter.isEmpty()) {
+        if (filter.isEmpty()) {
             filterIcon.icon =
                 ResourcesCompat.getDrawable(
                     requireContext().resources,

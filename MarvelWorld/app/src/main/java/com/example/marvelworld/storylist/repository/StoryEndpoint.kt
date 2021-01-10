@@ -8,6 +8,8 @@ import retrofit2.http.Query
 interface StoryEndpoint {
     @GET("/v1/public/stories")
     suspend fun getStories(
+        @Query("offset") offset: Int,
+        @Query("limit") limit: Int,
         @Query("characters") characters: List<Int>,
         @Query("comics") comics: List<Int>,
         @Query("events") events: List<Int>,

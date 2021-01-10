@@ -29,6 +29,7 @@ class ComicListFragment(
     private lateinit var filterIcon: MenuItem
     private val comicList = mutableListOf<Comic>()
     private var filter = Filter()
+    private var loading = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -58,11 +59,39 @@ class ComicListFragment(
             ComicViewModel.ComicViewModelFactory(ComicRepository())
         ).get(ComicViewModel::class.java)
 
+        if (comicList.isEmpty()) getComics()
+
+        initInfiniteScroll()
+    }
+
+    private fun getComics() {
+        loading = true
         comicViewModel.getComics().observe(viewLifecycleOwner, {
-            comicList.clear()
             comicList.addAll(it)
             comicListAdapter.notifyDataSetChanged()
+            loading = false
         })
+    }
+
+    private fun initInfiniteScroll() {
+        recycler.run {
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+
+                    val target = recyclerView.layoutManager as GridLayoutManager
+                    val totalItemCount = target.itemCount
+                    val lastVisible = target.findLastVisibleItemPosition()
+
+                    if (totalItemCount - lastVisible < 10
+                        && totalItemCount < comicViewModel.total
+                        && !loading
+                    ) {
+                        getComics()
+                    }
+                }
+            })
+        }
     }
 
     override fun onComicClick(position: Int) {
@@ -99,21 +128,14 @@ class ComicListFragment(
 
     override fun onDataReceived(filter: Filter) {
         this.filter = filter
-
         updateFilterIcon()
-
         comicViewModel.applyFilter(this.filter)
-
-        comicViewModel.getComics()
-            .observe(viewLifecycleOwner, {
-                comicList.clear()
-                comicList.addAll(it)
-                comicListAdapter.notifyDataSetChanged()
-            })
+        comicList.clear()
+        getComics()
     }
 
     private fun updateFilterIcon() {
-        if (this.filter.isEmpty()) {
+        if (filter.isEmpty()) {
             filterIcon.icon =
                 ResourcesCompat.getDrawable(
                     requireContext().resources,

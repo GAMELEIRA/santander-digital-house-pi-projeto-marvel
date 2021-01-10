@@ -28,6 +28,7 @@ class SeriesListFragment(
     private lateinit var filterIcon: MenuItem
     private val seriesList = mutableListOf<Series>()
     private var filter = Filter()
+    private var loading = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -56,11 +57,39 @@ class SeriesListFragment(
             SeriesViewModel.SeriesViewModelFactory(SeriesRepository())
         ).get(SeriesViewModel::class.java)
 
+        if (seriesList.isEmpty()) getSeries()
+
+        initInfiniteScroll()
+    }
+
+    private fun getSeries() {
+        loading = true
         seriesViewModel.getSeries().observe(viewLifecycleOwner, {
-            seriesList.clear()
             seriesList.addAll(it)
             seriesListAdapter.notifyDataSetChanged()
+            loading = false
         })
+    }
+
+    private fun initInfiniteScroll() {
+        recycler.run {
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+
+                    val target = recyclerView.layoutManager as GridLayoutManager
+                    val totalItemCount = target.itemCount
+                    val lastVisible = target.findLastVisibleItemPosition()
+
+                    if (totalItemCount - lastVisible < 10
+                        && totalItemCount < seriesViewModel.total
+                        && !loading
+                    ) {
+                        getSeries()
+                    }
+                }
+            })
+        }
     }
 
     override fun onSeriesClick(position: Int) {
@@ -97,21 +126,14 @@ class SeriesListFragment(
 
     override fun onDataReceived(filter: Filter) {
         this.filter = filter
-
         updateFilterIcon()
-
         seriesViewModel.applyFilter(this.filter)
-
-        seriesViewModel.getSeries()
-            .observe(viewLifecycleOwner, {
-                seriesList.clear()
-                seriesList.addAll(it)
-                seriesListAdapter.notifyDataSetChanged()
-            })
+        seriesList.clear()
+        getSeries()
     }
 
     private fun updateFilterIcon() {
-        if (this.filter.isEmpty()) {
+        if (filter.isEmpty()) {
             filterIcon.icon =
                 ResourcesCompat.getDrawable(
                     requireContext().resources,

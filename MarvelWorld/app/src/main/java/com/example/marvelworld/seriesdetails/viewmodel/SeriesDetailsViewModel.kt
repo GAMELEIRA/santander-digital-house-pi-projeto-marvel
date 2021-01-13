@@ -3,22 +3,26 @@ package com.example.marvelworld.seriesdetails.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.liveData
+import com.example.marvelworld.favorite.respository.FavoriteRepository
 import com.example.marvelworld.reusablecomponents.horizontallist.HorizontalListItem
 import com.example.marvelworld.reusablecomponents.horizontallist.HorizontalListUtils
 import com.example.marvelworld.seriesdetails.respository.SeriesDetailsRepository
+import com.example.marvelworld.util.ResourceType
 import kotlinx.coroutines.Dispatchers
 
-@Suppress("UNCHECKED_CAST")
 class SeriesDetailsViewModel(
-    private val repository: SeriesDetailsRepository
+    private val seriesRepository: SeriesDetailsRepository,
+    private val favoriteRepository: FavoriteRepository
 ) : ViewModel() {
     fun getOneSeries(seriesId: Int) = liveData(Dispatchers.IO) {
-        val response = repository.getOneSeries(seriesId)
+        val response = seriesRepository.getOneSeries(seriesId)
+        val series = response.data.results[0]
+        series.isFavorite = favoriteRepository.isFavorite(series.id, ResourceType.SERIES)
         emit(response.data.results[0])
     }
 
     fun getSeriesCharacters(seriesId: Int) = liveData(Dispatchers.IO) {
-        val response = repository.getSeriesCharacters(seriesId)
+        val response = seriesRepository.getSeriesCharacters(seriesId)
         emit(response.data.results.map { character ->
             HorizontalListItem(
                 character.id,
@@ -29,7 +33,7 @@ class SeriesDetailsViewModel(
     }
 
     fun getSeriesComics(seriesId: Int) = liveData(Dispatchers.IO) {
-        val response = repository.getSeriesComics(seriesId)
+        val response = seriesRepository.getSeriesComics(seriesId)
         emit(response.data.results.map { comic ->
             HorizontalListItem(
                 comic.id,
@@ -40,7 +44,7 @@ class SeriesDetailsViewModel(
     }
 
     fun getSeriesStories(seriesId: Int) = liveData(Dispatchers.IO) {
-        val response = repository.getSeriesStories(seriesId)
+        val response = seriesRepository.getSeriesStories(seriesId)
         emit(response.data.results.map { story ->
             HorizontalListItem(
                 story.id,
@@ -51,7 +55,7 @@ class SeriesDetailsViewModel(
     }
 
     fun getSeriesEvents(seriesId: Int) = liveData(Dispatchers.IO) {
-        val response = repository.getSeriesEvents(seriesId)
+        val response = seriesRepository.getSeriesEvents(seriesId)
         emit(response.data.results.map { event ->
             HorizontalListItem(
                 event.id,
@@ -62,7 +66,7 @@ class SeriesDetailsViewModel(
     }
 
     fun getSeriesCreators(seriesId: Int) = liveData(Dispatchers.IO) {
-        val response = repository.getSeriesCreators(seriesId)
+        val response = seriesRepository.getSeriesCreators(seriesId)
         emit(response.data.results.map { creator ->
             HorizontalListItem(
                 creator.id,
@@ -72,11 +76,13 @@ class SeriesDetailsViewModel(
         })
     }
 
+    @Suppress("UNCHECKED_CAST")
     class SeriesDetailsViewModelFactory(
-        private val repository: SeriesDetailsRepository
+        private val seriesRepository: SeriesDetailsRepository,
+        private val favoriteRepository: FavoriteRepository
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            return SeriesDetailsViewModel(repository) as T
+            return SeriesDetailsViewModel(seriesRepository, favoriteRepository) as T
         }
     }
 }

@@ -14,5 +14,6 @@ data class Character(
     val comics: ComicList,
     val stories: StoryList,
     val events: EventList,
-    val series: SeriesList
+    val series: SeriesList,
+    var isFavorite: Boolean = false
 )

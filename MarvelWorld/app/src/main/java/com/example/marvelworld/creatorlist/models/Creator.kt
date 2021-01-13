@@ -17,5 +17,6 @@ data class Creator(
     val series: SeriesList,
     val stories: StoryList,
     val comics: ComicList,
-    val events: EventList
+    val events: EventList,
+    var isFavorite: Boolean = false
 )

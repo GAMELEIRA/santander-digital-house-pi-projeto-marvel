@@ -1,8 +1,10 @@
 package com.example.marvelworld.comiclist.repository
 
 import com.example.marvelworld.api.models.DataWrapper
+import com.example.marvelworld.characterlist.models.Character
 import com.example.marvelworld.comiclist.models.Comic
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ComicEndpoint {
@@ -16,4 +18,7 @@ interface ComicEndpoint {
         @Query("series") series: List<Int>,
         @Query("creators") creators: List<Int>
     ): DataWrapper<Comic>
+
+    @GET("/v1/public/comics/{comicId}")
+    suspend fun getComic(@Path("comicId") comicId: Int): DataWrapper<Comic>
 }

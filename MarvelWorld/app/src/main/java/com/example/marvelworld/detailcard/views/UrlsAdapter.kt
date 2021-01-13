@@ -1,4 +1,4 @@
-package com.example.marvelworld.reusablecomponents.urlsdialog
+package com.example.marvelworld.detailcard.views
 
 import android.content.Context
 import android.graphics.Paint

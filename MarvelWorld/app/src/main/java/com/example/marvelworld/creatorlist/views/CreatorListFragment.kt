@@ -13,12 +13,14 @@ import com.example.marvelworld.R
 import com.example.marvelworld.creatorlist.models.Creator
 import com.example.marvelworld.creatorlist.respository.CreatorRepository
 import com.example.marvelworld.creatorlist.viewmodel.CreatorViewModel
+import com.example.marvelworld.favorite.db.AppDatabase
+import com.example.marvelworld.favorite.respository.FavoriteRepository
 import com.example.marvelworld.filters.models.Filter
 import com.example.marvelworld.filters.views.CallbackListener
 import com.example.marvelworld.filters.views.FilterListFragment
 
 class CreatorListFragment(
-    onlyFavorites: Boolean = false
+    private val onlyFavorites: Boolean = false
 ) : Fragment(),
     OnCreatorClickListener,
     CallbackListener {
@@ -30,6 +32,7 @@ class CreatorListFragment(
     private val creatorList = mutableListOf<Creator>()
     private var filter = Filter()
     private var loading = false
+    private var onPause = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,10 +42,24 @@ class CreatorListFragment(
         return inflater.inflate(R.layout.fragment_creator_list, container, false)
     }
 
+    override fun onPause() {
+        super.onPause()
+
+        onPause = true
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (onPause) {
+            updateCreators()
+            onPause = false
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setHasOptionsMenu(true)
+        if (!onlyFavorites) setHasOptionsMenu(true)
 
         recycler = view.findViewById(R.id.recycler_creator_list)
 
@@ -56,21 +73,47 @@ class CreatorListFragment(
 
         creatorViewModel = ViewModelProvider(
             this,
-            CreatorViewModel.CreatorViewModelFactory(CreatorRepository())
+            CreatorViewModel.CreatorViewModelFactory(
+                CreatorRepository(),
+                FavoriteRepository(AppDatabase.getDatabase(view.context).favoriteDao())
+            )
         ).get(CreatorViewModel::class.java)
 
         if (creatorList.isEmpty()) getCreators()
 
-        initInfiniteScroll()
+        if (!onlyFavorites) initInfiniteScroll()
+    }
+
+    private fun updateCreators() {
+        if (!onlyFavorites) {
+            creatorViewModel.updateCreators(creatorList)
+                .observe(viewLifecycleOwner, {
+                    creatorListAdapter.notifyDataSetChanged()
+                })
+        } else {
+            creatorViewModel.updateFavoriteCreators(creatorList)
+                .observe(viewLifecycleOwner, {
+                    creatorList.removeAll(it)
+                    creatorListAdapter.notifyDataSetChanged()
+                })
+        }
     }
 
     private fun getCreators() {
         loading = true
-        creatorViewModel.getCreators().observe(viewLifecycleOwner, {
-            creatorList.addAll(it)
-            creatorListAdapter.notifyDataSetChanged()
-            loading = false
-        })
+        if (onlyFavorites) {
+            creatorViewModel.getFavoriteCreators().observe(viewLifecycleOwner, {
+                creatorList.addAll(it)
+                creatorListAdapter.notifyDataSetChanged()
+                loading = false
+            })
+        } else {
+            creatorViewModel.getCreators().observe(viewLifecycleOwner, {
+                creatorList.addAll(it)
+                creatorListAdapter.notifyDataSetChanged()
+                loading = false
+            })
+        }
     }
 
     private fun initInfiniteScroll() {
@@ -97,6 +140,36 @@ class CreatorListFragment(
     override fun onCreatorClick(position: Int) {
         val bundle = bundleOf("CREATOR_ID" to creatorList[position].id)
         findNavController().navigate(R.id.creatorDetailsFragment, bundle)
+    }
+
+    override fun onCreatorFavoriteClick(position: Int) {
+        creatorViewModel.isFavorite(creatorList[position].id)
+            .observe(viewLifecycleOwner, { isFavorite ->
+                if (isFavorite) {
+                    creatorViewModel.removeFavorite(creatorList[position].id)
+                        .observe(viewLifecycleOwner, {
+                            if (it) {
+                                creatorList[position].isFavorite = false
+                                if (onlyFavorites) {
+                                    creatorList.removeAt(position)
+                                    creatorListAdapter.notifyDataSetChanged()
+                                } else {
+                                    creatorListAdapter.notifyItemChanged(position)
+                                }
+                            }
+                        })
+                } else {
+                    creatorViewModel.addFavorite(creatorList[position].id)
+                        .observe(viewLifecycleOwner, {
+                            if (it) {
+                                creatorList[position].isFavorite = true
+                                creatorListAdapter.notifyItemChanged(position)
+                            }
+                        })
+                }
+
+                creatorList[position].isFavorite = !creatorList[position].isFavorite
+            })
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

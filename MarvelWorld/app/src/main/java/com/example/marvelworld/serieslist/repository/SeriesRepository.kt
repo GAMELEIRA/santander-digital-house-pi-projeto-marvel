@@ -22,4 +22,6 @@ class SeriesRepository {
         events,
         creators
     )
+
+    suspend fun getOneSeries(seriesId: Int) = seriesService.getOneSeries(seriesId)
 }

@@ -3,12 +3,17 @@ package com.example.marvelworld.comiclist.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.liveData
+import com.example.marvelworld.comiclist.models.Comic
 import com.example.marvelworld.comiclist.repository.ComicRepository
+import com.example.marvelworld.favorite.models.Favorite
+import com.example.marvelworld.favorite.respository.FavoriteRepository
 import com.example.marvelworld.filters.models.Filter
+import com.example.marvelworld.util.ResourceType
 import kotlinx.coroutines.Dispatchers
 
 class ComicViewModel(
-    private val repository: ComicRepository
+    private val comicRepository: ComicRepository,
+    private val favoriteRepository: FavoriteRepository
 ) : ViewModel() {
     private var title: String? = null
     private var characters = listOf<Int>()
@@ -20,12 +25,62 @@ class ComicViewModel(
     var total = 0
 
     fun getComics() = liveData(Dispatchers.IO) {
-        val response = repository.getComics(offset, limit, title, characters, events, series, creators)
+        val response =
+            comicRepository.getComics(offset, limit, title, characters, events, series, creators)
 
         offset = response.data.offset + response.data.count
         total = response.data.total
 
+        response.data.results.forEach {
+            it.isFavorite = favoriteRepository.isFavorite(it.id, ResourceType.COMIC)
+        }
+
         emit(response.data.results)
+    }
+
+    fun updateComics(comics: MutableList<Comic>) = liveData(Dispatchers.IO) {
+        comics.forEach {
+            it.isFavorite = favoriteRepository.isFavorite(it.id, ResourceType.COMIC)
+        }
+
+        emit(true)
+    }
+
+    fun getFavoriteComics() = liveData(Dispatchers.IO) {
+        val favorites = favoriteRepository.getFavorites(ResourceType.COMIC)
+        val comics = mutableListOf<Comic>()
+
+        favorites.forEach {
+            val comic = comicRepository.getComic(it.resourceId).data.results[0]
+            comic.isFavorite = true
+            comics.add(comic)
+        }
+
+        emit(comics)
+    }
+
+    fun updateFavoriteComics(comics: MutableList<Comic>) = liveData(Dispatchers.IO) {
+        val comicsToRemove = mutableListOf<Comic>()
+        comics.forEach {
+            val isFavorite = favoriteRepository.isFavorite(it.id, ResourceType.COMIC)
+            if (!isFavorite) comicsToRemove.add(it)
+        }
+        emit(comicsToRemove)
+    }
+
+    fun addFavorite(resourceId: Int) = liveData(Dispatchers.IO) {
+        favoriteRepository.addFavorite(Favorite(resourceId, ResourceType.COMIC))
+        emit(true)
+    }
+
+    fun removeFavorite(resourceId: Int) = liveData(Dispatchers.IO) {
+        favoriteRepository.removeFavorite(resourceId, ResourceType.COMIC)
+        emit(true)
+    }
+
+    fun isFavorite(resourceId: Int) = liveData(Dispatchers.IO) {
+        val result = favoriteRepository.isFavorite(resourceId, ResourceType.COMIC)
+        emit(result)
     }
 
     fun applyFilter(filter: Filter) {
@@ -41,10 +96,11 @@ class ComicViewModel(
 
     @Suppress("UNCHECKED_CAST")
     class ComicViewModelFactory(
-        private val repository: ComicRepository
+        private val comicRepository: ComicRepository,
+        private val favoriteRepository: FavoriteRepository
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            return ComicViewModel(repository) as T
+            return ComicViewModel(comicRepository, favoriteRepository) as T
         }
     }
 }

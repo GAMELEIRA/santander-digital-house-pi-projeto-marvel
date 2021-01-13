@@ -13,13 +13,7 @@ class EventRepository {
         comics: List<Int>,
         events: List<Int>,
         series: List<Int>
-    ) = eventService.getEvents(
-        offset,
-        limit,
-        nameStartsWith,
-        characters,
-        comics,
-        events,
-        series
-    )
+    ) = eventService.getEvents(offset, limit, nameStartsWith, characters, comics, events, series)
+
+    suspend fun getEvent(eventId: Int) = eventService.getEvent(eventId)
 }

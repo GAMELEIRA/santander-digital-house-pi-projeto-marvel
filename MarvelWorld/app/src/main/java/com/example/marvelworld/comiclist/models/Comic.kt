@@ -16,5 +16,6 @@ data class Comic(
     val creators: CreatorList,
     val characters: CharacterList,
     val stories: StoryList,
-    val events: EventList
+    val events: EventList,
+    var isFavorite: Boolean = false
 )

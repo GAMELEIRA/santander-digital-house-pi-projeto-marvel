@@ -3,12 +3,17 @@ package com.example.marvelworld.eventlist.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.liveData
+import com.example.marvelworld.eventlist.models.Event
 import com.example.marvelworld.eventlist.repository.EventRepository
+import com.example.marvelworld.favorite.models.Favorite
+import com.example.marvelworld.favorite.respository.FavoriteRepository
 import com.example.marvelworld.filters.models.Filter
+import com.example.marvelworld.util.ResourceType
 import kotlinx.coroutines.Dispatchers
 
 class EventViewModel(
-    private val repository: EventRepository
+    private val eventRepository: EventRepository,
+    private val favoriteRepository: FavoriteRepository
 ) : ViewModel() {
     private var name: String? = null
     private var characters = listOf<Int>()
@@ -20,12 +25,62 @@ class EventViewModel(
     var total = 0
 
     fun getEvents() = liveData(Dispatchers.IO) {
-        val response = repository.getEvents(offset, limit, name, characters, comics, events, series)
+        val response =
+            eventRepository.getEvents(offset, limit, name, characters, comics, events, series)
 
         offset = response.data.offset + response.data.count
         total = response.data.total
 
+        response.data.results.forEach {
+            it.isFavorite = favoriteRepository.isFavorite(it.id, ResourceType.EVENT)
+        }
+
         emit(response.data.results)
+    }
+
+    fun updateEvents(events: MutableList<Event>) = liveData(Dispatchers.IO) {
+        events.forEach {
+            it.isFavorite = favoriteRepository.isFavorite(it.id, ResourceType.EVENT)
+        }
+
+        emit(true)
+    }
+
+    fun getFavoriteEvents() = liveData(Dispatchers.IO) {
+        val favorites = favoriteRepository.getFavorites(ResourceType.EVENT)
+        val events = mutableListOf<Event>()
+
+        favorites.forEach {
+            val event = eventRepository.getEvent(it.resourceId).data.results[0]
+            event.isFavorite = true
+            events.add(event)
+        }
+
+        emit(events)
+    }
+
+    fun updateFavoriteEvents(events: MutableList<Event>) = liveData(Dispatchers.IO) {
+        val eventsToRemove = mutableListOf<Event>()
+        events.forEach {
+            val isFavorite = favoriteRepository.isFavorite(it.id, ResourceType.EVENT)
+            if (!isFavorite) eventsToRemove.add(it)
+        }
+        emit(eventsToRemove)
+    }
+
+    fun addFavorite(resourceId: Int) = liveData(Dispatchers.IO) {
+        favoriteRepository.addFavorite(Favorite(resourceId, ResourceType.EVENT))
+        emit(true)
+    }
+
+    fun removeFavorite(resourceId: Int) = liveData(Dispatchers.IO) {
+        favoriteRepository.removeFavorite(resourceId, ResourceType.EVENT)
+        emit(true)
+    }
+
+    fun isFavorite(resourceId: Int) = liveData(Dispatchers.IO) {
+        val result = favoriteRepository.isFavorite(resourceId, ResourceType.EVENT)
+        emit(result)
     }
 
     fun applyFilter(filter: Filter) {
@@ -39,11 +94,13 @@ class EventViewModel(
         total = 0
     }
 
+    @Suppress("UNCHECKED_CAST")
     class EventViewModelFactory(
-        private val repository: EventRepository
+        private val eventRepository: EventRepository,
+        private val favoriteRepository: FavoriteRepository
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            return EventViewModel(repository) as T
+            return EventViewModel(eventRepository, favoriteRepository) as T
         }
     }
 }

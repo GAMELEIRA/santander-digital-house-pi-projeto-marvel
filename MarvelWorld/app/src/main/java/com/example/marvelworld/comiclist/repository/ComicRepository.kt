@@ -13,13 +13,7 @@ class ComicRepository {
         events: List<Int>,
         series: List<Int>,
         creators: List<Int>
-    ) = comicService.getComics(
-        offset,
-        limit,
-        titleStartsWith,
-        characters,
-        events,
-        series,
-        creators
-    )
+    ) = comicService.getComics(offset, limit, titleStartsWith, characters, events, series, creators)
+
+    suspend fun getComic(comicId: Int) = comicService.getComic(comicId)
 }

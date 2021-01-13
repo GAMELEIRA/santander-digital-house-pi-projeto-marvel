@@ -4,21 +4,25 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.liveData
 import com.example.marvelworld.creatordetails.repository.CreatorDetailsRepository
+import com.example.marvelworld.favorite.respository.FavoriteRepository
 import com.example.marvelworld.reusablecomponents.horizontallist.HorizontalListItem
 import com.example.marvelworld.reusablecomponents.horizontallist.HorizontalListUtils
+import com.example.marvelworld.util.ResourceType
 import kotlinx.coroutines.Dispatchers
 
-@Suppress("UNCHECKED_CAST")
 class CreatorDetailsViewModel(
-    private val repository: CreatorDetailsRepository
+    private val creatorRepository: CreatorDetailsRepository,
+    private val favoriteRepository: FavoriteRepository
 ) : ViewModel() {
     fun getCreator(creatorId: Int) = liveData(Dispatchers.IO) {
-        val response = repository.getCreator(creatorId)
-        emit(response.data.results[0])
+        val response = creatorRepository.getCreator(creatorId)
+        val creator = response.data.results[0]
+        creator.isFavorite = favoriteRepository.isFavorite(creator.id, ResourceType.CREATOR)
+        emit(creator)
     }
 
     fun getCreatorComics(creatorId: Int) = liveData(Dispatchers.IO) {
-        val response = repository.getCreatorComics(creatorId)
+        val response = creatorRepository.getCreatorComics(creatorId)
         emit(response.data.results.map { comic ->
             HorizontalListItem(
                 comic.id,
@@ -29,7 +33,7 @@ class CreatorDetailsViewModel(
     }
 
     fun getCreatorEvents(creatorId: Int) = liveData(Dispatchers.IO) {
-        val response = repository.getCreatorEvents(creatorId)
+        val response = creatorRepository.getCreatorEvents(creatorId)
         emit(response.data.results.map { event ->
             HorizontalListItem(
                 event.id,
@@ -40,7 +44,7 @@ class CreatorDetailsViewModel(
     }
 
     fun getCreatorStories(creatorId: Int) = liveData(Dispatchers.IO) {
-        val response = repository.getCreatorStories(creatorId)
+        val response = creatorRepository.getCreatorStories(creatorId)
         emit(response.data.results.map { story ->
             HorizontalListItem(
                 story.id,
@@ -51,7 +55,7 @@ class CreatorDetailsViewModel(
     }
 
     fun getCreatorSeries(creatorId: Int) = liveData(Dispatchers.IO) {
-        val response = repository.getCreatorSeries(creatorId)
+        val response = creatorRepository.getCreatorSeries(creatorId)
         emit(response.data.results.map { series ->
             HorizontalListItem(
                 series.id,
@@ -61,11 +65,13 @@ class CreatorDetailsViewModel(
         })
     }
 
+    @Suppress("UNCHECKED_CAST")
     class CreatorDetailsViewModelFactory(
-        private val repository: CreatorDetailsRepository
+        private val creatorRepository: CreatorDetailsRepository,
+        private val favoriteRepository: FavoriteRepository
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            return CreatorDetailsViewModel(repository) as T
+            return CreatorDetailsViewModel(creatorRepository, favoriteRepository) as T
         }
     }
 }

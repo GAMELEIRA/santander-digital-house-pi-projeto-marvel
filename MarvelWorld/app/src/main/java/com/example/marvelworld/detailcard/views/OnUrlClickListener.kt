@@ -1,4 +1,4 @@
-package com.example.marvelworld.reusablecomponents.urlsdialog
+package com.example.marvelworld.detailcard.views
 
 interface OnUrlClickListener {
     fun onUrlClick(position: Int)

@@ -3,12 +3,17 @@ package com.example.marvelworld.storylist.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.liveData
+import com.example.marvelworld.favorite.models.Favorite
+import com.example.marvelworld.favorite.respository.FavoriteRepository
 import com.example.marvelworld.filters.models.Filter
+import com.example.marvelworld.storylist.models.Story
 import com.example.marvelworld.storylist.repository.StoryRepository
+import com.example.marvelworld.util.ResourceType
 import kotlinx.coroutines.Dispatchers
 
 class StoryViewModel(
-    private val repository: StoryRepository
+    private val storyRepository: StoryRepository,
+    private val favoriteRepository: FavoriteRepository
 ) : ViewModel() {
     private var characters = listOf<Int>()
     private var comics = listOf<Int>()
@@ -20,12 +25,61 @@ class StoryViewModel(
     var total = 0
 
     fun getStories() = liveData(Dispatchers.IO) {
-        val response = repository.getStories(offset, limit, characters, comics, events, series, creators)
+        val response = storyRepository.getStories(offset, limit, characters, comics, events, series, creators)
 
         offset = response.data.offset + response.data.count
         total = response.data.total
 
+        response.data.results.forEach {
+            it.isFavorite = favoriteRepository.isFavorite(it.id, ResourceType.STORY)
+        }
+
         emit(response.data.results)
+    }
+
+    fun updateStories(stories: MutableList<Story>) = liveData(Dispatchers.IO) {
+        stories.forEach {
+            it.isFavorite = favoriteRepository.isFavorite(it.id, ResourceType.STORY)
+        }
+
+        emit(true)
+    }
+
+    fun getFavoriteStories() = liveData(Dispatchers.IO) {
+        val favorites = favoriteRepository.getFavorites(ResourceType.STORY)
+        val stories = mutableListOf<Story>()
+
+        favorites.forEach {
+            val story = storyRepository.getStory(it.resourceId).data.results[0]
+            story.isFavorite = true
+            stories.add(story)
+        }
+
+        emit(stories)
+    }
+
+    fun updateFavoriteStories(stories: MutableList<Story>) = liveData(Dispatchers.IO) {
+        val storiesToRemove = mutableListOf<Story>()
+        stories.forEach {
+            val isFavorite = favoriteRepository.isFavorite(it.id, ResourceType.STORY)
+            if(!isFavorite) storiesToRemove.add(it)
+        }
+        emit(storiesToRemove)
+    }
+
+    fun addFavorite(resourceId: Int) = liveData(Dispatchers.IO) {
+        favoriteRepository.addFavorite(Favorite(resourceId, ResourceType.STORY))
+        emit(true)
+    }
+
+    fun removeFavorite(resourceId: Int) = liveData(Dispatchers.IO) {
+        favoriteRepository.removeFavorite(resourceId, ResourceType.STORY)
+        emit(true)
+    }
+
+    fun isFavorite(resourceId: Int) = liveData(Dispatchers.IO) {
+        val result = favoriteRepository.isFavorite(resourceId, ResourceType.STORY)
+        emit(result)
     }
 
     fun applyFilter(filter: Filter) {
@@ -41,10 +95,11 @@ class StoryViewModel(
 
     @Suppress("UNCHECKED_CAST")
     class StoryViewModelFactory(
-        private val repository: StoryRepository
+        private val storyRepository: StoryRepository,
+        private val favoriteRepository: FavoriteRepository
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            return StoryViewModel(repository) as T
+            return StoryViewModel(storyRepository, favoriteRepository) as T
         }
     }
 }

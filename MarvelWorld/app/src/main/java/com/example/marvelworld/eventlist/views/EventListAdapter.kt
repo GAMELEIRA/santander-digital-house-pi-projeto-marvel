@@ -1,15 +1,17 @@
 package com.example.marvelworld.eventlist.views
 
-import android.annotation.SuppressLint
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.content.Context
+import android.view.*
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.core.view.GestureDetectorCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.marvelworld.R
 import com.example.marvelworld.api.models.Image
 import com.example.marvelworld.eventlist.models.Event
+import com.google.android.material.card.MaterialCardView
 import com.squareup.picasso.Picasso
 
 class EventListAdapter(
@@ -22,7 +24,7 @@ class EventListAdapter(
             .from(parent.context)
             .inflate(R.layout.event_list_item, parent, false)
 
-        return EventViewHolder(view)
+        return EventViewHolder(view, parent.context)
     }
 
     override fun onBindViewHolder(holder: EventViewHolder, position: Int) {
@@ -32,18 +34,67 @@ class EventListAdapter(
 
     override fun getItemCount() = eventList.size
 
-    class EventViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class EventViewHolder(
+        view: View,
+        private val context: Context
+    ) : RecyclerView.ViewHolder(view) {
         private val image: ImageView = view.findViewById(R.id.img_event_list_item)
+        private val favoriteButton: ImageButton = view.findViewById(R.id.event_list_favorite_button)
         private val title: TextView = view.findViewById(R.id.title_event_list_item)
+        private val cardView: MaterialCardView = view.findViewById(R.id.card)
 
-        @SuppressLint("SetTextI18n")
-        fun bind(event: Event, onEventClickListener: OnEventClickListener) {
-            val path = event.thumbnail.getImagePath(Image.PORTRAIT_UNCANNY)
+        fun bind(eventModel: Event, onEventClickListener: OnEventClickListener) {
+            val path = eventModel.thumbnail.getImagePath(Image.PORTRAIT_UNCANNY)
             Picasso.get().load(path).into(image)
-            title.text = event.title
+            title.text = eventModel.title
 
-            itemView.setOnClickListener {
-                onEventClickListener.onEventClick(adapterPosition)
+            if (eventModel.isFavorite) {
+                favoriteButton.background = ContextCompat.getDrawable(
+                    context,
+                    R.drawable.ic_favorite_button_set
+                )
+
+                cardView.setCardBackgroundColor(
+                    ContextCompat.getColor(
+                        context,
+                        R.color.colorPrimary
+                    )
+                )
+            } else {
+                favoriteButton.background = ContextCompat.getDrawable(
+                    context,
+                    R.drawable.ic_favorite_button_unset
+                )
+
+                cardView.setCardBackgroundColor(
+                    ContextCompat.getColor(
+                        context,
+                        R.color.dark_grey
+                    )
+                )
+            }
+
+            favoriteButton.setOnClickListener {
+                onEventClickListener.onEventFavoriteClick(adapterPosition)
+            }
+
+            val gestureDetector =
+                GestureDetectorCompat(context, object : GestureDetector.SimpleOnGestureListener() {
+                    override fun onSingleTapConfirmed(e: MotionEvent?): Boolean {
+                        onEventClickListener.onEventClick(adapterPosition)
+                        return super.onSingleTapConfirmed(e)
+                    }
+
+                    override fun onDoubleTap(e: MotionEvent?): Boolean {
+                        onEventClickListener.onEventFavoriteClick(adapterPosition)
+                        return super.onDoubleTap(e)
+                    }
+                })
+
+            itemView.setOnTouchListener { v, event ->
+                gestureDetector.onTouchEvent(event)
+                v.performClick()
+                true
             }
         }
     }

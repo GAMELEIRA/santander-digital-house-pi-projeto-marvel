@@ -16,5 +16,6 @@ data class Story(
     val events: EventList,
     val characters: CharacterList,
     val creators: CreatorList,
-    val originalissue: ComicSummary
+    val originalissue: ComicSummary,
+    var isFavorite: Boolean = false
 )

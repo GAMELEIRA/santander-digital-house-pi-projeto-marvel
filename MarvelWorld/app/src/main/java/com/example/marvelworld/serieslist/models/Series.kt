@@ -20,5 +20,6 @@ data class Series(
     val characters: CharacterList,
     val creators: CreatorList,
     val next: SeriesSummary,
-    val previous: SeriesSummary
+    val previous: SeriesSummary,
+    var isFavorite: Boolean = false
 )

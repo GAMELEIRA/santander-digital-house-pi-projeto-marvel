@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".favorites.views.FavoritesFragment">
+    tools:context=".favorite.views.FavoritesFragment">
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/view_pager"

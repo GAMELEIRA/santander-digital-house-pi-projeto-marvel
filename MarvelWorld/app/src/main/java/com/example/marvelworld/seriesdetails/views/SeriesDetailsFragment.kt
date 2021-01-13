@@ -11,15 +11,23 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.marvelworld.R
 import com.example.marvelworld.api.models.Image
-import com.example.marvelworld.reusablecomponents.expandablecard.Card
-import com.example.marvelworld.reusablecomponents.expandablecard.ExpandableCardUtils
+import com.example.marvelworld.detailcard.models.DetailCard
+import com.example.marvelworld.detailcard.views.DetailCardFragment
+import com.example.marvelworld.eventdetails.viewmodel.EventDetailsViewModel
+import com.example.marvelworld.favorite.db.AppDatabase
+import com.example.marvelworld.favorite.respository.FavoriteRepository
 import com.example.marvelworld.reusablecomponents.horizontallist.HorizontalListItem
 import com.example.marvelworld.reusablecomponents.horizontallist.HorizontalListUtils
 import com.example.marvelworld.reusablecomponents.horizontallist.OnHorizontalListItemClickListener
 import com.example.marvelworld.seriesdetails.respository.SeriesDetailsRepository
 import com.example.marvelworld.seriesdetails.viewmodel.SeriesDetailsViewModel
+import com.example.marvelworld.util.ResourceType
 
-class SeriesDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
+class SeriesDetailsFragment :
+    Fragment(),
+    OnHorizontalListItemClickListener {
+
+    private lateinit var seriesDetailsViewModel: SeriesDetailsViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,21 +42,31 @@ class SeriesDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
 
         val seriesId = requireArguments().getInt("SERIES_ID")
 
-        val seriesDetailsViewModel = ViewModelProvider(
+        seriesDetailsViewModel = ViewModelProvider(
             this,
-            SeriesDetailsViewModel.SeriesDetailsViewModelFactory(SeriesDetailsRepository())
+            SeriesDetailsViewModel.SeriesDetailsViewModelFactory(
+                SeriesDetailsRepository(),
+                FavoriteRepository(AppDatabase.getDatabase(view.context).favoriteDao())
+            )
         ).get(SeriesDetailsViewModel::class.java)
 
         seriesDetailsViewModel.getOneSeries(seriesId)
             .observe(viewLifecycleOwner, { series ->
-                val card = Card(
+                val card = DetailCard(
+                    series.id,
                     series.title,
                     series.thumbnail.getImagePath(Image.LANDSCAPE_INCREDIBLE),
                     series.thumbnail.getImagePath(Image.FULL_SIZE),
                     series.description,
-                    series.urls
+                    series.urls,
+                    ResourceType.SERIES,
+                    series.isFavorite
                 )
-                ExpandableCardUtils.initCard(view, card, childFragmentManager)
+
+                childFragmentManager.beginTransaction().replace(
+                    R.id.detail_card,
+                    DetailCardFragment(card)
+                ).commit()
             })
 
         seriesDetailsViewModel.getSeriesCharacters(seriesId)

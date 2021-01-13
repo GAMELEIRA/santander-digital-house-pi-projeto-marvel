@@ -1,4 +1,4 @@
-package com.example.marvelworld.reusablecomponents.imagedialog
+package com.example.marvelworld.detailcard.views
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,14 +7,13 @@ import android.view.ViewGroup
 import android.view.WindowManager.LayoutParams
 import android.widget.ImageButton
 import android.widget.ImageView
-import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import com.example.marvelworld.R
-import com.example.marvelworld.reusablecomponents.expandablecard.Card
+import com.example.marvelworld.detailcard.models.DetailCard
 import com.squareup.picasso.Picasso
 
 
-class ImageDialogFragment(private val card: Card) : DialogFragment() {
+class ImageDialogFragment(private val card: DetailCard) : DialogFragment() {
 
     override fun onResume() {
         super.onResume()
@@ -35,9 +34,6 @@ class ImageDialogFragment(private val card: Card) : DialogFragment() {
         closeButton.setOnClickListener {
             this.dismiss()
         }
-
-        val title = view.findViewById<TextView>(R.id.image_dialog_title)
-        title.text = card.title
 
         val image = view.findViewById<ImageView>(R.id.image_dialog_image)
         Picasso.get().load(card.imageDialog).into(image)

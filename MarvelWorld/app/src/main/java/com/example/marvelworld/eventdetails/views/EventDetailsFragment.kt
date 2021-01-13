@@ -11,15 +11,22 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.marvelworld.R
 import com.example.marvelworld.api.models.Image
+import com.example.marvelworld.detailcard.models.DetailCard
+import com.example.marvelworld.detailcard.views.DetailCardFragment
 import com.example.marvelworld.eventdetails.respository.EventDetailsRepository
 import com.example.marvelworld.eventdetails.viewmodel.EventDetailsViewModel
-import com.example.marvelworld.reusablecomponents.expandablecard.Card
-import com.example.marvelworld.reusablecomponents.expandablecard.ExpandableCardUtils
+import com.example.marvelworld.favorite.db.AppDatabase
+import com.example.marvelworld.favorite.respository.FavoriteRepository
 import com.example.marvelworld.reusablecomponents.horizontallist.HorizontalListItem
 import com.example.marvelworld.reusablecomponents.horizontallist.HorizontalListUtils
 import com.example.marvelworld.reusablecomponents.horizontallist.OnHorizontalListItemClickListener
+import com.example.marvelworld.util.ResourceType
 
-class EventDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
+class EventDetailsFragment :
+    Fragment(),
+    OnHorizontalListItemClickListener {
+
+    private lateinit var eventDetailsViewModel: EventDetailsViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,21 +41,31 @@ class EventDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
 
         val eventId = requireArguments().getInt("EVENT_ID")
 
-        val eventDetailsViewModel = ViewModelProvider(
+        eventDetailsViewModel = ViewModelProvider(
             this,
-            EventDetailsViewModel.EventDetailsViewModelFactory(EventDetailsRepository())
+            EventDetailsViewModel.EventDetailsViewModelFactory(
+                EventDetailsRepository(),
+                FavoriteRepository(AppDatabase.getDatabase(view.context).favoriteDao())
+            )
         ).get(EventDetailsViewModel::class.java)
 
         eventDetailsViewModel.getEvent(eventId)
             .observe(viewLifecycleOwner, { event ->
-                val card = Card(
+                val card = DetailCard(
+                    event.id,
                     event.title,
                     event.thumbnail.getImagePath(Image.LANDSCAPE_INCREDIBLE),
                     event.thumbnail.getImagePath(Image.FULL_SIZE),
                     event.description,
-                    event.urls
+                    event.urls,
+                    ResourceType.EVENT,
+                    event.isFavorite
                 )
-                ExpandableCardUtils.initCard(view, card, childFragmentManager)
+
+                childFragmentManager.beginTransaction().replace(
+                    R.id.detail_card,
+                    DetailCardFragment(card)
+                ).commit()
             })
 
         eventDetailsViewModel.getEventCharacters(eventId)

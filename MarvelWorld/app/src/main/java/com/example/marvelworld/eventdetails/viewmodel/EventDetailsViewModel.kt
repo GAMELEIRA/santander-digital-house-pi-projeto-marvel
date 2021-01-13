@@ -4,21 +4,25 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.liveData
 import com.example.marvelworld.eventdetails.respository.EventDetailsRepository
+import com.example.marvelworld.favorite.respository.FavoriteRepository
 import com.example.marvelworld.reusablecomponents.horizontallist.HorizontalListItem
 import com.example.marvelworld.reusablecomponents.horizontallist.HorizontalListUtils
+import com.example.marvelworld.util.ResourceType
 import kotlinx.coroutines.Dispatchers
 
-@Suppress("UNCHECKED_CAST")
 class EventDetailsViewModel(
-    private val repository: EventDetailsRepository
+    private val eventRepository: EventDetailsRepository,
+    private val favoriteRepository: FavoriteRepository
 ) : ViewModel() {
     fun getEvent(eventId: Int) = liveData(Dispatchers.IO) {
-        val response = repository.getEvent(eventId)
+        val response = eventRepository.getEvent(eventId)
+        val event = response.data.results[0]
+        event.isFavorite = favoriteRepository.isFavorite(event.id, ResourceType.EVENT)
         emit(response.data.results[0])
     }
 
     fun getEventCharacters(eventId: Int) = liveData(Dispatchers.IO) {
-        val response = repository.getEventCharacters(eventId)
+        val response = eventRepository.getEventCharacters(eventId)
         emit(response.data.results.map { character ->
             HorizontalListItem(
                 character.id,
@@ -29,7 +33,7 @@ class EventDetailsViewModel(
     }
 
     fun getEventComics(eventId: Int) = liveData(Dispatchers.IO) {
-        val response = repository.getEventComics(eventId)
+        val response = eventRepository.getEventComics(eventId)
         emit(response.data.results.map { comic ->
             HorizontalListItem(
                 comic.id,
@@ -40,7 +44,7 @@ class EventDetailsViewModel(
     }
 
     fun getEventStories(eventId: Int) = liveData(Dispatchers.IO) {
-        val response = repository.getEventStories(eventId)
+        val response = eventRepository.getEventStories(eventId)
         emit(response.data.results.map { story ->
             HorizontalListItem(
                 story.id,
@@ -51,7 +55,7 @@ class EventDetailsViewModel(
     }
 
     fun getEventSeries(eventId: Int) = liveData(Dispatchers.IO) {
-        val response = repository.getEventSeries(eventId)
+        val response = eventRepository.getEventSeries(eventId)
         emit(response.data.results.map { series ->
             HorizontalListItem(
                 series.id,
@@ -62,7 +66,7 @@ class EventDetailsViewModel(
     }
 
     fun getEventCreators(eventId: Int) = liveData(Dispatchers.IO) {
-        val response = repository.getEventCreators(eventId)
+        val response = eventRepository.getEventCreators(eventId)
         emit(response.data.results.map { creator ->
             HorizontalListItem(
                 creator.id,
@@ -72,11 +76,13 @@ class EventDetailsViewModel(
         })
     }
 
+    @Suppress("UNCHECKED_CAST")
     class EventDetailsViewModelFactory(
-        private val repository: EventDetailsRepository
+        private val eventRepository: EventDetailsRepository,
+        private val favoriteRepository: FavoriteRepository
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            return EventDetailsViewModel(repository) as T
+            return EventDetailsViewModel(eventRepository, favoriteRepository) as T
         }
     }
 }

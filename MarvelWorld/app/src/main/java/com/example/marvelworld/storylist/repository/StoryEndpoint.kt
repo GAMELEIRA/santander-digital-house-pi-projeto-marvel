@@ -3,6 +3,7 @@ package com.example.marvelworld.storylist.repository
 import com.example.marvelworld.api.models.DataWrapper
 import com.example.marvelworld.storylist.models.Story
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface StoryEndpoint {
@@ -16,4 +17,7 @@ interface StoryEndpoint {
         @Query("series") series: List<Int>,
         @Query("creators") creators: List<Int>
     ): DataWrapper<Story>
+
+    @GET("/v1/public/stories/{storyId}")
+    suspend fun getStory(@Path("storyId") storyId: Int): DataWrapper<Story>
 }

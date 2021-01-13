@@ -16,5 +16,6 @@ data class Event(
     val characters: CharacterList,
     val creators: CreatorList,
     val next: EventSummary,
-    val previous: EventSummary
+    val previous: EventSummary,
+    var isFavorite: Boolean = false
 )

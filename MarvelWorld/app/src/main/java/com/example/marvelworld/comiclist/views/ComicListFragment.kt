@@ -13,12 +13,14 @@ import com.example.marvelworld.R
 import com.example.marvelworld.comiclist.models.Comic
 import com.example.marvelworld.comiclist.repository.ComicRepository
 import com.example.marvelworld.comiclist.viewmodel.ComicViewModel
+import com.example.marvelworld.favorite.db.AppDatabase
+import com.example.marvelworld.favorite.respository.FavoriteRepository
 import com.example.marvelworld.filters.models.Filter
 import com.example.marvelworld.filters.views.CallbackListener
 import com.example.marvelworld.filters.views.FilterListFragment
 
 class ComicListFragment(
-    onlyFavorites: Boolean = false
+    private val onlyFavorites: Boolean = false
 ) : Fragment(),
     OnComicClickListener,
     CallbackListener {
@@ -30,6 +32,7 @@ class ComicListFragment(
     private val comicList = mutableListOf<Comic>()
     private var filter = Filter()
     private var loading = false
+    private var onPause = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,10 +42,24 @@ class ComicListFragment(
         return inflater.inflate(R.layout.fragment_comic_list, container, false)
     }
 
+    override fun onPause() {
+        super.onPause()
+
+        onPause = true
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (onPause) {
+            updateComics()
+            onPause = false
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setHasOptionsMenu(true)
+        if (!onlyFavorites) setHasOptionsMenu(true)
 
         recycler = view.findViewById(R.id.recycler_comic_list)
 
@@ -56,21 +73,47 @@ class ComicListFragment(
 
         comicViewModel = ViewModelProvider(
             this,
-            ComicViewModel.ComicViewModelFactory(ComicRepository())
+            ComicViewModel.ComicViewModelFactory(
+                ComicRepository(),
+                FavoriteRepository(AppDatabase.getDatabase(view.context).favoriteDao())
+            )
         ).get(ComicViewModel::class.java)
 
         if (comicList.isEmpty()) getComics()
 
-        initInfiniteScroll()
+        if (!onlyFavorites) initInfiniteScroll()
+    }
+
+    private fun updateComics() {
+        if (!onlyFavorites) {
+            comicViewModel.updateComics(comicList)
+                .observe(viewLifecycleOwner, {
+                    comicListAdapter.notifyDataSetChanged()
+                })
+        } else {
+            comicViewModel.updateFavoriteComics(comicList)
+                .observe(viewLifecycleOwner, {
+                    comicList.removeAll(it)
+                    comicListAdapter.notifyDataSetChanged()
+                })
+        }
     }
 
     private fun getComics() {
         loading = true
-        comicViewModel.getComics().observe(viewLifecycleOwner, {
-            comicList.addAll(it)
-            comicListAdapter.notifyDataSetChanged()
-            loading = false
-        })
+        if (onlyFavorites) {
+            comicViewModel.getFavoriteComics().observe(viewLifecycleOwner, {
+                comicList.addAll(it)
+                comicListAdapter.notifyDataSetChanged()
+                loading = false
+            })
+        } else {
+            comicViewModel.getComics().observe(viewLifecycleOwner, {
+                comicList.addAll(it)
+                comicListAdapter.notifyDataSetChanged()
+                loading = false
+            })
+        }
     }
 
     private fun initInfiniteScroll() {
@@ -97,6 +140,36 @@ class ComicListFragment(
     override fun onComicClick(position: Int) {
         val bundle = bundleOf("COMIC_ID" to comicList[position].id)
         findNavController().navigate(R.id.comicDetailsFragment, bundle)
+    }
+
+    override fun onComicFavoriteClick(position: Int) {
+        comicViewModel.isFavorite(comicList[position].id)
+            .observe(viewLifecycleOwner, { isFavorite ->
+                if (isFavorite) {
+                    comicViewModel.removeFavorite(comicList[position].id)
+                        .observe(viewLifecycleOwner, {
+                            if (it) {
+                                comicList[position].isFavorite = false
+                                if (onlyFavorites) {
+                                    comicList.removeAt(position)
+                                    comicListAdapter.notifyDataSetChanged()
+                                } else {
+                                    comicListAdapter.notifyItemChanged(position)
+                                }
+                            }
+                        })
+                } else {
+                    comicViewModel.addFavorite(comicList[position].id)
+                        .observe(viewLifecycleOwner, {
+                            if (it) {
+                                comicList[position].isFavorite = true
+                                comicListAdapter.notifyItemChanged(position)
+                            }
+                        })
+                }
+
+                comicList[position].isFavorite = !comicList[position].isFavorite
+            })
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

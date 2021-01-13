@@ -11,15 +11,22 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.marvelworld.R
 import com.example.marvelworld.api.models.Image
-import com.example.marvelworld.reusablecomponents.expandablecard.Card
-import com.example.marvelworld.reusablecomponents.expandablecard.ExpandableCardUtils
+import com.example.marvelworld.detailcard.models.DetailCard
+import com.example.marvelworld.detailcard.views.DetailCardFragment
+import com.example.marvelworld.favorite.db.AppDatabase
+import com.example.marvelworld.favorite.respository.FavoriteRepository
 import com.example.marvelworld.reusablecomponents.horizontallist.HorizontalListItem
 import com.example.marvelworld.reusablecomponents.horizontallist.HorizontalListUtils
 import com.example.marvelworld.reusablecomponents.horizontallist.OnHorizontalListItemClickListener
 import com.example.marvelworld.storydetails.repository.StoryDetailsRepository
 import com.example.marvelworld.storydetails.viewmodel.StoryDetailsViewModel
+import com.example.marvelworld.util.ResourceType
 
-class StoryDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
+class StoryDetailsFragment :
+    Fragment(),
+    OnHorizontalListItemClickListener {
+
+    private lateinit var storyDetailsViewModel: StoryDetailsViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,21 +41,31 @@ class StoryDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
 
         val storyId = requireArguments().getInt("STORY_ID")
 
-        val storyDetailsViewModel = ViewModelProvider(
+        storyDetailsViewModel = ViewModelProvider(
             this,
-            StoryDetailsViewModel.StoryDetailsViewModelFactory(StoryDetailsRepository())
+            StoryDetailsViewModel.StoryDetailsViewModelFactory(
+                StoryDetailsRepository(),
+                FavoriteRepository(AppDatabase.getDatabase(view.context).favoriteDao())
+            )
         ).get(StoryDetailsViewModel::class.java)
 
         storyDetailsViewModel.getStory(storyId)
             .observe(viewLifecycleOwner, { story ->
-                val card = Card(
+                val card = DetailCard(
+                    story.id,
                     story.title,
                     story.thumbnail?.getImagePath(Image.LANDSCAPE_INCREDIBLE),
                     story.thumbnail?.getImagePath(Image.FULL_SIZE),
                     story.description,
-                    null
+                    null,
+                    ResourceType.STORY,
+                    story.isFavorite
                 )
-                ExpandableCardUtils.initCard(view, card, childFragmentManager)
+
+                childFragmentManager.beginTransaction().replace(
+                    R.id.detail_card,
+                    DetailCardFragment(card)
+                ).commit()
             })
 
         storyDetailsViewModel.getStoryCharacters(storyId)

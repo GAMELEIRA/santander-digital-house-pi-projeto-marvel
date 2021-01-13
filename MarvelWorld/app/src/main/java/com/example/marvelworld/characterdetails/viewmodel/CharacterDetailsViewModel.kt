@@ -4,21 +4,25 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.liveData
 import com.example.marvelworld.characterdetails.repository.CharacterDetailsRepository
+import com.example.marvelworld.favorite.respository.FavoriteRepository
 import com.example.marvelworld.reusablecomponents.horizontallist.HorizontalListItem
 import com.example.marvelworld.reusablecomponents.horizontallist.HorizontalListUtils
+import com.example.marvelworld.util.ResourceType
 import kotlinx.coroutines.Dispatchers
 
-@Suppress("UNCHECKED_CAST")
 class CharacterDetailsViewModel(
-    private val repository: CharacterDetailsRepository
+    private val characterRepository: CharacterDetailsRepository,
+    private val favoriteRepository: FavoriteRepository
 ) : ViewModel() {
     fun getCharacter(characterId: Int) = liveData(Dispatchers.IO) {
-        val response = repository.getCharacter(characterId)
-        emit(response.data.results[0])
+        val response = characterRepository.getCharacter(characterId)
+        val character = response.data.results[0]
+        character.isFavorite = favoriteRepository.isFavorite(character.id, ResourceType.CHARACTER)
+        emit(character)
     }
 
     fun getCharacterComics(characterId: Int) = liveData(Dispatchers.IO) {
-        val response = repository.getCharacterComics(characterId)
+        val response = characterRepository.getCharacterComics(characterId)
         emit(response.data.results.map { comic ->
             HorizontalListItem(
                 comic.id,
@@ -29,7 +33,7 @@ class CharacterDetailsViewModel(
     }
 
     fun getCharacterStories(characterId: Int) = liveData(Dispatchers.IO) {
-        val response = repository.getCharacterStories(characterId)
+        val response = characterRepository.getCharacterStories(characterId)
         emit(response.data.results.map { story ->
             HorizontalListItem(
                 story.id,
@@ -40,7 +44,7 @@ class CharacterDetailsViewModel(
     }
 
     fun getCharacterEvents(characterId: Int) = liveData(Dispatchers.IO) {
-        val response = repository.getCharacterEvents(characterId)
+        val response = characterRepository.getCharacterEvents(characterId)
         emit(response.data.results.map { event ->
             HorizontalListItem(
                 event.id,
@@ -51,7 +55,7 @@ class CharacterDetailsViewModel(
     }
 
     fun getCharacterSeries(characterId: Int) = liveData(Dispatchers.IO) {
-        val response = repository.getCharacterSeries(characterId)
+        val response = characterRepository.getCharacterSeries(characterId)
         emit(response.data.results.map { series ->
             HorizontalListItem(
                 series.id,
@@ -61,11 +65,13 @@ class CharacterDetailsViewModel(
         })
     }
 
+    @Suppress("UNCHECKED_CAST")
     class CharacterDetailsViewModelFactory(
-        private val repository: CharacterDetailsRepository
+        private val characterRepository: CharacterDetailsRepository,
+        private val favoriteRepository: FavoriteRepository
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            return CharacterDetailsViewModel(repository) as T
+            return CharacterDetailsViewModel(characterRepository, favoriteRepository) as T
         }
     }
 }

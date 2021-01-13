@@ -13,13 +13,18 @@ import com.example.marvelworld.R
 import com.example.marvelworld.api.models.Image
 import com.example.marvelworld.creatordetails.repository.CreatorDetailsRepository
 import com.example.marvelworld.creatordetails.viewmodel.CreatorDetailsViewModel
-import com.example.marvelworld.reusablecomponents.expandablecard.Card
-import com.example.marvelworld.reusablecomponents.expandablecard.ExpandableCardUtils
+import com.example.marvelworld.detailcard.models.DetailCard
+import com.example.marvelworld.detailcard.views.DetailCardFragment
+import com.example.marvelworld.favorite.db.AppDatabase
+import com.example.marvelworld.favorite.respository.FavoriteRepository
 import com.example.marvelworld.reusablecomponents.horizontallist.HorizontalListItem
 import com.example.marvelworld.reusablecomponents.horizontallist.HorizontalListUtils
 import com.example.marvelworld.reusablecomponents.horizontallist.OnHorizontalListItemClickListener
+import com.example.marvelworld.util.ResourceType
 
-class CreatorDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
+class CreatorDetailsFragment :
+    Fragment(),
+    OnHorizontalListItemClickListener {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,19 +41,29 @@ class CreatorDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
 
         val creatorDetailsViewModel = ViewModelProvider(
             this,
-            CreatorDetailsViewModel.CreatorDetailsViewModelFactory(CreatorDetailsRepository())
+            CreatorDetailsViewModel.CreatorDetailsViewModelFactory(
+                CreatorDetailsRepository(),
+                FavoriteRepository(AppDatabase.getDatabase(view.context).favoriteDao())
+            )
         ).get(CreatorDetailsViewModel::class.java)
 
         creatorDetailsViewModel.getCreator(creatorId)
             .observe(viewLifecycleOwner, { creator ->
-                val card = Card(
+                val card = DetailCard(
+                    creator.id,
                     creator.fullName,
                     creator.thumbnail.getImagePath(Image.LANDSCAPE_INCREDIBLE),
                     creator.thumbnail.getImagePath(Image.FULL_SIZE),
                     null,
-                    creator.urls
+                    creator.urls,
+                    ResourceType.CREATOR,
+                    creator.isFavorite
                 )
-                ExpandableCardUtils.initCard(view, card, childFragmentManager)
+
+                childFragmentManager.beginTransaction().replace(
+                    R.id.detail_card,
+                    DetailCardFragment(card)
+                ).commit()
             })
 
         creatorDetailsViewModel.getCreatorComics(creatorId)

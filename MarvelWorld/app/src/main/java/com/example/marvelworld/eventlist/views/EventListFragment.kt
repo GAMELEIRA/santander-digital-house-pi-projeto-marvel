@@ -13,12 +13,14 @@ import com.example.marvelworld.R
 import com.example.marvelworld.eventlist.models.Event
 import com.example.marvelworld.eventlist.repository.EventRepository
 import com.example.marvelworld.eventlist.viewmodel.EventViewModel
+import com.example.marvelworld.favorite.db.AppDatabase
+import com.example.marvelworld.favorite.respository.FavoriteRepository
 import com.example.marvelworld.filters.models.Filter
 import com.example.marvelworld.filters.views.CallbackListener
 import com.example.marvelworld.filters.views.FilterListFragment
 
 class EventListFragment(
-    onlyFavorites: Boolean = false
+    private val onlyFavorites: Boolean = false
 ) : Fragment(),
     OnEventClickListener,
     CallbackListener {
@@ -30,6 +32,7 @@ class EventListFragment(
     private val eventList = mutableListOf<Event>()
     private var filter = Filter()
     private var loading = false
+    private var onPause = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,10 +42,24 @@ class EventListFragment(
         return inflater.inflate(R.layout.fragment_event_list, container, false)
     }
 
+    override fun onPause() {
+        super.onPause()
+
+        onPause = true
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (onPause) {
+            updateEvents()
+            onPause = false
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setHasOptionsMenu(true)
+        if (!onlyFavorites) setHasOptionsMenu(true)
 
         recycler = view.findViewById(R.id.recycler_event_list)
 
@@ -56,21 +73,47 @@ class EventListFragment(
 
         eventViewModel = ViewModelProvider(
             this,
-            EventViewModel.EventViewModelFactory(EventRepository())
+            EventViewModel.EventViewModelFactory(
+                EventRepository(),
+                FavoriteRepository(AppDatabase.getDatabase(view.context).favoriteDao())
+            )
         ).get(EventViewModel::class.java)
 
         if (eventList.isEmpty()) getEvents()
 
-        initInfiniteScroll()
+        if (!onlyFavorites) initInfiniteScroll()
+    }
+
+    private fun updateEvents() {
+        if (!onlyFavorites) {
+            eventViewModel.updateEvents(eventList)
+                .observe(viewLifecycleOwner, {
+                    eventListAdapter.notifyDataSetChanged()
+                })
+        } else {
+            eventViewModel.updateFavoriteEvents(eventList)
+                .observe(viewLifecycleOwner, {
+                    eventList.removeAll(it)
+                    eventListAdapter.notifyDataSetChanged()
+                })
+        }
     }
 
     private fun getEvents() {
         loading = true
-        eventViewModel.getEvents().observe(viewLifecycleOwner, {
-            eventList.addAll(it)
-            eventListAdapter.notifyDataSetChanged()
-            loading = false
-        })
+        if (onlyFavorites) {
+            eventViewModel.getFavoriteEvents().observe(viewLifecycleOwner, {
+                eventList.addAll(it)
+                eventListAdapter.notifyDataSetChanged()
+                loading = false
+            })
+        } else {
+            eventViewModel.getEvents().observe(viewLifecycleOwner, {
+                eventList.addAll(it)
+                eventListAdapter.notifyDataSetChanged()
+                loading = false
+            })
+        }
     }
 
     private fun initInfiniteScroll() {
@@ -97,6 +140,36 @@ class EventListFragment(
     override fun onEventClick(position: Int) {
         val bundle = bundleOf("EVENT_ID" to eventList[position].id)
         findNavController().navigate(R.id.eventDetailsFragment, bundle)
+    }
+
+    override fun onEventFavoriteClick(position: Int) {
+        eventViewModel.isFavorite(eventList[position].id)
+            .observe(viewLifecycleOwner, { isFavorite ->
+                if (isFavorite) {
+                    eventViewModel.removeFavorite(eventList[position].id)
+                        .observe(viewLifecycleOwner, {
+                            if (it) {
+                                eventList[position].isFavorite = false
+                                if (onlyFavorites) {
+                                    eventList.removeAt(position)
+                                    eventListAdapter.notifyDataSetChanged()
+                                } else {
+                                    eventListAdapter.notifyItemChanged(position)
+                                }
+                            }
+                        })
+                } else {
+                    eventViewModel.addFavorite(eventList[position].id)
+                        .observe(viewLifecycleOwner, {
+                            if (it) {
+                                eventList[position].isFavorite = true
+                                eventListAdapter.notifyItemChanged(position)
+                            }
+                        })
+                }
+
+                eventList[position].isFavorite = !eventList[position].isFavorite
+            })
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

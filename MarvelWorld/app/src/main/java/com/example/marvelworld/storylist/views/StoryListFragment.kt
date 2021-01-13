@@ -10,6 +10,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.marvelworld.R
+import com.example.marvelworld.favorite.db.AppDatabase
+import com.example.marvelworld.favorite.respository.FavoriteRepository
 import com.example.marvelworld.filters.models.Filter
 import com.example.marvelworld.filters.views.CallbackListener
 import com.example.marvelworld.filters.views.FilterListFragment
@@ -18,7 +20,7 @@ import com.example.marvelworld.storylist.repository.StoryRepository
 import com.example.marvelworld.storylist.viewmodel.StoryViewModel
 
 class StoryListFragment(
-    onlyFavorites: Boolean = false
+    private val onlyFavorites: Boolean = false
 ) : Fragment(),
     OnStoryClickListener,
     CallbackListener {
@@ -30,6 +32,7 @@ class StoryListFragment(
     private val storyList = mutableListOf<Story>()
     private var filter = Filter()
     private var loading = false
+    private var onPause = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,10 +42,24 @@ class StoryListFragment(
         return inflater.inflate(R.layout.fragment_story_list, container, false)
     }
 
+    override fun onPause() {
+        super.onPause()
+
+        onPause = true
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (onPause) {
+            updateStories()
+            onPause = false
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setHasOptionsMenu(true)
+        if (!onlyFavorites) setHasOptionsMenu(true)
 
         recycler = view.findViewById(R.id.recycler_story_list)
         val manager = LinearLayoutManager(view.context)
@@ -55,21 +72,47 @@ class StoryListFragment(
 
         storyViewModel = ViewModelProvider(
             this,
-            StoryViewModel.StoryViewModelFactory(StoryRepository())
+            StoryViewModel.StoryViewModelFactory(
+                StoryRepository(),
+                FavoriteRepository(AppDatabase.getDatabase(view.context).favoriteDao())
+            )
         ).get(StoryViewModel::class.java)
 
-        getStories()
+        if(storyList.isEmpty()) getStories()
 
-        initInfiniteScroll()
+        if (!onlyFavorites) initInfiniteScroll()
+    }
+
+    private fun updateStories() {
+        if (!onlyFavorites) {
+            storyViewModel.updateStories(storyList)
+                .observe(viewLifecycleOwner, {
+                    storyListAdapter.notifyDataSetChanged()
+                })
+        } else {
+            storyViewModel.updateFavoriteStories(storyList)
+                .observe(viewLifecycleOwner, {
+                    storyList.removeAll(it)
+                    storyListAdapter.notifyDataSetChanged()
+                })
+        }
     }
 
     private fun getStories() {
         loading = true
-        storyViewModel.getStories().observe(viewLifecycleOwner, {
-            storyList.addAll(it)
-            storyListAdapter.notifyDataSetChanged()
-            loading = false
-        })
+        if (onlyFavorites) {
+            storyViewModel.getFavoriteStories().observe(viewLifecycleOwner, {
+                storyList.addAll(it)
+                storyListAdapter.notifyDataSetChanged()
+                loading = false
+            })
+        } else {
+            storyViewModel.getStories().observe(viewLifecycleOwner, {
+                storyList.addAll(it)
+                storyListAdapter.notifyDataSetChanged()
+                loading = false
+            })
+        }
     }
 
     private fun initInfiniteScroll() {
@@ -96,6 +139,36 @@ class StoryListFragment(
     override fun onStoryClick(position: Int) {
         val bundle = bundleOf("STORY_ID" to storyList[position].id)
         findNavController().navigate(R.id.storyDetailsFragment, bundle)
+    }
+
+    override fun onStoryFavoriteClick(position: Int) {
+        storyViewModel.isFavorite(storyList[position].id)
+            .observe(viewLifecycleOwner, { isFavorite ->
+                if (isFavorite) {
+                    storyViewModel.removeFavorite(storyList[position].id)
+                        .observe(viewLifecycleOwner, {
+                            if (it) {
+                                storyList[position].isFavorite = false
+                                if (onlyFavorites) {
+                                    storyList.removeAt(position)
+                                    storyListAdapter.notifyDataSetChanged()
+                                } else {
+                                    storyListAdapter.notifyItemChanged(position)
+                                }
+                            }
+                        })
+                } else {
+                    storyViewModel.addFavorite(storyList[position].id)
+                        .observe(viewLifecycleOwner, {
+                            if (it) {
+                                storyList[position].isFavorite = true
+                                storyListAdapter.notifyItemChanged(position)
+                            }
+                        })
+                }
+
+                storyList[position].isFavorite = !storyList[position].isFavorite
+            })
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

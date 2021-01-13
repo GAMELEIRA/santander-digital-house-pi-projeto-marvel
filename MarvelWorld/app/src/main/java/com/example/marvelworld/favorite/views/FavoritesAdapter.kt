@@ -1,4 +1,4 @@
-package com.example.marvelworld.favorites.views
+package com.example.marvelworld.favorite.views
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager

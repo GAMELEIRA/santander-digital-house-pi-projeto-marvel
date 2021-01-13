@@ -2,36 +2,42 @@
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
     android:checkable="true"
     android:clickable="true"
     android:focusable="true"
-    app:cardBackgroundColor="#272727"
+    app:cardBackgroundColor="@color/dark_grey"
     app:cardCornerRadius="0dp">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/text_view_story_shape"
         android:orientation="horizontal">
-
-        <View
-            android:layout_width="4dp"
-            android:layout_height="match_parent"
-            android:background="@color/colorPrimary" />
 
         <TextView
             android:id="@+id/story_list_item_title"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
             android:padding="8dp"
-            android:textColor="#fff"
+            android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold"
             tools:text="Story title" />
 
+        <ImageButton
+            android:id="@+id/story_list_favorite_button"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/ic_baseline_star_border_24"
+            android:contentDescription="@string/button_for_setting_resource_as_favorite"
+            app:backgroundTint="@color/white" />
     </LinearLayout>
-
-
 </com.google.android.material.card.MaterialCardView>

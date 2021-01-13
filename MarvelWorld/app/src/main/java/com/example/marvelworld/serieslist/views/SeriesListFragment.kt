@@ -10,6 +10,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.marvelworld.R
+import com.example.marvelworld.favorite.db.AppDatabase
+import com.example.marvelworld.favorite.respository.FavoriteRepository
 import com.example.marvelworld.filters.models.Filter
 import com.example.marvelworld.filters.views.CallbackListener
 import com.example.marvelworld.filters.views.FilterListFragment
@@ -18,7 +20,7 @@ import com.example.marvelworld.serieslist.repository.SeriesRepository
 import com.example.marvelworld.serieslist.viewmodel.SeriesViewModel
 
 class SeriesListFragment(
-    onlyFavorites: Boolean = false
+    private val onlyFavorites: Boolean = false
 ) : Fragment(),
     OnSeriesClickListener,
     CallbackListener {
@@ -29,6 +31,7 @@ class SeriesListFragment(
     private val seriesList = mutableListOf<Series>()
     private var filter = Filter()
     private var loading = false
+    private var onPause = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,10 +41,24 @@ class SeriesListFragment(
         return inflater.inflate(R.layout.fragment_series_list, container, false)
     }
 
+    override fun onPause() {
+        super.onPause()
+
+        onPause = true
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (onPause) {
+            updateSeries()
+            onPause = false
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setHasOptionsMenu(true)
+        if (!onlyFavorites) setHasOptionsMenu(true)
 
         recycler = view.findViewById(R.id.recycler_series_list)
         val manager = GridLayoutManager(view.context, 2)
@@ -54,21 +71,47 @@ class SeriesListFragment(
 
         seriesViewModel = ViewModelProvider(
             this,
-            SeriesViewModel.SeriesViewModelFactory(SeriesRepository())
+            SeriesViewModel.SeriesViewModelFactory(
+                SeriesRepository(),
+                FavoriteRepository(AppDatabase.getDatabase(view.context).favoriteDao())
+            )
         ).get(SeriesViewModel::class.java)
 
         if (seriesList.isEmpty()) getSeries()
 
-        initInfiniteScroll()
+        if (!onlyFavorites) initInfiniteScroll()
+    }
+
+    private fun updateSeries() {
+        if (!onlyFavorites) {
+            seriesViewModel.updateSeries(seriesList)
+                .observe(viewLifecycleOwner, {
+                    seriesListAdapter.notifyDataSetChanged()
+                })
+        } else {
+            seriesViewModel.updateFavoriteSeries(seriesList)
+                .observe(viewLifecycleOwner, {
+                    seriesList.removeAll(it)
+                    seriesListAdapter.notifyDataSetChanged()
+                })
+        }
     }
 
     private fun getSeries() {
         loading = true
-        seriesViewModel.getSeries().observe(viewLifecycleOwner, {
-            seriesList.addAll(it)
-            seriesListAdapter.notifyDataSetChanged()
-            loading = false
-        })
+        if (onlyFavorites) {
+            seriesViewModel.getFavoriteSeries().observe(viewLifecycleOwner, {
+                seriesList.addAll(it)
+                seriesListAdapter.notifyDataSetChanged()
+                loading = false
+            })
+        } else {
+            seriesViewModel.getSeries().observe(viewLifecycleOwner, {
+                seriesList.addAll(it)
+                seriesListAdapter.notifyDataSetChanged()
+                loading = false
+            })
+        }
     }
 
     private fun initInfiniteScroll() {
@@ -95,6 +138,36 @@ class SeriesListFragment(
     override fun onSeriesClick(position: Int) {
         val bundle = bundleOf("SERIES_ID" to seriesList[position].id)
         findNavController().navigate(R.id.seriesDetailsFragment, bundle)
+    }
+
+    override fun onSeriesFavoriteClick(position: Int) {
+        seriesViewModel.isFavorite(seriesList[position].id)
+            .observe(viewLifecycleOwner, { isFavorite ->
+                if (isFavorite) {
+                    seriesViewModel.removeFavorite(seriesList[position].id)
+                        .observe(viewLifecycleOwner, {
+                            if (it) {
+                                seriesList[position].isFavorite = false
+                                if (onlyFavorites) {
+                                    seriesList.removeAt(position)
+                                    seriesListAdapter.notifyDataSetChanged()
+                                } else {
+                                    seriesListAdapter.notifyItemChanged(position)
+                                }
+                            }
+                        })
+                } else {
+                    seriesViewModel.addFavorite(seriesList[position].id)
+                        .observe(viewLifecycleOwner, {
+                            if (it) {
+                                seriesList[position].isFavorite = true
+                                seriesListAdapter.notifyItemChanged(position)
+                            }
+                        })
+                }
+
+                seriesList[position].isFavorite = !seriesList[position].isFavorite
+            })
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

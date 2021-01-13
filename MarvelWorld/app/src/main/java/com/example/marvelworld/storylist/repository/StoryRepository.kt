@@ -13,13 +13,7 @@ class StoryRepository {
         events: List<Int>,
         series: List<Int>,
         creators: List<Int>
-    ) = storyService.getStories(
-        offset,
-        limit,
-        characters,
-        comics,
-        events,
-        series,
-        creators
-    )
+    ) = storyService.getStories(offset, limit, characters, comics, events, series, creators)
+
+    suspend fun getStory(storyId: Int) = storyService.getStory(storyId)
 }

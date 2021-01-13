@@ -12,12 +12,7 @@ class CreatorRepository {
         comics: List<Int>,
         events: List<Int>,
         series: List<Int>
-    ) = creatorService.getCreators(
-        offset,
-        limit,
-        nameStartsWith,
-        comics,
-        events,
-        series
-    )
+    ) = creatorService.getCreators(offset, limit, nameStartsWith, comics, events, series)
+
+    suspend fun getCreator(creatorId: Int) = creatorService.getCreator(creatorId)
 }

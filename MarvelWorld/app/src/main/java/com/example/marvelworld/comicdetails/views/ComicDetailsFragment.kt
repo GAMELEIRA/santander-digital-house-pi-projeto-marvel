@@ -14,15 +14,22 @@ import com.example.marvelworld.R
 import com.example.marvelworld.api.models.Image
 import com.example.marvelworld.comicdetails.respository.ComicDetailsRepository
 import com.example.marvelworld.comicdetails.viewmodel.ComicDetailsViewModel
-import com.example.marvelworld.reusablecomponents.expandablecard.Card
-import com.example.marvelworld.reusablecomponents.expandablecard.ExpandableCardUtils
+import com.example.marvelworld.detailcard.models.DetailCard
+import com.example.marvelworld.detailcard.views.DetailCardFragment
+import com.example.marvelworld.favorite.db.AppDatabase
+import com.example.marvelworld.favorite.respository.FavoriteRepository
 import com.example.marvelworld.reusablecomponents.horizontallist.HorizontalListItem
 import com.example.marvelworld.reusablecomponents.horizontallist.HorizontalListUtils
 import com.example.marvelworld.reusablecomponents.horizontallist.OnHorizontalListItemClickListener
+import com.example.marvelworld.util.ResourceType
 import java.text.SimpleDateFormat
 import java.util.*
 
-class ComicDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
+class ComicDetailsFragment :
+    Fragment(),
+    OnHorizontalListItemClickListener {
+
+    private lateinit var comicDetailsViewModel: ComicDetailsViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,21 +44,31 @@ class ComicDetailsFragment : Fragment(), OnHorizontalListItemClickListener {
 
         val comicId = requireArguments().getInt("COMIC_ID")
 
-        val comicDetailsViewModel = ViewModelProvider(
+        comicDetailsViewModel = ViewModelProvider(
             this,
-            ComicDetailsViewModel.ComicDetailsViewModelFactory(ComicDetailsRepository())
+            ComicDetailsViewModel.ComicDetailsViewModelFactory(
+                ComicDetailsRepository(),
+                FavoriteRepository(AppDatabase.getDatabase(view.context).favoriteDao())
+            )
         ).get(ComicDetailsViewModel::class.java)
 
         comicDetailsViewModel.getComic(comicId)
             .observe(viewLifecycleOwner, { comic ->
-                val card = Card(
+                val card = DetailCard(
+                    comic.id,
                     comic.title,
                     comic.thumbnail.getImagePath(Image.LANDSCAPE_INCREDIBLE),
                     comic.thumbnail.getImagePath(Image.FULL_SIZE),
                     comic.description,
-                    comic.urls
+                    comic.urls,
+                    ResourceType.COMIC,
+                    comic.isFavorite
                 )
-                ExpandableCardUtils.initCard(view, card, childFragmentManager)
+
+                childFragmentManager.beginTransaction().replace(
+                    R.id.detail_card,
+                    DetailCardFragment(card)
+                ).commit()
 
                 val publishDate = view.findViewById<TextView>(R.id.publish_date)
                 val date = comic.dates.find { date ->

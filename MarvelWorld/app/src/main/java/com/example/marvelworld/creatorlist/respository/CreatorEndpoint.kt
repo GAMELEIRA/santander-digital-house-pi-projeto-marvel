@@ -3,6 +3,7 @@ package com.example.marvelworld.creatorlist.respository
 import com.example.marvelworld.api.models.DataWrapper
 import com.example.marvelworld.creatorlist.models.Creator
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface CreatorEndpoint {
@@ -15,4 +16,7 @@ interface CreatorEndpoint {
         @Query("events") events: List<Int>,
         @Query("series") series: List<Int>
     ): DataWrapper<Creator>
+
+    @GET("/v1/public/creators/{creatorId}")
+    suspend fun getCreator(@Path("creatorId") creatorId: Int): DataWrapper<Creator>
 }

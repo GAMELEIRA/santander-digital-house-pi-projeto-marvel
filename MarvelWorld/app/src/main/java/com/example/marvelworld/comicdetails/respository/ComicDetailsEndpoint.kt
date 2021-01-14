@@ -8,20 +8,37 @@ import com.example.marvelworld.eventlist.models.Event
 import com.example.marvelworld.storylist.models.Story
 import retrofit2.http.GET
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ComicDetailsEndpoint {
     @GET("/v1/public/comics/{comicId}")
     suspend fun getComic(@Path("comicId") comicId: Int): DataWrapper<Comic>
 
     @GET("/v1/public/comics/{comicId}/characters")
-    suspend fun getComicCharacters(@Path("comicId") comicId: Int): DataWrapper<Character>
+    suspend fun getComicCharacters(
+        @Path("comicId") comicId: Int,
+        @Query("offset") offset: Int,
+        @Query("limit") limit: Int
+    ): DataWrapper<Character>
 
     @GET("/v1/public/comics/{comicId}/creators")
-    suspend fun getComicCreators(@Path("comicId") comicId: Int): DataWrapper<Creator>
+    suspend fun getComicCreators(
+        @Path("comicId") comicId: Int,
+        @Query("offset") offset: Int,
+        @Query("limit") limit: Int
+    ): DataWrapper<Creator>
 
     @GET("/v1/public/comics/{comicId}/events")
-    suspend fun getComicEvents(@Path("comicId") comicId: Int): DataWrapper<Event>
+    suspend fun getComicEvents(
+        @Path("comicId") comicId: Int,
+        @Query("offset") offset: Int,
+        @Query("limit") limit: Int
+    ): DataWrapper<Event>
 
     @GET("/v1/public/comics/{comicId}/stories")
-    suspend fun getComicStories(@Path("comicId") comicId: Int): DataWrapper<Story>
+    suspend fun getComicStories(
+        @Path("comicId") comicId: Int,
+        @Query("offset") offset: Int,
+        @Query("limit") limit: Int
+    ): DataWrapper<Story>
 }

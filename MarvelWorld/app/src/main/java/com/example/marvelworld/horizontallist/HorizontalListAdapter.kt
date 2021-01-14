@@ -1,4 +1,4 @@
-package com.example.marvelworld.reusablecomponents.horizontallist
+package com.example.marvelworld.horizontallist
 
 import android.view.LayoutInflater
 import android.view.View

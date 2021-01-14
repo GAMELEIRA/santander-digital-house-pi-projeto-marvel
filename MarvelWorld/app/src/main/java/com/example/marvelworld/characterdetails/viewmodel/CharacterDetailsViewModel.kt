@@ -5,15 +5,20 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.liveData
 import com.example.marvelworld.characterdetails.repository.CharacterDetailsRepository
 import com.example.marvelworld.favorite.respository.FavoriteRepository
-import com.example.marvelworld.reusablecomponents.horizontallist.HorizontalListItem
-import com.example.marvelworld.reusablecomponents.horizontallist.HorizontalListUtils
+import com.example.marvelworld.horizontallist.HorizontalListItem
+import com.example.marvelworld.util.InfiniteScrollable
 import com.example.marvelworld.util.ResourceType
 import kotlinx.coroutines.Dispatchers
 
 class CharacterDetailsViewModel(
     private val characterRepository: CharacterDetailsRepository,
     private val favoriteRepository: FavoriteRepository
-) : ViewModel() {
+) : ViewModel(), InfiniteScrollable {
+
+    override var offset = 0
+    override val limit = 20
+    override var total = 0
+
     fun getCharacter(characterId: Int) = liveData(Dispatchers.IO) {
         val response = characterRepository.getCharacter(characterId)
         val character = response.data.results[0]
@@ -21,46 +26,62 @@ class CharacterDetailsViewModel(
         emit(character)
     }
 
-    fun getCharacterComics(characterId: Int) = liveData(Dispatchers.IO) {
-        val response = characterRepository.getCharacterComics(characterId)
+    override fun getComics(resourceId: Int) = liveData(Dispatchers.IO) {
+        val response = characterRepository.getCharacterComics(offset, limit, resourceId)
+
+        offset = response.data.offset + response.data.count
+        total = response.data.total
+
         emit(response.data.results.map { comic ->
             HorizontalListItem(
                 comic.id,
                 comic.title,
-                HorizontalListUtils.COMIC
+                ResourceType.COMIC
             )
         })
     }
 
-    fun getCharacterStories(characterId: Int) = liveData(Dispatchers.IO) {
-        val response = characterRepository.getCharacterStories(characterId)
+    override fun getStories(resourceId: Int) = liveData(Dispatchers.IO) {
+        val response = characterRepository.getCharacterStories(offset, limit, resourceId)
+
+        offset = response.data.offset + response.data.count
+        total = response.data.total
+
         emit(response.data.results.map { story ->
             HorizontalListItem(
                 story.id,
                 story.title,
-                HorizontalListUtils.STORY
+                ResourceType.STORY
             )
         })
     }
 
-    fun getCharacterEvents(characterId: Int) = liveData(Dispatchers.IO) {
-        val response = characterRepository.getCharacterEvents(characterId)
+    override fun getEvents(resourceId: Int) = liveData(Dispatchers.IO) {
+        val response = characterRepository.getCharacterEvents(offset, limit, resourceId)
+
+        offset = response.data.offset + response.data.count
+        total = response.data.total
+
         emit(response.data.results.map { event ->
             HorizontalListItem(
                 event.id,
                 event.title,
-                HorizontalListUtils.EVENT
+                ResourceType.EVENT
             )
         })
     }
 
-    fun getCharacterSeries(characterId: Int) = liveData(Dispatchers.IO) {
-        val response = characterRepository.getCharacterSeries(characterId)
+    override fun getSeries(resourceId: Int) = liveData(Dispatchers.IO) {
+        val response = characterRepository.getCharacterSeries(offset, limit, resourceId)
+
+        offset = response.data.offset + response.data.count
+        total = response.data.total
+
         emit(response.data.results.map { series ->
             HorizontalListItem(
                 series.id,
                 series.title,
-                HorizontalListUtils.SERIES
+                ResourceType.SERIES
             )
         })
     }

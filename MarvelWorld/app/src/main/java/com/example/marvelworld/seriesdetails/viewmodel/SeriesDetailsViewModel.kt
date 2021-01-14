@@ -4,16 +4,21 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.liveData
 import com.example.marvelworld.favorite.respository.FavoriteRepository
-import com.example.marvelworld.reusablecomponents.horizontallist.HorizontalListItem
-import com.example.marvelworld.reusablecomponents.horizontallist.HorizontalListUtils
+import com.example.marvelworld.horizontallist.HorizontalListItem
 import com.example.marvelworld.seriesdetails.respository.SeriesDetailsRepository
+import com.example.marvelworld.util.InfiniteScrollable
 import com.example.marvelworld.util.ResourceType
 import kotlinx.coroutines.Dispatchers
 
 class SeriesDetailsViewModel(
     private val seriesRepository: SeriesDetailsRepository,
     private val favoriteRepository: FavoriteRepository
-) : ViewModel() {
+) : ViewModel(), InfiniteScrollable {
+
+    override var offset = 0
+    override val limit = 20
+    override var total = 0
+
     fun getOneSeries(seriesId: Int) = liveData(Dispatchers.IO) {
         val response = seriesRepository.getOneSeries(seriesId)
         val series = response.data.results[0]
@@ -21,57 +26,77 @@ class SeriesDetailsViewModel(
         emit(response.data.results[0])
     }
 
-    fun getSeriesCharacters(seriesId: Int) = liveData(Dispatchers.IO) {
-        val response = seriesRepository.getSeriesCharacters(seriesId)
+    override fun getCharacters(resourceId: Int) = liveData(Dispatchers.IO) {
+        val response = seriesRepository.getSeriesCharacters(offset, limit, resourceId)
+
+        offset = response.data.offset + response.data.count
+        total = response.data.total
+
         emit(response.data.results.map { character ->
             HorizontalListItem(
                 character.id,
                 character.name,
-                HorizontalListUtils.CHARACTER
+                ResourceType.CHARACTER
             )
         })
     }
 
-    fun getSeriesComics(seriesId: Int) = liveData(Dispatchers.IO) {
-        val response = seriesRepository.getSeriesComics(seriesId)
+    override fun getComics(resourceId: Int) = liveData(Dispatchers.IO) {
+        val response = seriesRepository.getSeriesComics(offset, limit, resourceId)
+
+        offset = response.data.offset + response.data.count
+        total = response.data.total
+
         emit(response.data.results.map { comic ->
             HorizontalListItem(
                 comic.id,
                 comic.title,
-                HorizontalListUtils.COMIC
+                ResourceType.COMIC
             )
         })
     }
 
-    fun getSeriesStories(seriesId: Int) = liveData(Dispatchers.IO) {
-        val response = seriesRepository.getSeriesStories(seriesId)
+    override fun getStories(resourceId: Int) = liveData(Dispatchers.IO) {
+        val response = seriesRepository.getSeriesStories(offset, limit, resourceId)
+
+        offset = response.data.offset + response.data.count
+        total = response.data.total
+
         emit(response.data.results.map { story ->
             HorizontalListItem(
                 story.id,
                 story.title,
-                HorizontalListUtils.STORY
+                ResourceType.STORY
             )
         })
     }
 
-    fun getSeriesEvents(seriesId: Int) = liveData(Dispatchers.IO) {
-        val response = seriesRepository.getSeriesEvents(seriesId)
+    override fun getEvents(resourceId: Int) = liveData(Dispatchers.IO) {
+        val response = seriesRepository.getSeriesEvents(offset, limit, resourceId)
+
+        offset = response.data.offset + response.data.count
+        total = response.data.total
+
         emit(response.data.results.map { event ->
             HorizontalListItem(
                 event.id,
                 event.title,
-                HorizontalListUtils.EVENT
+                ResourceType.EVENT
             )
         })
     }
 
-    fun getSeriesCreators(seriesId: Int) = liveData(Dispatchers.IO) {
-        val response = seriesRepository.getSeriesCreators(seriesId)
+    override fun getCreators(resourceId: Int) = liveData(Dispatchers.IO) {
+        val response = seriesRepository.getSeriesCreators(offset, limit, resourceId)
+
+        offset = response.data.offset + response.data.count
+        total = response.data.total
+
         emit(response.data.results.map { creator ->
             HorizontalListItem(
                 creator.id,
                 creator.fullName,
-                HorizontalListUtils.CREATOR
+                ResourceType.CREATOR
             )
         })
     }

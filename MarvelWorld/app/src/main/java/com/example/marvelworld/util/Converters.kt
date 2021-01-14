@@ -1,6 +1,8 @@
 package com.example.marvelworld.util
 
+import android.content.res.Resources
 import androidx.room.TypeConverter
+import com.example.marvelworld.R
 
 class Converters {
 
@@ -18,8 +20,9 @@ class Converters {
             3 -> ResourceType.EVENT
             4 -> ResourceType.SERIES
             5 -> ResourceType.STORY
-            else -> throw IllegalArgumentException("Wrong type of resource")
+            else -> throw IllegalArgumentException(
+                Resources.getSystem().getString(R.string.wrong_type_of_resource)
+            )
         }
-
     }
 }

@@ -38,7 +38,7 @@ class CharacterListFragment(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_characeter_list, container, false)
+        return inflater.inflate(R.layout.fragment_character_list, container, false)
     }
 
     override fun onPause() {

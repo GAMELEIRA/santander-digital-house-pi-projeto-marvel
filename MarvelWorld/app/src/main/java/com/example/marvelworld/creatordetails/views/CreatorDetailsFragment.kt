@@ -4,11 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import com.example.marvelworld.R
 import com.example.marvelworld.api.models.Image
 import com.example.marvelworld.creatordetails.repository.CreatorDetailsRepository
@@ -17,14 +14,15 @@ import com.example.marvelworld.detailcard.models.DetailCard
 import com.example.marvelworld.detailcard.views.DetailCardFragment
 import com.example.marvelworld.favorite.db.AppDatabase
 import com.example.marvelworld.favorite.respository.FavoriteRepository
-import com.example.marvelworld.reusablecomponents.horizontallist.HorizontalListItem
-import com.example.marvelworld.reusablecomponents.horizontallist.HorizontalListUtils
-import com.example.marvelworld.reusablecomponents.horizontallist.OnHorizontalListItemClickListener
+import com.example.marvelworld.horizontallist.HorizontalListFragment
 import com.example.marvelworld.util.ResourceType
+import kotlin.properties.Delegates
 
-class CreatorDetailsFragment :
-    Fragment(),
-    OnHorizontalListItemClickListener {
+class CreatorDetailsFragment : Fragment() {
+
+    private lateinit var creatorDetailsViewModel: CreatorDetailsViewModel
+    private var creatorId by Delegates.notNull<Int>()
+    private val horizontalListFragmentMap = mutableMapOf<ResourceType, HorizontalListFragment>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,9 +35,9 @@ class CreatorDetailsFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val creatorId = requireArguments().getInt("CREATOR_ID")
+        creatorId = requireArguments().getInt("CREATOR_ID")
 
-        val creatorDetailsViewModel = ViewModelProvider(
+        creatorDetailsViewModel = ViewModelProvider(
             this,
             CreatorDetailsViewModel.CreatorDetailsViewModelFactory(
                 CreatorDetailsRepository(),
@@ -66,70 +64,23 @@ class CreatorDetailsFragment :
                 ).commit()
             })
 
-        creatorDetailsViewModel.getCreatorComics(creatorId)
-            .observe(viewLifecycleOwner, {
-                val comicList = view.findViewById<LinearLayout>(R.id.comic_list)
-                HorizontalListUtils.initHorizontalList(
-                    comicList,
-                    it,
-                    getString(R.string.comics),
-                    this
-                )
-            })
-
-        creatorDetailsViewModel.getCreatorEvents(creatorId)
-            .observe(viewLifecycleOwner, {
-                val eventList = view.findViewById<LinearLayout>(R.id.event_list)
-                HorizontalListUtils.initHorizontalList(
-                    eventList,
-                    it,
-                    getString(R.string.events),
-                    this
-                )
-            })
-
-        creatorDetailsViewModel.getCreatorSeries(creatorId)
-            .observe(viewLifecycleOwner, {
-                val seriesList = view.findViewById<LinearLayout>(R.id.series_list)
-                HorizontalListUtils.initHorizontalList(
-                    seriesList,
-                    it,
-                    getString(R.string.series),
-                    this
-                )
-            })
-
-        creatorDetailsViewModel.getCreatorStories(creatorId)
-            .observe(viewLifecycleOwner, {
-                val storyList = view.findViewById<LinearLayout>(R.id.story_list)
-                HorizontalListUtils.initHorizontalList(
-                    storyList,
-                    it,
-                    getString(R.string.stories),
-                    this
-                )
-            })
+        if (horizontalListFragmentMap.isEmpty()) {
+            inflateFragment(R.id.comic_list, getString(R.string.comics), ResourceType.COMIC)
+            inflateFragment(R.id.event_list, getString(R.string.events), ResourceType.EVENT)
+            inflateFragment(R.id.series_list, getString(R.string.series), ResourceType.SERIES)
+            inflateFragment(R.id.story_list, getString(R.string.stories), ResourceType.STORY)
+        }
     }
 
-    override fun onHorizontalListItemClick(item: HorizontalListItem) {
-        val bundle = bundleOf()
-        when (item.type) {
-            HorizontalListUtils.COMIC -> {
-                bundle.putInt("COMIC_ID", item.id)
-                findNavController().navigate(R.id.comicDetailsFragment, bundle)
-            }
-            HorizontalListUtils.EVENT -> {
-                bundle.putInt("EVENT_ID", item.id)
-                findNavController().navigate(R.id.eventDetailsFragment, bundle)
-            }
-            HorizontalListUtils.SERIES -> {
-                bundle.putInt("SERIES_ID", item.id)
-                findNavController().navigate(R.id.seriesDetailsFragment, bundle)
-            }
-            HorizontalListUtils.STORY -> {
-                bundle.putInt("STORY_ID", item.id)
-                findNavController().navigate(R.id.storyDetailsFragment, bundle)
-            }
-        }
+    private fun inflateFragment(layoutId: Int, title: String, type: ResourceType) {
+        val horizontalListFragment =
+            HorizontalListFragment(creatorDetailsViewModel, title, type, creatorId)
+
+        horizontalListFragmentMap[type] = horizontalListFragment
+
+        childFragmentManager.beginTransaction().replace(
+            layoutId,
+            horizontalListFragment
+        ).commit()
     }
 }

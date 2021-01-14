@@ -6,9 +6,19 @@ class StoryDetailsRepository {
     private val storyService = NetworkUtils.getApiService(StoryDetailsEndpoint::class.java)
 
     suspend fun getStory(storyId: Int) = storyService.getStory(storyId)
-    suspend fun getStoryCharacters(storyId: Int) = storyService.getStoryCharacters(storyId)
-    suspend fun getStoryComics(storyId: Int) = storyService.getStoryComics(storyId)
-    suspend fun getStoryCreators(storyId: Int) = storyService.getStoryCreators(storyId)
-    suspend fun getStoryEvents(storyId: Int) = storyService.getStoryEvents(storyId)
-    suspend fun getStorySeries(storyId: Int) = storyService.getStorySeries(storyId)
+
+    suspend fun getStoryCharacters(offset: Int, limit: Int, storyId: Int) =
+        storyService.getStoryCharacters(storyId, offset, limit)
+
+    suspend fun getStoryComics(offset: Int, limit: Int, storyId: Int) =
+        storyService.getStoryComics(storyId, offset, limit)
+
+    suspend fun getStoryCreators(offset: Int, limit: Int, storyId: Int) =
+        storyService.getStoryCreators(storyId, offset, limit)
+
+    suspend fun getStoryEvents(offset: Int, limit: Int, storyId: Int) =
+        storyService.getStoryEvents(storyId, offset, limit)
+
+    suspend fun getStorySeries(offset: Int, limit: Int, storyId: Int) =
+        storyService.getStorySeries(storyId, offset, limit)
 }

@@ -18,37 +18,32 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp" />
 
-        <include
+        <FrameLayout
             android:id="@+id/character_list"
-            layout="@layout/horizontal_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp" />
 
-        <include
+        <FrameLayout
             android:id="@+id/comic_list"
-            layout="@layout/horizontal_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp" />
 
-        <include
+        <FrameLayout
             android:id="@+id/event_list"
-            layout="@layout/horizontal_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp" />
 
-        <include
+        <FrameLayout
             android:id="@+id/story_list"
-            layout="@layout/horizontal_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp" />
 
-        <include
+        <FrameLayout
             android:id="@+id/creator_list"
-            layout="@layout/horizontal_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp" />

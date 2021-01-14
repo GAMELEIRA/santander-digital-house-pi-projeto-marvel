@@ -4,16 +4,21 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.liveData
 import com.example.marvelworld.favorite.respository.FavoriteRepository
-import com.example.marvelworld.reusablecomponents.horizontallist.HorizontalListItem
-import com.example.marvelworld.reusablecomponents.horizontallist.HorizontalListUtils
+import com.example.marvelworld.horizontallist.HorizontalListItem
 import com.example.marvelworld.storydetails.repository.StoryDetailsRepository
+import com.example.marvelworld.util.InfiniteScrollable
 import com.example.marvelworld.util.ResourceType
 import kotlinx.coroutines.Dispatchers
 
 class StoryDetailsViewModel(
     private val storyRepository: StoryDetailsRepository,
     private val favoriteRepository: FavoriteRepository
-) : ViewModel() {
+) : ViewModel(), InfiniteScrollable {
+
+    override var offset = 0
+    override val limit = 20
+    override var total = 0
+
     fun getStory(storyId: Int) = liveData(Dispatchers.IO) {
         val response = storyRepository.getStory(storyId)
         val story = response.data.results[0]
@@ -21,57 +26,57 @@ class StoryDetailsViewModel(
         emit(response.data.results[0])
     }
 
-    fun getStoryCharacters(storyId: Int) = liveData(Dispatchers.IO) {
-        val response = storyRepository.getStoryCharacters(storyId)
+    override fun getCharacters(resourceId: Int) = liveData(Dispatchers.IO) {
+        val response = storyRepository.getStoryCharacters(offset, limit, resourceId)
         emit(response.data.results.map { character ->
             HorizontalListItem(
                 character.id,
                 character.name,
-                HorizontalListUtils.CHARACTER
+                ResourceType.CHARACTER
             )
         })
     }
 
-    fun getStoryComics(storyId: Int) = liveData(Dispatchers.IO) {
-        val response = storyRepository.getStoryComics(storyId)
+    override fun getComics(resourceId: Int) = liveData(Dispatchers.IO) {
+        val response = storyRepository.getStoryComics(offset, limit, resourceId)
         emit(response.data.results.map { comic ->
             HorizontalListItem(
                 comic.id,
                 comic.title,
-                HorizontalListUtils.COMIC
+                ResourceType.COMIC
             )
         })
     }
 
-    fun getStoryEvents(storyId: Int) = liveData(Dispatchers.IO) {
-        val response = storyRepository.getStoryEvents(storyId)
+    override fun getEvents(resourceId: Int) = liveData(Dispatchers.IO) {
+        val response = storyRepository.getStoryEvents(offset, limit, resourceId)
         emit(response.data.results.map { event ->
             HorizontalListItem(
                 event.id,
                 event.title,
-                HorizontalListUtils.EVENT
+                ResourceType.EVENT
             )
         })
     }
 
-    fun getStorySeries(storyId: Int) = liveData(Dispatchers.IO) {
-        val response = storyRepository.getStorySeries(storyId)
+    override fun getSeries(resourceId: Int) = liveData(Dispatchers.IO) {
+        val response = storyRepository.getStorySeries(offset, limit, resourceId)
         emit(response.data.results.map { story ->
             HorizontalListItem(
                 story.id,
                 story.title,
-                HorizontalListUtils.SERIES
+                ResourceType.SERIES
             )
         })
     }
 
-    fun getStoryCreators(storyId: Int) = liveData(Dispatchers.IO) {
-        val response = storyRepository.getStoryCreators(storyId)
+    override fun getCreators(resourceId: Int) = liveData(Dispatchers.IO) {
+        val response = storyRepository.getStoryCreators(offset, limit, resourceId)
         emit(response.data.results.map { creator ->
             HorizontalListItem(
                 creator.id,
                 creator.fullName,
-                HorizontalListUtils.CREATOR
+                ResourceType.CREATOR
             )
         })
     }

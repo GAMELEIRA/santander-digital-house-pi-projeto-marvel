@@ -1,4 +1,4 @@
-package com.example.marvelworld.reusablecomponents.horizontallist
+package com.example.marvelworld.horizontallist
 
 interface OnHorizontalListItemClickListener {
     fun onHorizontalListItemClick(item: HorizontalListItem)

@@ -9,23 +9,44 @@ import com.example.marvelworld.serieslist.models.Series
 import com.example.marvelworld.storylist.models.Story
 import retrofit2.http.GET
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface StoryDetailsEndpoint {
     @GET("/v1/public/stories/{storyId}")
     suspend fun getStory(@Path("storyId") storyId: Int): DataWrapper<Story>
 
     @GET("/v1/public/stories/{storyId}/characters")
-    suspend fun getStoryCharacters(@Path("storyId") storyId: Int): DataWrapper<Character>
+    suspend fun getStoryCharacters(
+        @Path("storyId") storyId: Int,
+        @Query("offset") offset: Int,
+        @Query("limit") limit: Int
+    ): DataWrapper<Character>
 
     @GET("/v1/public/stories/{storyId}/comics")
-    suspend fun getStoryComics(@Path("storyId") storyId: Int): DataWrapper<Comic>
+    suspend fun getStoryComics(
+        @Path("storyId") storyId: Int,
+        @Query("offset") offset: Int,
+        @Query("limit") limit: Int
+    ): DataWrapper<Comic>
 
     @GET("/v1/public/stories/{storyId}/creators")
-    suspend fun getStoryCreators(@Path("storyId") storyId: Int): DataWrapper<Creator>
+    suspend fun getStoryCreators(
+        @Path("storyId") storyId: Int,
+        @Query("offset") offset: Int,
+        @Query("limit") limit: Int
+    ): DataWrapper<Creator>
 
     @GET("/v1/public/stories/{storyId}/events")
-    suspend fun getStoryEvents(@Path("storyId") storyId: Int): DataWrapper<Event>
+    suspend fun getStoryEvents(
+        @Path("storyId") storyId: Int,
+        @Query("offset") offset: Int,
+        @Query("limit") limit: Int
+    ): DataWrapper<Event>
 
     @GET("/v1/public/stories/{storyId}/series")
-    suspend fun getStorySeries(@Path("storyId") seriesId: Int): DataWrapper<Series>
+    suspend fun getStorySeries(
+        @Path("storyId") seriesId: Int,
+        @Query("offset") offset: Int,
+        @Query("limit") limit: Int
+    ): DataWrapper<Series>
 }

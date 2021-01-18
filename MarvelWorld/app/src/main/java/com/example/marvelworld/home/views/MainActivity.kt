@@ -15,6 +15,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.marvelworld.R
 import com.example.marvelworld.signinsignup.view.SignInSignUpActivity
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : AppCompatActivity() {
     private val navController: NavController by lazy { findNavController(R.id.nav_host_fragment) }
@@ -22,6 +23,8 @@ class MainActivity : AppCompatActivity() {
     private val navigationView by lazy { findViewById<NavigationView>(R.id.navigationView) }
     private val logOutButton by lazy { findViewById<LinearLayout>(R.id.log_out_button) }
     private lateinit var appBarConfiguration: AppBarConfiguration
+
+    private val auth by lazy { FirebaseAuth.getInstance() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +37,7 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
 
         logOutButton.setOnClickListener {
+            auth.signOut()
             val intent = Intent(this, SignInSignUpActivity::class.java)
             startActivity(intent)
             finish()

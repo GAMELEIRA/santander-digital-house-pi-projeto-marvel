@@ -56,7 +56,6 @@
     <string name="stories">Stories</string>
     <string name="creator">Creator</string>
     <string name="creators">Creators</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="wrong_type_of_resource">Wrong type of resource</string>
+    <string name="sing_in_failed">Sign in failed!</string>
 </resources>

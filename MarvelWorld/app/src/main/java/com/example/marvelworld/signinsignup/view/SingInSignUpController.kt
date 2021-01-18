@@ -1,6 +1,6 @@
 package com.example.marvelworld.signinsignup.view
 
-interface FragmentController {
+interface SingInSignUpController {
     fun showSignUpFragment()
     fun startMainActivity()
     fun showSignInFragment()

@@ -13,7 +13,7 @@ class SignUpFragment : Fragment() {
 
     private lateinit var signUpButton: Button
     private lateinit var signInButton: RelativeLayout
-    private lateinit var activity: FragmentController
+    private lateinit var activity: SingInSignUpController
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -27,7 +27,7 @@ class SignUpFragment : Fragment() {
 
         signUpButton = view.findViewById(R.id.sign_up_button)
         signInButton = view.findViewById(R.id.sign_in)
-        activity = requireActivity() as FragmentController
+        activity = requireActivity() as SingInSignUpController
 
         signUpButton.setOnClickListener {
             activity.showSignInFragment()

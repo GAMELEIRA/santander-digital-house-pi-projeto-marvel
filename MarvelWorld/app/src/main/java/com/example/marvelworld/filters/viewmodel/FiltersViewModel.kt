@@ -15,6 +15,7 @@ class FiltersViewModel(
         emit(response.data.results)
     }
 
+    @Suppress("UNCHECKED_CAST")
     class FiltersViewModelFactory(
         private val repository: FiltersRepository
     ) : ViewModelProvider.Factory {

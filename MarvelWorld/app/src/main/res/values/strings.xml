@@ -58,4 +58,9 @@
     <string name="creators">Creators</string>
     <string name="wrong_type_of_resource">Wrong type of resource</string>
     <string name="sing_in_failed">Sign in failed!</string>
+    <string name="facebook_app_id">3541055272608153</string>
+    <string name="fb_login_protocol_scheme">fb3541055272608153</string>
+    <string name="sign_in_canceled">Sign in canceled!</string>
+
+
 </resources>

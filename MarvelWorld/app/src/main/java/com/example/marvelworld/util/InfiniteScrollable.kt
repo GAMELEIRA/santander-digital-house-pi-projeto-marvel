@@ -1,6 +1,5 @@
 package com.example.marvelworld.util
 
-import androidx.lifecycle.LiveDataScope
 import androidx.lifecycle.liveData
 import com.example.marvelworld.horizontallist.HorizontalListItem
 import kotlinx.coroutines.Dispatchers

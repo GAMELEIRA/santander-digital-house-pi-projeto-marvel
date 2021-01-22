@@ -33,6 +33,8 @@
         <item name="boxBackgroundMode">filled</item>
         <item name="boxStrokeColor">#00FFFFFF</item>
         <item name="startIconTintMode">screen</item>
+        <item name="errorTextColor">@color/white</item>
+        <item name="errorIconTint">@color/white</item>
     </style>
 
 </resources>

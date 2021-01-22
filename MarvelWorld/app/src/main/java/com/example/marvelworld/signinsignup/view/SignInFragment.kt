@@ -21,6 +21,8 @@ import com.facebook.login.LoginResult
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
@@ -28,6 +30,12 @@ import com.google.firebase.auth.GoogleAuthProvider
 
 
 class SignInFragment : Fragment() {
+
+    private lateinit var email: String
+    private lateinit var password: String
+
+    private lateinit var tilEmail: TextInputLayout
+    private lateinit var tilPassword: TextInputLayout
 
     private lateinit var signInButton: Button
     private lateinit var signUpButton: RelativeLayout
@@ -48,10 +56,14 @@ class SignInFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        tilEmail = view.findViewById(R.id.email_input_layout)
+        tilPassword = view.findViewById(R.id.password_input_layout)
+
         signInButton = view.findViewById(R.id.sign_in_button)
         signUpButton = view.findViewById(R.id.sign_up_button)
         facebookButton = view.findViewById(R.id.facebook_button)
         googleButton = view.findViewById(R.id.google_button)
+
         singInSignUpController = requireActivity() as SingInSignUpController
 
         googleButton.setOnClickListener {
@@ -63,7 +75,13 @@ class SignInFragment : Fragment() {
         }
 
         signInButton.setOnClickListener {
-            singInSignUpController.startMainActivity()
+            email = view.findViewById<TextInputEditText>(R.id.email_input).text.toString().trim()
+            password =
+                view.findViewById<TextInputEditText>(R.id.password_input).text.toString().trim()
+
+            if (validateFields()) {
+                signInWithEmailAndPassword(email, password)
+            }
         }
 
         signUpButton.setOnClickListener {
@@ -94,7 +112,8 @@ class SignInFragment : Fragment() {
             }
 
             override fun onCancel() {
-                Toast.makeText(context, getString(R.string.sign_in_canceled), Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, getString(R.string.sign_in_canceled), Toast.LENGTH_SHORT)
+                    .show()
             }
 
             override fun onError(exception: FacebookException) {
@@ -143,5 +162,44 @@ class SignInFragment : Fragment() {
             .addOnFailureListener {
                 Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
             }
+    }
+
+    private fun signInWithEmailAndPassword(email: String, password: String) {
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val user = auth.currentUser
+                    if (user!!.isEmailVerified) {
+                        singInSignUpController.startMainActivity()
+                    } else {
+                        Toast.makeText(context, R.string.verify_email, Toast.LENGTH_SHORT).show()
+                        auth.signOut()
+                    }
+                } else {
+                    Toast.makeText(context, R.string.auth_failed, Toast.LENGTH_SHORT).show()
+                }
+            }
+    }
+
+    private fun validateFields(): Boolean {
+        var isValid = true
+
+        isValid = validateField(tilEmail, email) && isValid
+        isValid = validateField(tilPassword, password) && isValid
+
+        return isValid
+    }
+
+    private fun validateField(textInputLayout: TextInputLayout, text: String): Boolean {
+        var isValid = true
+
+        textInputLayout.error = null
+
+        if (text.isEmpty()) {
+            textInputLayout.error = getString(R.string.required_field)
+            isValid = false
+        }
+
+        return isValid
     }
 }

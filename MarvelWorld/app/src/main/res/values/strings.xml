@@ -61,6 +61,13 @@
     <string name="facebook_app_id">3541055272608153</string>
     <string name="fb_login_protocol_scheme">fb3541055272608153</string>
     <string name="sign_in_canceled">Sign in canceled!</string>
+    <string name="password_match">password\' and \'repeat password\' don\'t match</string>
+    <string name="required_field">This field is required!</string>
+    <string name="verify_email">Verify your email</string>
+    <string name="auth_failed">Authentication failed.</string>
+    <string name="password_pattern_error">Password must contain at least one digit [0\-9]\nOne lowercase character [a\-z]\nOne uppercase character [A\-Z]\nOne special character like ! @ # &amp; ( )\n8 characters and a maximum of 20 characters</string>
+    <string name="email_sent">Verification email sent to %1$s</string>
+    <string name="email_verification_failed">Failed to send verification email.</string>
 
 
 </resources>

@@ -141,7 +141,7 @@ class SignUpFragment : Fragment() {
                 if (task.isSuccessful) {
                     Toast.makeText(
                         context,
-                        getString(R.string.email_sent, user.email),
+                        getString(R.string.verification_email_sent, user.email),
                         Toast.LENGTH_SHORT
                     ).show()
                     auth.signOut()

@@ -5,10 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageButton
-import android.widget.RelativeLayout
-import android.widget.Toast
+import android.widget.*
 import androidx.fragment.app.Fragment
 import com.example.marvelworld.R
 import com.example.marvelworld.util.Constant
@@ -35,10 +32,12 @@ class SignInFragment : Fragment() {
     private lateinit var password: String
 
     private lateinit var tilEmail: TextInputLayout
+    private lateinit var tieEmail: TextInputEditText
     private lateinit var tilPassword: TextInputLayout
 
     private lateinit var signInButton: Button
     private lateinit var signUpButton: RelativeLayout
+    private lateinit var forgotPasswordButton: TextView
     private lateinit var facebookButton: ImageButton
     private lateinit var googleButton: ImageButton
     private lateinit var singInSignUpController: SingInSignUpController
@@ -57,10 +56,12 @@ class SignInFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         tilEmail = view.findViewById(R.id.email_input_layout)
+        tieEmail = view.findViewById(R.id.email_input)
         tilPassword = view.findViewById(R.id.password_input_layout)
 
         signInButton = view.findViewById(R.id.sign_in_button)
         signUpButton = view.findViewById(R.id.sign_up_button)
+        forgotPasswordButton = view.findViewById(R.id.forgot_password_button)
         facebookButton = view.findViewById(R.id.facebook_button)
         googleButton = view.findViewById(R.id.google_button)
 
@@ -75,7 +76,7 @@ class SignInFragment : Fragment() {
         }
 
         signInButton.setOnClickListener {
-            email = view.findViewById<TextInputEditText>(R.id.email_input).text.toString().trim()
+            email = tieEmail.text.toString().trim()
             password =
                 view.findViewById<TextInputEditText>(R.id.password_input).text.toString().trim()
 
@@ -86,6 +87,11 @@ class SignInFragment : Fragment() {
 
         signUpButton.setOnClickListener {
             singInSignUpController.showSignUpFragment()
+        }
+
+        forgotPasswordButton.setOnClickListener {
+            email = tieEmail.text.toString().trim()
+            singInSignUpController.showResetPasswordFragment(email)
         }
     }
 
@@ -172,8 +178,7 @@ class SignInFragment : Fragment() {
                     if (user!!.isEmailVerified) {
                         singInSignUpController.startMainActivity()
                     } else {
-                        Toast.makeText(context, R.string.verify_email, Toast.LENGTH_SHORT).show()
-                        auth.signOut()
+                        singInSignUpController.showVerificationEmailFragment(email)
                     }
                 } else {
                     Toast.makeText(context, R.string.auth_failed, Toast.LENGTH_SHORT).show()

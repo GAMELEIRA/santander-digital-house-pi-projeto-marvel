@@ -8,7 +8,9 @@ class DetailCardRepository(private val favoriteDao: FavoriteDao) {
 
     suspend fun addFavorite(favorite: Favorite) = favoriteDao.addFavorite(favorite)
 
-    suspend fun removeFavorite(resourceId: Int, type: ResourceType) = favoriteDao.removeFavorite(resourceId, type)
+    suspend fun removeFavorite(userId: String, resourceId: Int, type: ResourceType) =
+        favoriteDao.removeFavorite(userId, resourceId, type)
 
-    suspend fun isFavorite(resourceId: Int, type: ResourceType) = favoriteDao.isFavorite(resourceId, type)
+    suspend fun isFavorite(userId: String, resourceId: Int, type: ResourceType) =
+        favoriteDao.isFavorite(userId, resourceId, type)
 }

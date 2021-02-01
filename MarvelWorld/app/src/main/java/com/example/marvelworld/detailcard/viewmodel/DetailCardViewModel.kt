@@ -6,24 +6,26 @@ import androidx.lifecycle.liveData
 import com.example.marvelworld.detailcard.repository.DetailCardRepository
 import com.example.marvelworld.favorite.models.Favorite
 import com.example.marvelworld.util.ResourceType
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 
 class DetailCardViewModel(
     private val repository: DetailCardRepository
 ) : ViewModel() {
+    private val userId by lazy { FirebaseAuth.getInstance().currentUser!!.uid }
 
     fun addFavorite(resourceId: Int, type: ResourceType) = liveData(Dispatchers.IO) {
-        repository.addFavorite(Favorite(resourceId, type))
+        repository.addFavorite(Favorite(userId, resourceId, type))
         emit(true)
     }
 
     fun removeFavorite(resourceId: Int, type: ResourceType) = liveData(Dispatchers.IO) {
-        repository.removeFavorite(resourceId, type)
+        repository.removeFavorite(userId, resourceId, type)
         emit(true)
     }
 
     fun isFavorite(resourceId: Int, type: ResourceType) = liveData(Dispatchers.IO) {
-        val result = repository.isFavorite(resourceId, type)
+        val result = repository.isFavorite(userId, resourceId, type)
         emit(result)
     }
 

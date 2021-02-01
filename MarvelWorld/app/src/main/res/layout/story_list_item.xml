@@ -37,7 +37,6 @@
             android:layout_gravity="center_vertical"
             android:layout_marginEnd="8dp"
             android:background="@drawable/ic_baseline_star_border_24"
-            android:contentDescription="@string/button_for_setting_resource_as_favorite"
-            app:backgroundTint="@color/white" />
+            android:contentDescription="@string/button_for_setting_resource_as_favorite" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

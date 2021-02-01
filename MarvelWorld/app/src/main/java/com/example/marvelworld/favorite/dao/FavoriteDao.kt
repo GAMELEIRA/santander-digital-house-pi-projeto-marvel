@@ -12,12 +12,12 @@ interface FavoriteDao {
     @Insert
     suspend fun addFavorite(favorite: Favorite)
 
-    @Query("DELETE FROM Favorite WHERE resourceId = :resourceId AND type = :type")
-    suspend fun removeFavorite(resourceId: Int, type: ResourceType)
+    @Query("DELETE FROM Favorite WHERE resourceId = :resourceId AND type = :type AND userId = :userId")
+    suspend fun removeFavorite(userId: String, resourceId: Int, type: ResourceType)
 
-    @Query("SELECT * FROM Favorite WHERE type = :type")
-    suspend fun getFavorites(type: ResourceType): List<Favorite>
+    @Query("SELECT * FROM Favorite WHERE type = :type AND userId = :userId")
+    suspend fun getFavorites(userId: String, type: ResourceType): List<Favorite>
 
-    @Query("SELECT EXISTS(SELECT 1 FROM Favorite WHERE resourceId = :resourceId AND type = :type)")
-    suspend fun isFavorite(resourceId: Int, type: ResourceType): Boolean
+    @Query("SELECT EXISTS(SELECT 1 FROM Favorite WHERE resourceId = :resourceId AND type = :type AND userId = :userId)")
+    suspend fun isFavorite(userId: String, resourceId: Int, type: ResourceType): Boolean
 }

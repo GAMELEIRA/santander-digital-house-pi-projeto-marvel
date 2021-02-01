@@ -1,5 +1,10 @@
 package com.example.marvelworld.detailcard.views
 
+import android.annotation.SuppressLint
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,10 +14,12 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.transition.AutoTransition
 import androidx.transition.TransitionManager
+import com.example.marvelworld.BuildConfig
 import com.example.marvelworld.R
 import com.example.marvelworld.detailcard.models.DetailCard
 import com.example.marvelworld.detailcard.repository.DetailCardRepository
@@ -20,6 +27,11 @@ import com.example.marvelworld.detailcard.viewmodel.DetailCardViewModel
 import com.example.marvelworld.favorite.db.AppDatabase
 import com.google.android.material.card.MaterialCardView
 import com.squareup.picasso.Picasso
+import com.squareup.picasso.Picasso.LoadedFrom
+import com.squareup.picasso.Target
+import java.io.File
+import java.io.FileOutputStream
+
 
 class DetailCardFragment(
     private val detailCard: DetailCard
@@ -32,6 +44,7 @@ class DetailCardFragment(
     private lateinit var cardDescription: TextView
     private lateinit var cardDescriptionLayout: LinearLayout
     private lateinit var cardFavoriteButton: ImageButton
+    private lateinit var cardShareButton: ImageButton
     private lateinit var detailCardViewModel: DetailCardViewModel
 
     override fun onCreateView(
@@ -52,6 +65,7 @@ class DetailCardFragment(
         cardDescription = view.findViewById(R.id.detail_card_description)
         cardDescriptionLayout = view.findViewById(R.id.detail_card_description_layout)
         cardFavoriteButton = view.findViewById(R.id.detail_card_favorite_button)
+        cardShareButton = view.findViewById(R.id.detail_card_share_button)
 
         detailCardViewModel = ViewModelProvider(
             this,
@@ -89,6 +103,10 @@ class DetailCardFragment(
                             })
                     }
                 })
+        }
+
+        cardShareButton.setOnClickListener {
+            shareResourceDetails()
         }
     }
 
@@ -145,5 +163,59 @@ class DetailCardFragment(
             }
             cardImage.visibility = View.VISIBLE
         }
+    }
+
+    private fun shareResourceDetails() {
+        val intent = Intent(Intent.ACTION_SEND)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+
+        var extraText = detailCard.title + "\n\n"
+        extraText += if (!detailCard.description.isNullOrEmpty()) {
+            "${detailCard.description}\n\n"
+        } else {
+            ""
+        }
+        extraText += getString(R.string.share_msg)
+
+        if (detailCard.imageDialog != null) {
+            val target = object : Target {
+                override fun onBitmapLoaded(bitmap: Bitmap?, from: LoadedFrom?) {
+                    val uri = getImageUri(bitmap!!)
+                    intent.putExtra(Intent.EXTRA_TEXT, extraText)
+                    intent.putExtra(Intent.EXTRA_SUBJECT, extraText)
+                    intent.type = "image/jpg"
+                    intent.putExtra(Intent.EXTRA_STREAM, uri)
+                    startActivity(Intent.createChooser(intent, "Share"))
+                }
+
+                override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {}
+
+                override fun onPrepareLoad(placeHolderDrawable: Drawable?) {}
+            }
+
+            Picasso.get().load(detailCard.imageDialog).into(target)
+        } else {
+            intent.type = "text/plain"
+            intent.putExtra(Intent.EXTRA_TEXT, extraText)
+            startActivity(Intent.createChooser(intent, "Share"))
+        }
+    }
+
+    @SuppressLint("SetWorldReadable")
+    private fun getImageUri(bitmap: Bitmap): Uri {
+        val child = File.separator + detailCard.title.replace("\\s".toRegex(), "") + ".jpg"
+        val file = File(requireContext().externalCacheDir, child)
+        val fileOutputStream = FileOutputStream(file)
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream)
+        fileOutputStream.flush()
+        fileOutputStream.close()
+        file.setReadable(true, false)
+
+        return FileProvider.getUriForFile(
+            requireContext(),
+            "${BuildConfig.APPLICATION_ID}.provider",
+            file
+        )
     }
 }

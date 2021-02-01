@@ -8,12 +8,14 @@ import com.example.marvelworld.favorite.respository.FavoriteRepository
 import com.example.marvelworld.horizontallist.HorizontalListItem
 import com.example.marvelworld.util.InfiniteScrollable
 import com.example.marvelworld.util.ResourceType
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 
 class EventDetailsViewModel(
     private val eventRepository: EventDetailsRepository,
     private val favoriteRepository: FavoriteRepository
 ) : ViewModel(), InfiniteScrollable {
+    private val userId by lazy { FirebaseAuth.getInstance().currentUser!!.uid }
 
     override var offset = 0
     override val limit = 20
@@ -22,7 +24,7 @@ class EventDetailsViewModel(
     fun getEvent(eventId: Int) = liveData(Dispatchers.IO) {
         val response = eventRepository.getEvent(eventId)
         val event = response.data.results[0]
-        event.isFavorite = favoriteRepository.isFavorite(event.id, ResourceType.EVENT)
+        event.isFavorite = favoriteRepository.isFavorite(userId, event.id, ResourceType.EVENT)
         emit(response.data.results[0])
     }
 

@@ -8,12 +8,14 @@ import com.example.marvelworld.horizontallist.HorizontalListItem
 import com.example.marvelworld.seriesdetails.respository.SeriesDetailsRepository
 import com.example.marvelworld.util.InfiniteScrollable
 import com.example.marvelworld.util.ResourceType
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 
 class SeriesDetailsViewModel(
     private val seriesRepository: SeriesDetailsRepository,
     private val favoriteRepository: FavoriteRepository
 ) : ViewModel(), InfiniteScrollable {
+    private val userId by lazy { FirebaseAuth.getInstance().currentUser!!.uid }
 
     override var offset = 0
     override val limit = 20
@@ -22,7 +24,7 @@ class SeriesDetailsViewModel(
     fun getOneSeries(seriesId: Int) = liveData(Dispatchers.IO) {
         val response = seriesRepository.getOneSeries(seriesId)
         val series = response.data.results[0]
-        series.isFavorite = favoriteRepository.isFavorite(series.id, ResourceType.SERIES)
+        series.isFavorite = favoriteRepository.isFavorite(userId, series.id, ResourceType.SERIES)
         emit(response.data.results[0])
     }
 

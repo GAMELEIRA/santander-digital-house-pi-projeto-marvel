@@ -9,12 +9,15 @@ import com.example.marvelworld.filters.models.Filter
 import com.example.marvelworld.serieslist.models.Series
 import com.example.marvelworld.serieslist.repository.SeriesRepository
 import com.example.marvelworld.util.ResourceType
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 
 class SeriesViewModel(
     private val seriesRepository: SeriesRepository,
     private val favoriteRepository: FavoriteRepository
 ) : ViewModel() {
+    private val userId by lazy { FirebaseAuth.getInstance().currentUser!!.uid }
+
     private var title: String? = null
     private var characters = listOf<Int>()
     private var comics = listOf<Int>()
@@ -32,7 +35,7 @@ class SeriesViewModel(
         total = response.data.total
 
         response.data.results.forEach {
-            it.isFavorite = favoriteRepository.isFavorite(it.id, ResourceType.SERIES)
+            it.isFavorite = favoriteRepository.isFavorite(userId, it.id, ResourceType.SERIES)
         }
 
         emit(response.data.results)
@@ -40,14 +43,14 @@ class SeriesViewModel(
 
     fun updateSeries(series: MutableList<Series>) = liveData(Dispatchers.IO) {
         series.forEach {
-            it.isFavorite = favoriteRepository.isFavorite(it.id, ResourceType.SERIES)
+            it.isFavorite = favoriteRepository.isFavorite(userId, it.id, ResourceType.SERIES)
         }
 
         emit(true)
     }
 
     fun getFavoriteSeries() = liveData(Dispatchers.IO) {
-        val favorites = favoriteRepository.getFavorites(ResourceType.SERIES)
+        val favorites = favoriteRepository.getFavorites(userId, ResourceType.SERIES)
         val series = mutableListOf<Series>()
 
         favorites.forEach {
@@ -62,24 +65,24 @@ class SeriesViewModel(
     fun updateFavoriteSeries(series: MutableList<Series>) = liveData(Dispatchers.IO) {
         val seriesToRemove = mutableListOf<Series>()
         series.forEach {
-            val isFavorite = favoriteRepository.isFavorite(it.id, ResourceType.SERIES)
+            val isFavorite = favoriteRepository.isFavorite(userId, it.id, ResourceType.SERIES)
             if (!isFavorite) seriesToRemove.add(it)
         }
         emit(seriesToRemove)
     }
 
     fun addFavorite(resourceId: Int) = liveData(Dispatchers.IO) {
-        favoriteRepository.addFavorite(Favorite(resourceId, ResourceType.SERIES))
+        favoriteRepository.addFavorite(Favorite(userId, resourceId, ResourceType.SERIES))
         emit(true)
     }
 
     fun removeFavorite(resourceId: Int) = liveData(Dispatchers.IO) {
-        favoriteRepository.removeFavorite(resourceId, ResourceType.SERIES)
+        favoriteRepository.removeFavorite(userId, resourceId, ResourceType.SERIES)
         emit(true)
     }
 
     fun isFavorite(resourceId: Int) = liveData(Dispatchers.IO) {
-        val result = favoriteRepository.isFavorite(resourceId, ResourceType.SERIES)
+        val result = favoriteRepository.isFavorite(userId, resourceId, ResourceType.SERIES)
         emit(result)
     }
 

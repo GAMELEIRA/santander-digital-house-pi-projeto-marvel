@@ -9,12 +9,15 @@ import com.example.marvelworld.favorite.models.Favorite
 import com.example.marvelworld.favorite.respository.FavoriteRepository
 import com.example.marvelworld.filters.models.Filter
 import com.example.marvelworld.util.ResourceType
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 
 class EventViewModel(
     private val eventRepository: EventRepository,
     private val favoriteRepository: FavoriteRepository
 ) : ViewModel() {
+    private val userId by lazy { FirebaseAuth.getInstance().currentUser!!.uid }
+
     private var name: String? = null
     private var characters = listOf<Int>()
     private var comics = listOf<Int>()
@@ -32,7 +35,7 @@ class EventViewModel(
         total = response.data.total
 
         response.data.results.forEach {
-            it.isFavorite = favoriteRepository.isFavorite(it.id, ResourceType.EVENT)
+            it.isFavorite = favoriteRepository.isFavorite(userId, it.id, ResourceType.EVENT)
         }
 
         emit(response.data.results)
@@ -40,14 +43,14 @@ class EventViewModel(
 
     fun updateEvents(events: MutableList<Event>) = liveData(Dispatchers.IO) {
         events.forEach {
-            it.isFavorite = favoriteRepository.isFavorite(it.id, ResourceType.EVENT)
+            it.isFavorite = favoriteRepository.isFavorite(userId, it.id, ResourceType.EVENT)
         }
 
         emit(true)
     }
 
     fun getFavoriteEvents() = liveData(Dispatchers.IO) {
-        val favorites = favoriteRepository.getFavorites(ResourceType.EVENT)
+        val favorites = favoriteRepository.getFavorites(userId, ResourceType.EVENT)
         val events = mutableListOf<Event>()
 
         favorites.forEach {
@@ -62,24 +65,24 @@ class EventViewModel(
     fun updateFavoriteEvents(events: MutableList<Event>) = liveData(Dispatchers.IO) {
         val eventsToRemove = mutableListOf<Event>()
         events.forEach {
-            val isFavorite = favoriteRepository.isFavorite(it.id, ResourceType.EVENT)
+            val isFavorite = favoriteRepository.isFavorite(userId, it.id, ResourceType.EVENT)
             if (!isFavorite) eventsToRemove.add(it)
         }
         emit(eventsToRemove)
     }
 
     fun addFavorite(resourceId: Int) = liveData(Dispatchers.IO) {
-        favoriteRepository.addFavorite(Favorite(resourceId, ResourceType.EVENT))
+        favoriteRepository.addFavorite(Favorite(userId, resourceId, ResourceType.EVENT))
         emit(true)
     }
 
     fun removeFavorite(resourceId: Int) = liveData(Dispatchers.IO) {
-        favoriteRepository.removeFavorite(resourceId, ResourceType.EVENT)
+        favoriteRepository.removeFavorite(userId, resourceId, ResourceType.EVENT)
         emit(true)
     }
 
     fun isFavorite(resourceId: Int) = liveData(Dispatchers.IO) {
-        val result = favoriteRepository.isFavorite(resourceId, ResourceType.EVENT)
+        val result = favoriteRepository.isFavorite(userId, resourceId, ResourceType.EVENT)
         emit(result)
     }
 

@@ -9,12 +9,15 @@ import com.example.marvelworld.favorite.models.Favorite
 import com.example.marvelworld.favorite.respository.FavoriteRepository
 import com.example.marvelworld.filters.models.Filter
 import com.example.marvelworld.util.ResourceType
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 
 class CharacterViewModel(
     private val characterRepository: CharacterRepository,
     private val favoriteRepository: FavoriteRepository
 ) : ViewModel() {
+    private val userId by lazy { FirebaseAuth.getInstance().currentUser!!.uid }
+
     private var name: String? = null
     private var comics = listOf<Int>()
     private var events = listOf<Int>()
@@ -31,7 +34,7 @@ class CharacterViewModel(
         total = response.data.total
 
         response.data.results.forEach {
-            it.isFavorite = favoriteRepository.isFavorite(it.id, ResourceType.CHARACTER)
+            it.isFavorite = favoriteRepository.isFavorite(userId, it.id, ResourceType.CHARACTER)
         }
 
         emit(response.data.results)
@@ -39,14 +42,14 @@ class CharacterViewModel(
 
     fun updateCharacters(characters: MutableList<Character>) = liveData(Dispatchers.IO) {
         characters.forEach {
-            it.isFavorite = favoriteRepository.isFavorite(it.id, ResourceType.CHARACTER)
+            it.isFavorite = favoriteRepository.isFavorite(userId, it.id, ResourceType.CHARACTER)
         }
 
         emit(true)
     }
 
     fun getFavoriteCharacters() = liveData(Dispatchers.IO) {
-        val favorites = favoriteRepository.getFavorites(ResourceType.CHARACTER)
+        val favorites = favoriteRepository.getFavorites(userId, ResourceType.CHARACTER)
         val characters = mutableListOf<Character>()
 
         favorites.forEach {
@@ -61,7 +64,7 @@ class CharacterViewModel(
     fun updateFavoriteCharacters(characters: MutableList<Character>) = liveData(Dispatchers.IO) {
         val charactersToRemove = mutableListOf<Character>()
         characters.forEach {
-            val isFavorite = favoriteRepository.isFavorite(it.id, ResourceType.CHARACTER)
+            val isFavorite = favoriteRepository.isFavorite(userId, it.id, ResourceType.CHARACTER)
             if (!isFavorite) charactersToRemove.add(it)
         }
 
@@ -69,17 +72,17 @@ class CharacterViewModel(
     }
 
     fun addFavorite(resourceId: Int) = liveData(Dispatchers.IO) {
-        favoriteRepository.addFavorite(Favorite(resourceId, ResourceType.CHARACTER))
+        favoriteRepository.addFavorite(Favorite(userId, resourceId, ResourceType.CHARACTER))
         emit(true)
     }
 
     fun removeFavorite(resourceId: Int) = liveData(Dispatchers.IO) {
-        favoriteRepository.removeFavorite(resourceId, ResourceType.CHARACTER)
+        favoriteRepository.removeFavorite(userId, resourceId, ResourceType.CHARACTER)
         emit(true)
     }
 
     fun isFavorite(resourceId: Int) = liveData(Dispatchers.IO) {
-        val result = favoriteRepository.isFavorite(resourceId, ResourceType.CHARACTER)
+        val result = favoriteRepository.isFavorite(userId, resourceId, ResourceType.CHARACTER)
         emit(result)
     }
 

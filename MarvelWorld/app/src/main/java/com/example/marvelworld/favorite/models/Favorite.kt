@@ -11,10 +11,17 @@ data class Favorite(
     val id: Int,
 
     @ColumnInfo
+    val userId: String,
+
+    @ColumnInfo
     val resourceId: Int,
 
     @ColumnInfo
     val type: ResourceType
 ) {
-    constructor(resourceId: Int, type: ResourceType): this(0, resourceId, type)
+    constructor(
+        userId: String,
+        resourceId: Int,
+        type: ResourceType
+    ) : this(0, userId, resourceId, type)
 }

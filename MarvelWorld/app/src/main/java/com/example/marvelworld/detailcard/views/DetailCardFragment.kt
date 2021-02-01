@@ -84,22 +84,32 @@ class DetailCardFragment(
                     if (isFavorite) {
                         detailCardViewModel.removeFavorite(detailCard.resourceId, detailCard.type)
                             .observe(viewLifecycleOwner, {
-                                cardView.setCardBackgroundColor(context?.let {
+                                cardFavoriteButton.background =
+                                    ContextCompat.getDrawable(
+                                        requireContext(),
+                                        R.drawable.ic_baseline_star_border_24
+                                    )
+                                cardView.setCardBackgroundColor(
                                     ContextCompat.getColorStateList(
-                                        it,
+                                        requireContext(),
                                         R.color.dark_grey
                                     )
-                                })
+                                )
                             })
                     } else {
                         detailCardViewModel.addFavorite(detailCard.resourceId, detailCard.type)
                             .observe(viewLifecycleOwner, {
-                                cardView.setCardBackgroundColor(context?.let {
+                                cardFavoriteButton.background =
+                                    ContextCompat.getDrawable(
+                                        requireContext(),
+                                        R.drawable.ic_baseline_star_24
+                                    )
+                                cardView.setCardBackgroundColor(
                                     ContextCompat.getColorStateList(
-                                        it,
+                                        requireContext(),
                                         R.color.colorPrimary
                                     )
-                                })
+                                )
                             })
                     }
                 })
@@ -135,14 +145,25 @@ class DetailCardFragment(
                 0, 0, 0, 0
             )
         }
-
-        cardView.setCardBackgroundColor(context?.let {
-            ContextCompat.getColorStateList(
-                it,
-                if (detailCard.isFavorite) R.color.colorPrimary else R.color.dark_grey
+        if (detailCard.isFavorite) {
+            cardFavoriteButton.background =
+                ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_star_24)
+            cardView.setCardBackgroundColor(
+                ContextCompat.getColorStateList(
+                    requireContext(),
+                    R.color.colorPrimary
+                )
             )
-        })
-
+        } else {
+            cardFavoriteButton.background =
+                ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_star_border_24)
+            cardView.setCardBackgroundColor(
+                ContextCompat.getColorStateList(
+                    requireContext(),
+                    R.color.dark_grey
+                )
+            )
+        }
     }
 
     private fun initUrls() {

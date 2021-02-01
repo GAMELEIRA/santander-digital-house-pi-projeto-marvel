@@ -9,12 +9,15 @@ import com.example.marvelworld.favorite.models.Favorite
 import com.example.marvelworld.favorite.respository.FavoriteRepository
 import com.example.marvelworld.filters.models.Filter
 import com.example.marvelworld.util.ResourceType
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 
 class CreatorViewModel(
     private val creatorRepository: CreatorRepository,
     private val favoriteRepository: FavoriteRepository
 ) : ViewModel() {
+    private val userId by lazy { FirebaseAuth.getInstance().currentUser!!.uid }
+
     private var name: String? = null
     private var comics = listOf<Int>()
     private var events = listOf<Int>()
@@ -30,7 +33,7 @@ class CreatorViewModel(
         total = response.data.total
 
         response.data.results.forEach {
-            it.isFavorite = favoriteRepository.isFavorite(it.id, ResourceType.CREATOR)
+            it.isFavorite = favoriteRepository.isFavorite(userId, it.id, ResourceType.CREATOR)
         }
 
         emit(response.data.results)
@@ -38,14 +41,14 @@ class CreatorViewModel(
 
     fun updateCreators(creators: MutableList<Creator>) = liveData(Dispatchers.IO) {
         creators.forEach {
-            it.isFavorite = favoriteRepository.isFavorite(it.id, ResourceType.CREATOR)
+            it.isFavorite = favoriteRepository.isFavorite(userId, it.id, ResourceType.CREATOR)
         }
 
         emit(true)
     }
 
     fun getFavoriteCreators() = liveData(Dispatchers.IO) {
-        val favorites = favoriteRepository.getFavorites(ResourceType.CREATOR)
+        val favorites = favoriteRepository.getFavorites(userId, ResourceType.CREATOR)
         val creators = mutableListOf<Creator>()
 
         favorites.forEach {
@@ -60,24 +63,24 @@ class CreatorViewModel(
     fun updateFavoriteCreators(creators: MutableList<Creator>) = liveData(Dispatchers.IO) {
         val creatorsToRemove = mutableListOf<Creator>()
         creators.forEach {
-            val isFavorite = favoriteRepository.isFavorite(it.id, ResourceType.CREATOR)
+            val isFavorite = favoriteRepository.isFavorite(userId, it.id, ResourceType.CREATOR)
             if (!isFavorite) creatorsToRemove.add(it)
         }
         emit(creatorsToRemove)
     }
 
     fun addFavorite(resourceId: Int) = liveData(Dispatchers.IO) {
-        favoriteRepository.addFavorite(Favorite(resourceId, ResourceType.CREATOR))
+        favoriteRepository.addFavorite(Favorite(userId, resourceId, ResourceType.CREATOR))
         emit(true)
     }
 
     fun removeFavorite(resourceId: Int) = liveData(Dispatchers.IO) {
-        favoriteRepository.removeFavorite(resourceId, ResourceType.CREATOR)
+        favoriteRepository.removeFavorite(userId, resourceId, ResourceType.CREATOR)
         emit(true)
     }
 
     fun isFavorite(resourceId: Int) = liveData(Dispatchers.IO) {
-        val result = favoriteRepository.isFavorite(resourceId, ResourceType.CREATOR)
+        val result = favoriteRepository.isFavorite(userId, resourceId, ResourceType.CREATOR)
         emit(result)
     }
 

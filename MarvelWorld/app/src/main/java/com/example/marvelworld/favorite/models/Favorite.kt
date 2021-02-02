@@ -17,11 +17,23 @@ data class Favorite(
     val resourceId: Int,
 
     @ColumnInfo
-    val type: ResourceType
+    val type: ResourceType,
+
+    @ColumnInfo
+    val title: String,
+
+    @ColumnInfo
+    val imagePath: String?,
+
+    @ColumnInfo
+    val imageExtension: String?
 ) {
     constructor(
         userId: String,
         resourceId: Int,
-        type: ResourceType
-    ) : this(0, userId, resourceId, type)
+        type: ResourceType,
+        title: String,
+        imagePath: String?,
+        imageExtension: String?
+    ) : this(0, userId, resourceId, type, title, imagePath, imageExtension)
 }

@@ -81,7 +81,7 @@ class EventListFragment(
 
         if (eventList.isEmpty()) getEvents()
 
-        if (!onlyFavorites) initInfiniteScroll()
+        initInfiniteScroll()
     }
 
     private fun updateEvents() {
@@ -126,8 +126,14 @@ class EventListFragment(
                     val totalItemCount = target.itemCount
                     val lastVisible = target.findLastVisibleItemPosition()
 
+                    val total = if (!onlyFavorites) {
+                        eventViewModel.total
+                    } else {
+                        eventViewModel.totalFavorite
+                    }
+
                     if (totalItemCount - lastVisible < 10
-                        && totalItemCount < eventViewModel.total
+                        && totalItemCount < total
                         && !loading
                     ) {
                         getEvents()
@@ -159,7 +165,13 @@ class EventListFragment(
                             }
                         })
                 } else {
-                    eventViewModel.addFavorite(eventList[position].id)
+                    val event = eventList[position]
+                    eventViewModel.addFavorite(
+                        event.id,
+                        event.title,
+                        event.thumbnail.path,
+                        event.thumbnail.extension
+                    )
                         .observe(viewLifecycleOwner, {
                             if (it) {
                                 eventList[position].isFavorite = true

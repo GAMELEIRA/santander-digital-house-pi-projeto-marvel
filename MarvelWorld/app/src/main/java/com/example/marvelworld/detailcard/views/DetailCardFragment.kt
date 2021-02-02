@@ -21,6 +21,7 @@ import androidx.transition.AutoTransition
 import androidx.transition.TransitionManager
 import com.example.marvelworld.BuildConfig
 import com.example.marvelworld.R
+import com.example.marvelworld.api.models.Image
 import com.example.marvelworld.detailcard.models.DetailCard
 import com.example.marvelworld.detailcard.repository.DetailCardRepository
 import com.example.marvelworld.detailcard.viewmodel.DetailCardViewModel
@@ -97,7 +98,13 @@ class DetailCardFragment(
                                 )
                             })
                     } else {
-                        detailCardViewModel.addFavorite(detailCard.resourceId, detailCard.type)
+                        detailCardViewModel.addFavorite(
+                            detailCard.resourceId,
+                            detailCard.type,
+                            detailCard.title,
+                            detailCard.thumbnail?.path,
+                            detailCard.thumbnail?.extension
+                        )
                             .observe(viewLifecycleOwner, {
                                 cardFavoriteButton.background =
                                     ContextCompat.getDrawable(
@@ -177,8 +184,9 @@ class DetailCardFragment(
     }
 
     private fun initImageDialog() {
-        if (detailCard.imageCard != null) {
-            Picasso.get().load(detailCard.imageCard).into(cardImage)
+        if (detailCard.thumbnail != null) {
+            Picasso.get().load(detailCard.thumbnail.getImagePath(Image.LANDSCAPE_INCREDIBLE))
+                .into(cardImage)
             cardImage.setOnClickListener {
                 ImageDialogFragment(detailCard).show(parentFragmentManager, "add_image_dialog")
             }
@@ -199,7 +207,7 @@ class DetailCardFragment(
         }
         extraText += getString(R.string.share_msg)
 
-        if (detailCard.imageDialog != null) {
+        if (detailCard.thumbnail != null) {
             val target = object : Target {
                 override fun onBitmapLoaded(bitmap: Bitmap?, from: LoadedFrom?) {
                     val uri = getImageUri(bitmap!!)
@@ -215,7 +223,8 @@ class DetailCardFragment(
                 override fun onPrepareLoad(placeHolderDrawable: Drawable?) {}
             }
 
-            Picasso.get().load(detailCard.imageDialog).into(target)
+            Picasso.get().load(detailCard.thumbnail.getImagePath(Image.LANDSCAPE_INCREDIBLE))
+                .into(target)
         } else {
             intent.type = "text/plain"
             intent.putExtra(Intent.EXTRA_TEXT, extraText)

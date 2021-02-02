@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.marvelworld.R
-import com.example.marvelworld.api.models.Image
 import com.example.marvelworld.detailcard.models.DetailCard
 import com.example.marvelworld.detailcard.views.DetailCardFragment
 import com.example.marvelworld.favorite.db.AppDatabase
@@ -50,8 +49,7 @@ class StoryDetailsFragment : Fragment() {
                 val card = DetailCard(
                     story.id,
                     story.title,
-                    story.thumbnail?.getImagePath(Image.LANDSCAPE_INCREDIBLE),
-                    story.thumbnail?.getImagePath(Image.FULL_SIZE),
+                    null,
                     story.description,
                     null,
                     ResourceType.STORY,

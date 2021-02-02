@@ -80,7 +80,7 @@ class CharacterListFragment(
 
         if (characterList.isEmpty()) getCharacters()
 
-        if (!onlyFavorites) initInfiniteScroll()
+        initInfiniteScroll()
     }
 
     private fun updateCharacter() {
@@ -125,10 +125,13 @@ class CharacterListFragment(
                     val totalItemCount = target.itemCount
                     val lastVisible = target.findLastVisibleItemPosition()
 
-                    if (totalItemCount - lastVisible < 10
-                        && totalItemCount < characterViewModel.total
-                        && !loading
-                    ) {
+                    val total = if (!onlyFavorites) {
+                        characterViewModel.total
+                    } else {
+                        characterViewModel.totalFavorite
+                    }
+
+                    if (totalItemCount - lastVisible < 10 && totalItemCount < total && !loading) {
                         getCharacters()
                     }
                 }
@@ -158,7 +161,13 @@ class CharacterListFragment(
                             }
                         })
                 } else {
-                    characterViewModel.addFavorite(characterList[position].id)
+                    val character = characterList[position]
+                    characterViewModel.addFavorite(
+                        character.id,
+                        character.name,
+                        character.thumbnail.path,
+                        character.thumbnail.extension
+                    )
                         .observe(viewLifecycleOwner, {
                             if (it) {
                                 characterList[position].isFavorite = true

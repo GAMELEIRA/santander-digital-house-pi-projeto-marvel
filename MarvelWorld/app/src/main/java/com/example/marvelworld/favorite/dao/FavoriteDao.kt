@@ -18,6 +18,12 @@ interface FavoriteDao {
     @Query("SELECT * FROM Favorite WHERE type = :type AND userId = :userId")
     suspend fun getFavorites(userId: String, type: ResourceType): List<Favorite>
 
+    @Query("SELECT * FROM Favorite WHERE type = :type AND userId = :userId ORDER BY id LIMIT :limit OFFSET :offset")
+    suspend fun getFavorites(offset: Int, limit: Int, userId: String, type: ResourceType): List<Favorite>
+
     @Query("SELECT EXISTS(SELECT 1 FROM Favorite WHERE resourceId = :resourceId AND type = :type AND userId = :userId)")
     suspend fun isFavorite(userId: String, resourceId: Int, type: ResourceType): Boolean
+
+    @Query("SELECT COUNT(1) FROM Favorite WHERE type = :type AND userId = :userId")
+    fun countFavorites(userId: String, type: ResourceType): Int
 }

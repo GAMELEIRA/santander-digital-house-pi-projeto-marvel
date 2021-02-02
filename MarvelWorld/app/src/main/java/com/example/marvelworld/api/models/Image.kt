@@ -1,8 +1,8 @@
 package com.example.marvelworld.api.models
 
 class Image(
-    private val path: String,
-    private val extension: String
+    val path: String,
+    val extension: String
 ) {
     fun getImagePath(imageResolution: String = FULL_SIZE): String {
         var imagePath = getHttpsPath()

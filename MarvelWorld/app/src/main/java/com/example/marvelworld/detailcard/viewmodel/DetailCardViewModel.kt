@@ -14,8 +14,14 @@ class DetailCardViewModel(
 ) : ViewModel() {
     private val userId by lazy { FirebaseAuth.getInstance().currentUser!!.uid }
 
-    fun addFavorite(resourceId: Int, type: ResourceType) = liveData(Dispatchers.IO) {
-        repository.addFavorite(Favorite(userId, resourceId, type))
+    fun addFavorite(
+        resourceId: Int,
+        type: ResourceType,
+        title: String,
+        imagePath: String?,
+        imageExtension: String?
+    ) = liveData(Dispatchers.IO) {
+        repository.addFavorite(Favorite(userId, resourceId, type, title, imagePath, imageExtension))
         emit(true)
     }
 

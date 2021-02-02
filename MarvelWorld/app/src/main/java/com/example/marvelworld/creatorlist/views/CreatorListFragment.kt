@@ -81,7 +81,7 @@ class CreatorListFragment(
 
         if (creatorList.isEmpty()) getCreators()
 
-        if (!onlyFavorites) initInfiniteScroll()
+        initInfiniteScroll()
     }
 
     private fun updateCreators() {
@@ -126,8 +126,14 @@ class CreatorListFragment(
                     val totalItemCount = target.itemCount
                     val lastVisible = target.findLastVisibleItemPosition()
 
+                    val total = if (!onlyFavorites) {
+                        creatorViewModel.total
+                    } else {
+                        creatorViewModel.totalFavorite
+                    }
+
                     if (totalItemCount - lastVisible < 10
-                        && totalItemCount < creatorViewModel.total
+                        && totalItemCount < total
                         && !loading
                     ) {
                         getCreators()
@@ -159,7 +165,13 @@ class CreatorListFragment(
                             }
                         })
                 } else {
-                    creatorViewModel.addFavorite(creatorList[position].id)
+                    val creator = creatorList[position]
+                    creatorViewModel.addFavorite(
+                        creator.id,
+                        creator.fullName,
+                        creator.thumbnail.path,
+                        creator.thumbnail.extension
+                    )
                         .observe(viewLifecycleOwner, {
                             if (it) {
                                 creatorList[position].isFavorite = true

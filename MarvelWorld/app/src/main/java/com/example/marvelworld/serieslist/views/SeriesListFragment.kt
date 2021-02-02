@@ -79,7 +79,7 @@ class SeriesListFragment(
 
         if (seriesList.isEmpty()) getSeries()
 
-        if (!onlyFavorites) initInfiniteScroll()
+        initInfiniteScroll()
     }
 
     private fun updateSeries() {
@@ -124,8 +124,14 @@ class SeriesListFragment(
                     val totalItemCount = target.itemCount
                     val lastVisible = target.findLastVisibleItemPosition()
 
+                    val total = if (!onlyFavorites) {
+                        seriesViewModel.total
+                    } else {
+                        seriesViewModel.totalFavorite
+                    }
+
                     if (totalItemCount - lastVisible < 10
-                        && totalItemCount < seriesViewModel.total
+                        && totalItemCount < total
                         && !loading
                     ) {
                         getSeries()
@@ -157,7 +163,13 @@ class SeriesListFragment(
                             }
                         })
                 } else {
-                    seriesViewModel.addFavorite(seriesList[position].id)
+                    val series = seriesList[position]
+                    seriesViewModel.addFavorite(
+                        series.id,
+                        series.title,
+                        series.thumbnail.path,
+                        series.thumbnail.extension
+                    )
                         .observe(viewLifecycleOwner, {
                             if (it) {
                                 seriesList[position].isFavorite = true

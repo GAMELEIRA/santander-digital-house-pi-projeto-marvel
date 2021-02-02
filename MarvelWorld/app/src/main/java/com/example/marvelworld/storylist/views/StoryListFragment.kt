@@ -78,9 +78,9 @@ class StoryListFragment(
             )
         ).get(StoryViewModel::class.java)
 
-        if(storyList.isEmpty()) getStories()
+        if (storyList.isEmpty()) getStories()
 
-        if (!onlyFavorites) initInfiniteScroll()
+        initInfiniteScroll()
     }
 
     private fun updateStories() {
@@ -125,8 +125,14 @@ class StoryListFragment(
                     val totalItemCount = target.itemCount
                     val lastVisible = target.findLastVisibleItemPosition()
 
+                    val total = if (!onlyFavorites) {
+                        storyViewModel.total
+                    } else {
+                        storyViewModel.totalFavorite
+                    }
+
                     if (totalItemCount - lastVisible < 10
-                        && totalItemCount < storyViewModel.total
+                        && totalItemCount < total
                         && !loading
                     ) {
                         getStories()
@@ -158,7 +164,8 @@ class StoryListFragment(
                             }
                         })
                 } else {
-                    storyViewModel.addFavorite(storyList[position].id)
+                    val story = storyList[position]
+                    storyViewModel.addFavorite(story.id, story.title)
                         .observe(viewLifecycleOwner, {
                             if (it) {
                                 storyList[position].isFavorite = true

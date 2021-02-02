@@ -50,8 +50,7 @@ class EventDetailsFragment : Fragment() {
                 val card = DetailCard(
                     event.id,
                     event.title,
-                    event.thumbnail.getImagePath(Image.LANDSCAPE_INCREDIBLE),
-                    event.thumbnail.getImagePath(Image.FULL_SIZE),
+                    event.thumbnail,
                     event.description,
                     event.urls,
                     ResourceType.EVENT,

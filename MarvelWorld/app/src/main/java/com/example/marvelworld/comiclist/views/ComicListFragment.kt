@@ -81,7 +81,7 @@ class ComicListFragment(
 
         if (comicList.isEmpty()) getComics()
 
-        if (!onlyFavorites) initInfiniteScroll()
+        initInfiniteScroll()
     }
 
     private fun updateComics() {
@@ -126,8 +126,14 @@ class ComicListFragment(
                     val totalItemCount = target.itemCount
                     val lastVisible = target.findLastVisibleItemPosition()
 
+                    val total = if (!onlyFavorites) {
+                        comicViewModel.total
+                    } else {
+                        comicViewModel.totalFavorite
+                    }
+
                     if (totalItemCount - lastVisible < 10
-                        && totalItemCount < comicViewModel.total
+                        && totalItemCount < total
                         && !loading
                     ) {
                         getComics()
@@ -159,7 +165,13 @@ class ComicListFragment(
                             }
                         })
                 } else {
-                    comicViewModel.addFavorite(comicList[position].id)
+                    val comic = comicList[position]
+                    comicViewModel.addFavorite(
+                        comic.id,
+                        comic.title,
+                        comic.thumbnail.path,
+                        comic.thumbnail.extension
+                    )
                         .observe(viewLifecycleOwner, {
                             if (it) {
                                 comicList[position].isFavorite = true

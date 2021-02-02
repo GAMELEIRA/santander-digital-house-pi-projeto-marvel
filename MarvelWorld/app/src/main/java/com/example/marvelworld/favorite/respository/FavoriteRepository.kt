@@ -11,9 +11,12 @@ class FavoriteRepository(private val favoriteDao: FavoriteDao) {
     suspend fun removeFavorite(userId: String, resourceId: Int, type: ResourceType) =
         favoriteDao.removeFavorite(userId, resourceId, type)
 
-    suspend fun getFavorites(userId: String, type: ResourceType) =
-        favoriteDao.getFavorites(userId, type)
+    suspend fun getFavorites(offset: Int, limit: Int, userId: String, type: ResourceType) =
+        favoriteDao.getFavorites(offset, limit, userId, type)
 
     suspend fun isFavorite(userId: String, resourceId: Int, type: ResourceType) =
         favoriteDao.isFavorite(userId, resourceId, type)
+
+    fun countFavorites(userId: String, type: ResourceType) =
+        favoriteDao.countFavorites(userId, type)
 }

@@ -27,8 +27,13 @@ class StoryViewModel(
     private val limit = 20
     var total = 0
 
+    private var offsetFavorite = 0
+    private val limitFavorite = 20
+    var totalFavorite = 0
+
     fun getStories() = liveData(Dispatchers.IO) {
-        val response = storyRepository.getStories(offset, limit, characters, comics, events, series, creators)
+        val response =
+            storyRepository.getStories(offset, limit, characters, comics, events, series, creators)
 
         offset = response.data.offset + response.data.count
         total = response.data.total
@@ -49,11 +54,19 @@ class StoryViewModel(
     }
 
     fun getFavoriteStories() = liveData(Dispatchers.IO) {
-        val favorites = favoriteRepository.getFavorites(userId, ResourceType.STORY)
+        val favorites = favoriteRepository.getFavorites(
+            offsetFavorite,
+            limitFavorite,
+            userId,
+            ResourceType.STORY
+        )
         val stories = mutableListOf<Story>()
 
+        totalFavorite = favoriteRepository.countFavorites(userId, ResourceType.COMIC)
+        offsetFavorite += favorites.size
+
         favorites.forEach {
-            val story = storyRepository.getStory(it.resourceId).data.results[0]
+            val story = Story(it.resourceId, it.title, "", null,true)
             story.isFavorite = true
             stories.add(story)
         }
@@ -65,13 +78,22 @@ class StoryViewModel(
         val storiesToRemove = mutableListOf<Story>()
         stories.forEach {
             val isFavorite = favoriteRepository.isFavorite(userId, it.id, ResourceType.STORY)
-            if(!isFavorite) storiesToRemove.add(it)
+            if (!isFavorite) storiesToRemove.add(it)
         }
         emit(storiesToRemove)
     }
 
-    fun addFavorite(resourceId: Int) = liveData(Dispatchers.IO) {
-        favoriteRepository.addFavorite(Favorite(userId, resourceId, ResourceType.STORY))
+    fun addFavorite(resourceId: Int, title: String) = liveData(Dispatchers.IO) {
+        favoriteRepository.addFavorite(
+            Favorite(
+                userId,
+                resourceId,
+                ResourceType.STORY,
+                title,
+                null,
+                null
+            )
+        )
         emit(true)
     }
 

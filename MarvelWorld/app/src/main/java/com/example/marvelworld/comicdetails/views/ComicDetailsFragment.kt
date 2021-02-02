@@ -8,7 +8,6 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.marvelworld.R
-import com.example.marvelworld.api.models.Image
 import com.example.marvelworld.comicdetails.respository.ComicDetailsRepository
 import com.example.marvelworld.comicdetails.viewmodel.ComicDetailsViewModel
 import com.example.marvelworld.detailcard.models.DetailCard
@@ -53,8 +52,7 @@ class ComicDetailsFragment : Fragment() {
                 val card = DetailCard(
                     comic.id,
                     comic.title,
-                    comic.thumbnail.getImagePath(Image.LANDSCAPE_INCREDIBLE),
-                    comic.thumbnail.getImagePath(Image.FULL_SIZE),
+                    comic.thumbnail,
                     comic.description,
                     comic.urls,
                     ResourceType.COMIC,

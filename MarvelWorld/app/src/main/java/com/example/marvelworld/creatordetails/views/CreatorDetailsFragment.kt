@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.marvelworld.R
-import com.example.marvelworld.api.models.Image
 import com.example.marvelworld.creatordetails.repository.CreatorDetailsRepository
 import com.example.marvelworld.creatordetails.viewmodel.CreatorDetailsViewModel
 import com.example.marvelworld.detailcard.models.DetailCard
@@ -50,8 +49,7 @@ class CreatorDetailsFragment : Fragment() {
                 val card = DetailCard(
                     creator.id,
                     creator.fullName,
-                    creator.thumbnail.getImagePath(Image.LANDSCAPE_INCREDIBLE),
-                    creator.thumbnail.getImagePath(Image.FULL_SIZE),
+                    creator.thumbnail,
                     null,
                     creator.urls,
                     ResourceType.CREATOR,

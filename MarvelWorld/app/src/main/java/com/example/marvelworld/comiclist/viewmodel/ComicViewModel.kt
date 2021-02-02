@@ -3,6 +3,7 @@ package com.example.marvelworld.comiclist.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.liveData
+import com.example.marvelworld.api.models.Image
 import com.example.marvelworld.comiclist.models.Comic
 import com.example.marvelworld.comiclist.repository.ComicRepository
 import com.example.marvelworld.favorite.models.Favorite
@@ -27,6 +28,10 @@ class ComicViewModel(
     private val limit = 20
     var total = 0
 
+    private var offsetFavorite = 0
+    private val limitFavorite = 20
+    var totalFavorite = 0
+
     fun getComics() = liveData(Dispatchers.IO) {
         val response =
             comicRepository.getComics(offset, limit, title, characters, events, series, creators)
@@ -50,11 +55,27 @@ class ComicViewModel(
     }
 
     fun getFavoriteComics() = liveData(Dispatchers.IO) {
-        val favorites = favoriteRepository.getFavorites(userId, ResourceType.COMIC)
+        val favorites = favoriteRepository.getFavorites(
+            offsetFavorite,
+            limitFavorite,
+            userId,
+            ResourceType.COMIC
+        )
         val comics = mutableListOf<Comic>()
 
+        totalFavorite = favoriteRepository.countFavorites(userId, ResourceType.COMIC)
+        offsetFavorite += favorites.size
+
         favorites.forEach {
-            val comic = comicRepository.getComic(it.resourceId).data.results[0]
+            val comic = Comic(
+                it.resourceId,
+                it.title,
+                "",
+                listOf(),
+                listOf(),
+                Image(it.imagePath!!, it.imageExtension!!),
+                true
+            )
             comic.isFavorite = true
             comics.add(comic)
         }
@@ -71,10 +92,20 @@ class ComicViewModel(
         emit(comicsToRemove)
     }
 
-    fun addFavorite(resourceId: Int) = liveData(Dispatchers.IO) {
-        favoriteRepository.addFavorite(Favorite(userId, resourceId, ResourceType.COMIC))
-        emit(true)
-    }
+    fun addFavorite(resourceId: Int, title: String, imagePath: String?, imageExtension: String?) =
+        liveData(Dispatchers.IO) {
+            favoriteRepository.addFavorite(
+                Favorite(
+                    userId,
+                    resourceId,
+                    ResourceType.COMIC,
+                    title,
+                    imagePath,
+                    imageExtension
+                )
+            )
+            emit(true)
+        }
 
     fun removeFavorite(resourceId: Int) = liveData(Dispatchers.IO) {
         favoriteRepository.removeFavorite(userId, resourceId, ResourceType.COMIC)

@@ -9,6 +9,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.fragment.app.DialogFragment
 import com.example.marvelworld.R
+import com.example.marvelworld.api.models.Image
 import com.example.marvelworld.detailcard.models.DetailCard
 import com.squareup.picasso.Picasso
 
@@ -36,7 +37,7 @@ class ImageDialogFragment(private val card: DetailCard) : DialogFragment() {
         }
 
         val image = view.findViewById<ImageView>(R.id.image_dialog_image)
-        Picasso.get().load(card.imageDialog).into(image)
+        Picasso.get().load(card.thumbnail?.getImagePath(Image.FULL_SIZE)).into(image)
 
         return view
     }

@@ -211,7 +211,7 @@ class DetailCardFragment(
             val target = object : Target {
                 override fun onBitmapLoaded(bitmap: Bitmap?, from: LoadedFrom?) {
                     val uri = getImageUri(bitmap!!)
-                    intent.putExtra(Intent.EXTRA_SUBJECT, detailCard.title
+                    intent.putExtra(Intent.EXTRA_SUBJECT, detailCard.title)
                     intent.putExtra(Intent.EXTRA_TEXT, extraText)
                     intent.type = "image/jpg"
                     intent.putExtra(Intent.EXTRA_STREAM, uri)

@@ -8,7 +8,7 @@
     android:gravity="center_horizontal"
     android:orientation="vertical"
     android:paddingHorizontal="16dp"
-    tools:context=".signinsignup.view.VerificationEmailFragment">
+    tools:context=".authentication.view.VerificationEmailFragment">
 
     <TextView
         android:layout_width="match_parent"

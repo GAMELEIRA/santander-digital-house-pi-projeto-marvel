@@ -1,4 +1,4 @@
-package com.example.marvelworld.signinsignup.view
+package com.example.marvelworld.authentication.view
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -14,6 +14,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.UserProfileChangeRequest
 
 
 class SignUpFragment : Fragment() {
@@ -31,7 +32,7 @@ class SignUpFragment : Fragment() {
     private lateinit var password: String
     private lateinit var repeatPassword: String
 
-    private lateinit var singInSignUpController: SingInSignUpController
+    private lateinit var authenticationController: AuthenticationController
 
     private val auth by lazy { FirebaseAuth.getInstance() }
 
@@ -53,7 +54,7 @@ class SignUpFragment : Fragment() {
         signUpButton = view.findViewById(R.id.sign_up_button)
         signInButton = view.findViewById(R.id.sign_in)
 
-        singInSignUpController = requireActivity() as SingInSignUpController
+        authenticationController = requireActivity() as AuthenticationController
 
         signUpButton.setOnClickListener {
             name = view.findViewById<TextInputEditText>(R.id.name_input).text.toString().trim()
@@ -70,7 +71,7 @@ class SignUpFragment : Fragment() {
         }
 
         signInButton.setOnClickListener {
-            singInSignUpController.showSignInFragment()
+            authenticationController.showSignInFragment()
         }
     }
 
@@ -127,9 +128,12 @@ class SignUpFragment : Fragment() {
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val user = auth.currentUser!!
+                    val profileUpdates =
+                        UserProfileChangeRequest.Builder().setDisplayName(name).build()
+                    user.updateProfile(profileUpdates)
                     sendEmailVerification(user)
                 } else {
-                    Toast.makeText(context, getString(R.string.auth_failed), Toast.LENGTH_SHORT)
+                    Toast.makeText(context, getString(R.string.registration_failed), Toast.LENGTH_SHORT)
                         .show()
                 }
             }
@@ -145,7 +149,7 @@ class SignUpFragment : Fragment() {
                         Toast.LENGTH_SHORT
                     ).show()
                     auth.signOut()
-                    singInSignUpController.showSignInFragment()
+                    authenticationController.showSignInFragment()
                 } else {
                     Toast.makeText(
                         context,

@@ -1,4 +1,4 @@
-package com.example.marvelworld.signinsignup.view
+package com.example.marvelworld.authentication.view
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -21,7 +21,7 @@ class ResetPasswordFragment : Fragment() {
     private lateinit var email: String
     private lateinit var resetPasswordButton: Button
 
-    private lateinit var singInSignUpController: SingInSignUpController
+    private lateinit var authenticationController: AuthenticationController
     private val auth by lazy { FirebaseAuth.getInstance() }
 
     override fun onCreateView(
@@ -38,7 +38,7 @@ class ResetPasswordFragment : Fragment() {
         tieEmail = view.findViewById(R.id.email_input)
         resetPasswordButton = view.findViewById((R.id.reset_password_button))
 
-        singInSignUpController = requireActivity() as SingInSignUpController
+        authenticationController = requireActivity() as AuthenticationController
 
         tieEmail.setText(requireArguments().getString(Constant.EMAIL))
 
@@ -53,7 +53,7 @@ class ResetPasswordFragment : Fragment() {
                     Toast.LENGTH_SHORT
                 ).show()
 
-                singInSignUpController.showSignInFragment()
+                authenticationController.showSignInFragment()
             }
         }
     }

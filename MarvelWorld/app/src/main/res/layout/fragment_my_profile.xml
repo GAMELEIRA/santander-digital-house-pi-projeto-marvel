@@ -15,11 +15,13 @@
         android:layout_marginBottom="40dp">
 
         <ImageView
-            android:id="@+id/image_crop"
+            android:id="@+id/user_photo"
             android:layout_width="200dp"
             android:layout_height="200dp"
             android:layout_marginTop="50dp"
+            android:adjustViewBounds="true"
             android:contentDescription="@string/image_profile"
+            android:scaleType="centerCrop"
             android:src="@drawable/ic_launcher_background"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -36,25 +38,63 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton
+            android:id="@+id/upload_photo_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/ic_camera_icon"
             android:contentDescription="@string/button_for_uploading_profile_image"
-            app:layout_constraintBottom_toBottomOf="@+id/image_crop"
-            app:layout_constraintEnd_toEndOf="@+id/image_crop" />
+            app:layout_constraintBottom_toBottomOf="@+id/user_photo"
+            app:layout_constraintEnd_toEndOf="@+id/user_photo" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <com.google.android.material.button.MaterialButton
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/name_input_layout"
+        style="@style/SignInInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:hint="@string/name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:startIconDrawable="@drawable/ic_user_icon">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/name_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/save_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:padding="15dp"
-        android:text="@string/reset_password" />
+        android:text="@string/save" />
 
-    <com.google.android.material.button.MaterialButton
+    <Button
+        android:id="@+id/reset_password_button"
+        style="?attr/materialButtonOutlinedStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:padding="15dp"
+        android:text="@string/reset_password"
+        android:textColor="@color/white"
+        android:visibility="gone"
+        app:strokeColor="@color/colorPrimary" />
+
+    <Button
+        android:id="@+id/delete_account_button"
+        style="?attr/materialButtonOutlinedStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="15dp"
-        android:text="@string/delete_account" />
+        android:text="@string/delete_account"
+        android:textColor="@color/white"
+        app:strokeColor="@color/colorPrimary" />
 
 </LinearLayout>

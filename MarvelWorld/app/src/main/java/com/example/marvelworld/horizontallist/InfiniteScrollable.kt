@@ -1,4 +1,4 @@
-package com.example.marvelworld.util
+package com.example.marvelworld.horizontallist
 
 import androidx.lifecycle.liveData
 import com.example.marvelworld.horizontallist.HorizontalListItem

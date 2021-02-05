@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimary"
-    tools:context=".signinsignup.view.SignInFragment">
+    tools:context=".authentication.view.SignInFragment">
 
     <View
         android:id="@+id/sign_in_grey_background"
@@ -74,7 +74,7 @@
         android:clickable="true"
         android:focusable="true"
         android:text="@string/forgot_your_password"
-        android:textColor="@color/light_grey"
+        android:textColor="@color/text_input"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/password_input_layout" />

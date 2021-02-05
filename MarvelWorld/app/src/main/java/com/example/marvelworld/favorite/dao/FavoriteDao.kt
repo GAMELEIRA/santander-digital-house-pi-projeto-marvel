@@ -15,8 +15,8 @@ interface FavoriteDao {
     @Query("DELETE FROM Favorite WHERE resourceId = :resourceId AND type = :type AND userId = :userId")
     suspend fun removeFavorite(userId: String, resourceId: Int, type: ResourceType)
 
-    @Query("SELECT * FROM Favorite WHERE type = :type AND userId = :userId")
-    suspend fun getFavorites(userId: String, type: ResourceType): List<Favorite>
+    @Query("DELETE FROM Favorite WHERE userId = :userId")
+    suspend fun removeFavorites(userId: String)
 
     @Query("SELECT * FROM Favorite WHERE type = :type AND userId = :userId ORDER BY id LIMIT :limit OFFSET :offset")
     suspend fun getFavorites(offset: Int, limit: Int, userId: String, type: ResourceType): List<Favorite>

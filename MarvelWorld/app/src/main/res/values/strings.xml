@@ -69,11 +69,21 @@
     <string name="verification_email_sent">Verification email sent to %1$s</string>
     <string name="email_verification_failed">Failed to send verification email.</string>
     <string name="forgot_your_password">Forgot your password</string>
-    <string name="email_sent">Email sent</string>
+    <string name="email_sent">Reset instruction sent to your email</string>
     <string name="resend_email">Resend email</string>
     <string name="email_verification_msn">An email verification was sent to your account. If you don\'t received it, try resend it</string>
     <string name="failed_send_email">It was not possible to send an email right now. Try it later.</string>
     <string name="share_msg">Get Marvel World from Play Store to know more: link</string>
+    <string name="photo_upload_failed">Photo upload feiled</string>
+    <string name="save">Save</string>
+    <string name="profile_update_failed">Profile update failed</string>
+    <string name="delete_account_warning">This operation can\'t be undone. Do you want to continue?</string>
+    <string name="decline">Decline</string>
+    <string name="accept">Accept</string>
+    <string name="account_deleted">Account deleted</string>
+    <string name="delete_account_failed">Delete account failed</string>
+    <string name="profile_updated">Profile updated</string>
+    <string name="registration_failed">Registration failed</string>
 
 
 </resources>

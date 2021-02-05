@@ -1,6 +1,6 @@
-package com.example.marvelworld.signinsignup.view
+package com.example.marvelworld.authentication.view
 
-interface SingInSignUpController {
+interface AuthenticationController {
     fun showSignUpFragment()
     fun showResetPasswordFragment(email: String)
     fun showVerificationEmailFragment(email: String)

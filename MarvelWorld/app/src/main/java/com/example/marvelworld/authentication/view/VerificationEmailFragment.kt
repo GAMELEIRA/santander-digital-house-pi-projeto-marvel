@@ -1,4 +1,4 @@
-package com.example.marvelworld.signinsignup.view
+package com.example.marvelworld.authentication.view
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -14,7 +14,7 @@ class VerificationEmailFragment : Fragment() {
 
     private lateinit var resendEmailButton: Button
 
-    private lateinit var singInSignUpController: SingInSignUpController
+    private lateinit var authenticationController: AuthenticationController
     private val auth by lazy { FirebaseAuth.getInstance() }
 
     override fun onCreateView(
@@ -29,7 +29,7 @@ class VerificationEmailFragment : Fragment() {
 
         resendEmailButton = view.findViewById((R.id.resend_email_button))
 
-        singInSignUpController = requireActivity() as SingInSignUpController
+        authenticationController = requireActivity() as AuthenticationController
 
         resendEmailButton.setOnClickListener {
             val user = auth.currentUser!!
@@ -40,7 +40,7 @@ class VerificationEmailFragment : Fragment() {
                         Toast.makeText(context, getString(R.string.email_sent), Toast.LENGTH_SHORT)
                             .show()
                         auth.signOut()
-                        singInSignUpController.showSignInFragment()
+                        authenticationController.showSignInFragment()
                     } else {
                         Toast.makeText(
                             context,
@@ -49,7 +49,7 @@ class VerificationEmailFragment : Fragment() {
                         )
                             .show()
                         auth.signOut()
-                        singInSignUpController.showSignInFragment()
+                        authenticationController.showSignInFragment()
                     }
                 }
         }

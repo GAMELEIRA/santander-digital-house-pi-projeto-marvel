@@ -6,7 +6,7 @@ import androidx.lifecycle.liveData
 import com.example.marvelworld.favorite.respository.FavoriteRepository
 import com.example.marvelworld.horizontallist.HorizontalListItem
 import com.example.marvelworld.storydetails.repository.StoryDetailsRepository
-import com.example.marvelworld.util.InfiniteScrollable
+import com.example.marvelworld.horizontallist.InfiniteScrollable
 import com.example.marvelworld.util.ResourceType
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers

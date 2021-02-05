@@ -1,4 +1,4 @@
-package com.example.marvelworld.signinsignup.view
+package com.example.marvelworld.authentication.view
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,7 +8,7 @@ import com.example.marvelworld.R
 import com.example.marvelworld.home.views.MainActivity
 import com.example.marvelworld.util.Constant
 
-class SignInSignUpActivity : AppCompatActivity(), SingInSignUpController {
+class AuthenticationActivity : AppCompatActivity(), AuthenticationController {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_in_sign_up)

@@ -1,5 +1,6 @@
-package com.example.marvelworld.signinsignup.view
+package com.example.marvelworld.authentication.view
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -40,7 +41,7 @@ class SignInFragment : Fragment() {
     private lateinit var forgotPasswordButton: TextView
     private lateinit var facebookButton: ImageButton
     private lateinit var googleButton: ImageButton
-    private lateinit var singInSignUpController: SingInSignUpController
+    private lateinit var authenticationController: AuthenticationController
 
     private val callbackManager by lazy { CallbackManager.Factory.create() }
     private val auth by lazy { FirebaseAuth.getInstance() }
@@ -65,7 +66,7 @@ class SignInFragment : Fragment() {
         facebookButton = view.findViewById(R.id.facebook_button)
         googleButton = view.findViewById(R.id.google_button)
 
-        singInSignUpController = requireActivity() as SingInSignUpController
+        authenticationController = requireActivity() as AuthenticationController
 
         googleButton.setOnClickListener {
             signInWithGoogle()
@@ -86,12 +87,12 @@ class SignInFragment : Fragment() {
         }
 
         signUpButton.setOnClickListener {
-            singInSignUpController.showSignUpFragment()
+            authenticationController.showSignUpFragment()
         }
 
         forgotPasswordButton.setOnClickListener {
             email = tieEmail.text.toString().trim()
-            singInSignUpController.showResetPasswordFragment(email)
+            authenticationController.showResetPasswordFragment(email)
         }
     }
 
@@ -114,7 +115,7 @@ class SignInFragment : Fragment() {
             override fun onSuccess(loginResult: LoginResult) {
                 val credential: AuthCredential =
                     FacebookAuthProvider.getCredential(loginResult.accessToken.token)
-                firebaseAuth(credential)
+                firebaseAuth(credential, Constant.SING_IN_WITH_FACEBOOK)
             }
 
             override fun onCancel() {
@@ -142,7 +143,7 @@ class SignInFragment : Fragment() {
                 try {
                     val account = task.getResult(ApiException::class.java)!!
                     val credential = GoogleAuthProvider.getCredential(account.idToken!!, null)
-                    firebaseAuth(credential)
+                    firebaseAuth(credential, Constant.SING_IN_WITH_GOOGLE)
                 } catch (e: ApiException) {
                     e.printStackTrace()
                 }
@@ -155,11 +156,14 @@ class SignInFragment : Fragment() {
         }
     }
 
-    private fun firebaseAuth(credential: AuthCredential) {
+    private fun firebaseAuth(credential: AuthCredential, signInMode: Int) {
         auth.signInWithCredential(credential)
             .addOnCompleteListener(requireActivity()) { task ->
                 if (task.isSuccessful) {
-                    if (auth.currentUser != null) singInSignUpController.startMainActivity()
+                    if (auth.currentUser != null) {
+                        saveSignInMode(signInMode)
+                        authenticationController.startMainActivity()
+                    }
                 } else {
                     Toast.makeText(context, getString(R.string.sing_in_failed), Toast.LENGTH_SHORT)
                         .show()
@@ -176,9 +180,10 @@ class SignInFragment : Fragment() {
                 if (task.isSuccessful) {
                     val user = auth.currentUser
                     if (user!!.isEmailVerified) {
-                        singInSignUpController.startMainActivity()
+                        saveSignInMode(Constant.SING_IN_WITH_PASSWORD)
+                        authenticationController.startMainActivity()
                     } else {
-                        singInSignUpController.showVerificationEmailFragment(email)
+                        authenticationController.showVerificationEmailFragment(email)
                     }
                 } else {
                     Toast.makeText(context, R.string.auth_failed, Toast.LENGTH_SHORT).show()
@@ -206,5 +211,16 @@ class SignInFragment : Fragment() {
         }
 
         return isValid
+    }
+
+    private fun saveSignInMode(signInMode: Int) {
+        val sharedPref = requireActivity().getSharedPreferences(
+            Constant.SHARED_PREFERENCES,
+            Context.MODE_PRIVATE
+        )
+
+        with(sharedPref.edit()) {
+            putInt(Constant.SING_IN_MODE, signInMode).apply()
+        }
     }
 }

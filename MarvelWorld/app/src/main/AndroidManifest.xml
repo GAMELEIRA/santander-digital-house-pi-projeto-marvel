@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".signinsignup.view.SignInSignUpActivity"
+            android:name=".authentication.view.AuthenticationActivity"
             android:theme="@style/NoActionBar" />
         <activity
             android:name=".splashscreen.views.SplashScreen2"

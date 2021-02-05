@@ -7,7 +7,7 @@ import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
 import com.example.marvelworld.R
 import com.example.marvelworld.home.views.MainActivity
-import com.example.marvelworld.signinsignup.view.SignInSignUpActivity
+import com.example.marvelworld.authentication.view.AuthenticationActivity
 import com.google.firebase.auth.FirebaseAuth
 
 class SplashScreen2 : AppCompatActivity() {
@@ -26,7 +26,7 @@ class SplashScreen2 : AppCompatActivity() {
 
     private fun initNextIntent() {
         nextIntent = if (auth.currentUser == null) {
-            Intent(this, SignInSignUpActivity::class.java)
+            Intent(this, AuthenticationActivity::class.java)
         } else {
             Intent(this, MainActivity::class.java)
         }

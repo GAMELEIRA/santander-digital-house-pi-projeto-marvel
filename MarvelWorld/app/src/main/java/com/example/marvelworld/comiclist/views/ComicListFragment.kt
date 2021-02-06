@@ -2,6 +2,7 @@ package com.example.marvelworld.comiclist.views
 
 import android.os.Bundle
 import android.view.*
+import android.widget.Button
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -25,11 +26,12 @@ class ComicListFragment(
     OnComicClickListener,
     CallbackListener {
 
+    private lateinit var noResultScreen: View
     private lateinit var comicViewModel: ComicViewModel
     private lateinit var comicListAdapter: ComicListAdapter
     private lateinit var recycler: RecyclerView
     private lateinit var filterIcon: MenuItem
-    private val comicList = mutableListOf<Comic>()
+    private val comicList = mutableListOf<Comic?>()
     private var filter = Filter()
     private var loading = false
     private var onPause = false
@@ -59,11 +61,23 @@ class ComicListFragment(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        noResultScreen = view.findViewById(R.id.no_result_found_layout)
+
         if (!onlyFavorites) setHasOptionsMenu(true)
 
         recycler = view.findViewById(R.id.recycler_comic_list)
 
         val manager = GridLayoutManager(view.context, 2)
+        manager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                return if (comicList[position] != null) {
+                    1
+                } else {
+                    2
+                }
+            }
+        }
+
         comicListAdapter = ComicListAdapter(comicList, this)
 
         recycler.apply {
@@ -82,6 +96,10 @@ class ComicListFragment(
         if (comicList.isEmpty()) getComics()
 
         initInfiniteScroll()
+
+        noResultScreen.findViewById<Button>(R.id.clear_filter_button).setOnClickListener {
+            onDataReceived(Filter())
+        }
     }
 
     private fun updateComics() {
@@ -101,18 +119,32 @@ class ComicListFragment(
 
     private fun getComics() {
         loading = true
+        comicListAdapter.addNullData()
         if (onlyFavorites) {
             comicViewModel.getFavoriteComics().observe(viewLifecycleOwner, {
+                comicListAdapter.removeNull()
                 comicList.addAll(it)
                 comicListAdapter.notifyDataSetChanged()
                 loading = false
             })
         } else {
             comicViewModel.getComics().observe(viewLifecycleOwner, {
+                comicListAdapter.removeNull()
                 comicList.addAll(it)
                 comicListAdapter.notifyDataSetChanged()
+                testNoResult()
                 loading = false
             })
+        }
+    }
+
+    private fun testNoResult() {
+        if (comicList.isEmpty()) {
+            recycler.visibility = View.GONE
+            noResultScreen.visibility = View.VISIBLE
+        } else {
+            recycler.visibility = View.VISIBLE
+            noResultScreen.visibility = View.GONE
         }
     }
 
@@ -144,18 +176,18 @@ class ComicListFragment(
     }
 
     override fun onComicClick(position: Int) {
-        val bundle = bundleOf("COMIC_ID" to comicList[position].id)
+        val bundle = bundleOf("COMIC_ID" to comicList[position]!!.id)
         findNavController().navigate(R.id.comicDetailsFragment, bundle)
     }
 
     override fun onComicFavoriteClick(position: Int) {
-        comicViewModel.isFavorite(comicList[position].id)
+        comicViewModel.isFavorite(comicList[position]!!.id)
             .observe(viewLifecycleOwner, { isFavorite ->
                 if (isFavorite) {
-                    comicViewModel.removeFavorite(comicList[position].id)
+                    comicViewModel.removeFavorite(comicList[position]!!.id)
                         .observe(viewLifecycleOwner, {
                             if (it) {
-                                comicList[position].isFavorite = false
+                                comicList[position]!!.isFavorite = false
                                 if (onlyFavorites) {
                                     comicList.removeAt(position)
                                     comicListAdapter.notifyDataSetChanged()
@@ -165,7 +197,7 @@ class ComicListFragment(
                             }
                         })
                 } else {
-                    val comic = comicList[position]
+                    val comic = comicList[position]!!
                     comicViewModel.addFavorite(
                         comic.id,
                         comic.title,
@@ -174,13 +206,13 @@ class ComicListFragment(
                     )
                         .observe(viewLifecycleOwner, {
                             if (it) {
-                                comicList[position].isFavorite = true
+                                comicList[position]!!.isFavorite = true
                                 comicListAdapter.notifyItemChanged(position)
                             }
                         })
                 }
 
-                comicList[position].isFavorite = !comicList[position].isFavorite
+                comicList[position]!!.isFavorite = !comicList[position]!!.isFavorite
             })
     }
 

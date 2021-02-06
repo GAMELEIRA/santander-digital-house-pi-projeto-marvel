@@ -46,9 +46,9 @@ class ComicViewModel(
         emit(response.data.results)
     }
 
-    fun updateComics(comics: MutableList<Comic>) = liveData(Dispatchers.IO) {
+    fun updateComics(comics: MutableList<Comic?>) = liveData(Dispatchers.IO) {
         comics.forEach {
-            it.isFavorite = favoriteRepository.isFavorite(userId, it.id, ResourceType.COMIC)
+            it!!.isFavorite = favoriteRepository.isFavorite(userId, it.id, ResourceType.COMIC)
         }
 
         emit(true)
@@ -83,10 +83,10 @@ class ComicViewModel(
         emit(comics)
     }
 
-    fun updateFavoriteComics(comics: MutableList<Comic>) = liveData(Dispatchers.IO) {
+    fun updateFavoriteComics(comics: MutableList<Comic?>) = liveData(Dispatchers.IO) {
         val comicsToRemove = mutableListOf<Comic>()
         comics.forEach {
-            val isFavorite = favoriteRepository.isFavorite(userId, it.id, ResourceType.COMIC)
+            val isFavorite = favoriteRepository.isFavorite(userId, it!!.id, ResourceType.COMIC)
             if (!isFavorite) comicsToRemove.add(it)
         }
         emit(comicsToRemove)

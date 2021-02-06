@@ -225,9 +225,6 @@ class FilterListFragment(
         }
 
         closeFilters.setOnClickListener {
-            if (filter.isEmpty()) {
-                callbackListener.onDataReceived(filter)
-            }
             dismiss()
         }
 

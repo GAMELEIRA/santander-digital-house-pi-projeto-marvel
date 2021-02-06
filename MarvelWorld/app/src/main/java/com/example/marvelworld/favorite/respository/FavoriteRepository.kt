@@ -17,6 +17,6 @@ class FavoriteRepository(private val favoriteDao: FavoriteDao) {
     suspend fun isFavorite(userId: String, resourceId: Int, type: ResourceType) =
         favoriteDao.isFavorite(userId, resourceId, type)
 
-    fun countFavorites(userId: String, type: ResourceType) =
+    suspend fun countFavorites(userId: String, type: ResourceType) =
         favoriteDao.countFavorites(userId, type)
 }

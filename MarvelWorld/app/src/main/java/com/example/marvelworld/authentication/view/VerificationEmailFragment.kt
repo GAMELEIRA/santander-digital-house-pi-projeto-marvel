@@ -8,11 +8,13 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.marvelworld.R
+import com.example.marvelworld.util.LoadingDialog
 import com.google.firebase.auth.FirebaseAuth
 
 class VerificationEmailFragment : Fragment() {
 
     private lateinit var resendEmailButton: Button
+    private lateinit var loadingDialog: LoadingDialog
 
     private lateinit var authenticationController: AuthenticationController
     private val auth by lazy { FirebaseAuth.getInstance() }
@@ -27,30 +29,36 @@ class VerificationEmailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        loadingDialog =
+            LoadingDialog(requireContext(), layoutInflater, getString(R.string.sending_email))
+
         resendEmailButton = view.findViewById((R.id.resend_email_button))
 
         authenticationController = requireActivity() as AuthenticationController
 
+        val user = auth.currentUser!!
+        auth.signOut()
+
         resendEmailButton.setOnClickListener {
-            val user = auth.currentUser!!
+            loadingDialog.startLoadingDialog()
 
             user.sendEmailVerification()
                 .addOnCompleteListener {
                     if (it.isSuccessful) {
-                        Toast.makeText(context, getString(R.string.email_sent), Toast.LENGTH_SHORT)
-                            .show()
-                        auth.signOut()
-                        authenticationController.showSignInFragment()
+                        Toast.makeText(
+                            context,
+                            getString(R.string.verification_email_sent, user.email),
+                            Toast.LENGTH_SHORT
+                        ).show()
                     } else {
                         Toast.makeText(
                             context,
                             getString(R.string.failed_send_email),
                             Toast.LENGTH_LONG
-                        )
-                            .show()
-                        auth.signOut()
-                        authenticationController.showSignInFragment()
+                        ).show()
                     }
+                    loadingDialog.dismissDialog()
+                    authenticationController.showSignInFragment()
                 }
         }
     }

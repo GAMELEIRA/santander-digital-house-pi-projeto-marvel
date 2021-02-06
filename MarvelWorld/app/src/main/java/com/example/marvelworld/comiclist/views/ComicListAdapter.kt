@@ -11,33 +11,60 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.marvelworld.R
 import com.example.marvelworld.api.models.Image
 import com.example.marvelworld.comiclist.models.Comic
+import com.example.marvelworld.util.Constant
 import com.google.android.material.card.MaterialCardView
 import com.squareup.picasso.Picasso
 
 class ComicListAdapter(
-    private val comicList: List<Comic>,
+    private val comicList: MutableList<Comic?>,
     private val onComicClickListener: OnComicClickListener
-) : RecyclerView.Adapter<ComicListAdapter.ComicViewHolder>() {
+) : RecyclerView.Adapter<ComicListAdapter.CustomViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ComicViewHolder {
-        val view = LayoutInflater
-            .from(parent.context)
-            .inflate(R.layout.comic_list_item, parent, false)
-
-        return ComicViewHolder(view, parent.context)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomViewHolder {
+        return if (viewType == Constant.VIEW_TYPE_ITEM) {
+            val view = LayoutInflater
+                .from(parent.context)
+                .inflate(R.layout.comic_list_item, parent, false)
+            ComicViewHolder(view, parent.context)
+        } else {
+            val view = LayoutInflater
+                .from(parent.context)
+                .inflate(R.layout.recycler_progress_bar, parent, false)
+            ProgressBarViewHolder(view)
+        }
     }
 
-    override fun onBindViewHolder(holder: ComicViewHolder, position: Int) {
-        val comic = comicList[position]
-        holder.bind(comic, onComicClickListener)
+    override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
+        if (holder is ComicViewHolder) {
+            val comic = comicList[position]!!
+            holder.bind(comic, onComicClickListener)
+        }
     }
 
     override fun getItemCount() = comicList.size
 
+    override fun getItemViewType(position: Int): Int {
+        return if (comicList[position] != null) {
+            Constant.VIEW_TYPE_ITEM
+        } else {
+            Constant.VIEW_TYPE_LOADING
+        }
+    }
+
+    fun addNullData() {
+        comicList.add(null)
+        notifyDataSetChanged()
+    }
+
+    fun removeNull() {
+        comicList.removeAt(comicList.size - 1)
+        notifyDataSetChanged()
+    }
+
     class ComicViewHolder(
         view: View,
         private val context: Context
-    ) : RecyclerView.ViewHolder(view) {
+    ) : CustomViewHolder(view) {
         private val image: ImageView = view.findViewById(R.id.img_comic_list_item)
         private val favoriteButton: ImageButton = view.findViewById(R.id.comic_list_favorite_button)
         private val title: TextView = view.findViewById(R.id.title_comic_list_item)
@@ -98,4 +125,7 @@ class ComicListAdapter(
             }
         }
     }
+
+    class ProgressBarViewHolder(view: View) : CustomViewHolder(view)
+    open class CustomViewHolder(view: View) : RecyclerView.ViewHolder(view)
 }

@@ -15,9 +15,11 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.marvelworld.R
 import com.example.marvelworld.authentication.view.AuthenticationActivity
 import com.example.marvelworld.util.Constant
+import com.example.marvelworld.util.LoadingDialog
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
 
 class MainActivity : AppCompatActivity(), OnUpdateProfile {
@@ -29,12 +31,14 @@ class MainActivity : AppCompatActivity(), OnUpdateProfile {
     private lateinit var username: TextView
     private lateinit var userPhoto: ImageView
     private lateinit var uploadPhotoButton: ImageButton
-
+    private lateinit var loadingDialog: LoadingDialog
     private val auth by lazy { FirebaseAuth.getInstance() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        loadingDialog = LoadingDialog(this, layoutInflater, getString(R.string.updating))
 
         navigationView.setupWithNavController(navController)
         navigationView.itemIconTintList = null
@@ -92,15 +96,62 @@ class MainActivity : AppCompatActivity(), OnUpdateProfile {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == Constant.UPLOAD_IMAGE_CODE && resultCode == RESULT_OK) {
-            val imageURI = data?.data
-            val profileUpdates = UserProfileChangeRequest.Builder().setPhotoUri(imageURI).build()
-            auth.currentUser!!.updateProfile(profileUpdates).addOnFailureListener {
-                Toast.makeText(this, getString(R.string.photo_upload_failed), Toast.LENGTH_SHORT)
-                    .show()
-            }.addOnSuccessListener {
-                Picasso.get().load(auth.currentUser!!.photoUrl).into(userPhoto)
-            }
+            loadingDialog.startLoadingDialog()
+
+            val imageUri = data?.data!!
+
+            val reference = FirebaseStorage.getInstance().reference
+                .child("profileImages")
+                .child(auth.currentUser!!.uid + ".jpg")
+            reference.putFile(imageUri)
+                .addOnSuccessListener {
+                    reference.downloadUrl
+                        .addOnSuccessListener { uri ->
+                            val profileUpdates =
+                                UserProfileChangeRequest.Builder().setPhotoUri(uri).build()
+                            updateProfile(profileUpdates)
+                        }
+                        .addOnFailureListener {
+                            loadingDialog.dismissDialog()
+                            Toast.makeText(
+                                this,
+                                getString(R.string.photo_upload_failed),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                }
+                .addOnFailureListener {
+                    loadingDialog.dismissDialog()
+                    Toast.makeText(
+                        this,
+                        getString(R.string.photo_upload_failed),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
         }
+    }
+
+    private fun updateProfile(profileUpdates: UserProfileChangeRequest) {
+        auth.currentUser!!.updateProfile(profileUpdates)
+            .addOnSuccessListener {
+                Picasso.get().load(auth.currentUser!!.photoUrl).into(userPhoto)
+                Toast.makeText(
+                    this,
+                    getString(R.string.profile_updated),
+                    Toast.LENGTH_SHORT
+                ).show()
+                updateHeader()
+            }
+            .addOnFailureListener {
+                Toast.makeText(
+                    this,
+                    getString(R.string.photo_upload_failed),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            .addOnCompleteListener {
+                loadingDialog.dismissDialog()
+            }
     }
 
     override fun updateHeader() {

@@ -1,6 +1,5 @@
 package com.example.marvelworld.creatorlist.views
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.view.*
 import android.widget.ImageButton
@@ -12,39 +11,65 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.marvelworld.R
 import com.example.marvelworld.api.models.Image
 import com.example.marvelworld.creatorlist.models.Creator
+import com.example.marvelworld.util.Constant
 import com.google.android.material.card.MaterialCardView
 import com.squareup.picasso.Picasso
 
 class CreatorListAdapter(
-    private val creatorList: List<Creator>,
+    private val creatorList: MutableList<Creator?>,
     private val onCreatorClickListener: OnCreatorClickListener
-) : RecyclerView.Adapter<CreatorListAdapter.CreatorViewHolder>() {
+) : RecyclerView.Adapter<CreatorListAdapter.CustomViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CreatorViewHolder {
-        val view = LayoutInflater
-            .from(parent.context)
-            .inflate(R.layout.creator_list_item, parent, false)
-
-        return CreatorViewHolder(view, parent.context)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomViewHolder {
+        return if (viewType == Constant.VIEW_TYPE_ITEM) {
+            val view = LayoutInflater
+                .from(parent.context)
+                .inflate(R.layout.creator_list_item, parent, false)
+            CreatorViewHolder(view, parent.context)
+        } else {
+            val view = LayoutInflater
+                .from(parent.context)
+                .inflate(R.layout.recycler_progress_bar, parent, false)
+            ProgressBarViewHolder(view)
+        }
     }
 
-    override fun onBindViewHolder(holder: CreatorViewHolder, position: Int) {
-        val comic = creatorList[position]
-        holder.bind(comic, onCreatorClickListener)
+    override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
+        if(holder is CreatorViewHolder) {
+            val comic = creatorList[position]!!
+            holder.bind(comic, onCreatorClickListener)
+        }
     }
 
     override fun getItemCount() = creatorList.size
 
+    override fun getItemViewType(position: Int): Int {
+        return if (creatorList[position] != null) {
+            Constant.VIEW_TYPE_ITEM
+        } else {
+            Constant.VIEW_TYPE_LOADING
+        }
+    }
+
+    fun addNullData() {
+        creatorList.add(null)
+        notifyDataSetChanged()
+    }
+
+    fun removeNull() {
+        creatorList.removeAt(creatorList.size - 1)
+        notifyDataSetChanged()
+    }
+
     class CreatorViewHolder(
         view: View,
         private val context: Context
-    ) : RecyclerView.ViewHolder(view) {
+    ) : CustomViewHolder(view) {
         private val image: ImageView = view.findViewById(R.id.img_creator_list_item)
         private val favoriteButton: ImageButton = view.findViewById(R.id.creator_list_favorite_button)
         private val title: TextView = view.findViewById(R.id.title_creator_list_item)
         private val cardView: MaterialCardView = view.findViewById(R.id.card)
 
-        @SuppressLint("SetTextI18n")
         fun bind(creator: Creator, onCreatorClickListener: OnCreatorClickListener) {
             val path = creator.thumbnail.getImagePath(Image.PORTRAIT_UNCANNY)
             Picasso.get().load(path).into(image)
@@ -100,4 +125,7 @@ class CreatorListAdapter(
             }
         }
     }
+
+    class ProgressBarViewHolder(view: View) : CustomViewHolder(view)
+    open class CustomViewHolder(view: View) : RecyclerView.ViewHolder(view)
 }

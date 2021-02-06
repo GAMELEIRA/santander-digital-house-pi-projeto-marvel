@@ -23,4 +23,9 @@
         app:tabSelectedTextColor="#E62429"
         app:tabTextColor="#FFF" />
 
+    <include
+        android:id="@+id/no_favorites_layout"
+        layout="@layout/no_favorites"
+        android:visibility="gone" />
+
 </LinearLayout>

@@ -44,9 +44,9 @@ class CreatorViewModel(
         emit(response.data.results)
     }
 
-    fun updateCreators(creators: MutableList<Creator>) = liveData(Dispatchers.IO) {
+    fun updateCreators(creators: MutableList<Creator?>) = liveData(Dispatchers.IO) {
         creators.forEach {
-            it.isFavorite = favoriteRepository.isFavorite(userId, it.id, ResourceType.CREATOR)
+            it!!.isFavorite = favoriteRepository.isFavorite(userId, it.id, ResourceType.CREATOR)
         }
 
         emit(true)
@@ -79,10 +79,10 @@ class CreatorViewModel(
         emit(creators)
     }
 
-    fun updateFavoriteCreators(creators: MutableList<Creator>) = liveData(Dispatchers.IO) {
+    fun updateFavoriteCreators(creators: MutableList<Creator?>) = liveData(Dispatchers.IO) {
         val creatorsToRemove = mutableListOf<Creator>()
         creators.forEach {
-            val isFavorite = favoriteRepository.isFavorite(userId, it.id, ResourceType.CREATOR)
+            val isFavorite = favoriteRepository.isFavorite(userId, it!!.id, ResourceType.CREATOR)
             if (!isFavorite) creatorsToRemove.add(it)
         }
         emit(creatorsToRemove)

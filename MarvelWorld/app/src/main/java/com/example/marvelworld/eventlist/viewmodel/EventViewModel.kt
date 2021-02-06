@@ -46,9 +46,9 @@ class EventViewModel(
         emit(response.data.results)
     }
 
-    fun updateEvents(events: MutableList<Event>) = liveData(Dispatchers.IO) {
+    fun updateEvents(events: MutableList<Event?>) = liveData(Dispatchers.IO) {
         events.forEach {
-            it.isFavorite = favoriteRepository.isFavorite(userId, it.id, ResourceType.EVENT)
+            it!!.isFavorite = favoriteRepository.isFavorite(userId, it.id, ResourceType.EVENT)
         }
 
         emit(true)
@@ -82,10 +82,10 @@ class EventViewModel(
         emit(events)
     }
 
-    fun updateFavoriteEvents(events: MutableList<Event>) = liveData(Dispatchers.IO) {
+    fun updateFavoriteEvents(events: MutableList<Event?>) = liveData(Dispatchers.IO) {
         val eventsToRemove = mutableListOf<Event>()
         events.forEach {
-            val isFavorite = favoriteRepository.isFavorite(userId, it.id, ResourceType.EVENT)
+            val isFavorite = favoriteRepository.isFavorite(userId, it!!.id, ResourceType.EVENT)
             if (!isFavorite) eventsToRemove.add(it)
         }
         emit(eventsToRemove)

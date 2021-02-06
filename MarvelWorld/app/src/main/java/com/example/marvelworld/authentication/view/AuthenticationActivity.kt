@@ -8,6 +8,7 @@ import com.example.marvelworld.R
 import com.example.marvelworld.home.views.MainActivity
 import com.example.marvelworld.util.Constant
 
+
 class AuthenticationActivity : AppCompatActivity(), AuthenticationController {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

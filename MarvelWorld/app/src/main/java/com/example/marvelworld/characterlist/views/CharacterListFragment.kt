@@ -2,6 +2,7 @@ package com.example.marvelworld.characterlist.views
 
 import android.os.Bundle
 import android.view.*
+import android.widget.Button
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -25,11 +26,12 @@ class CharacterListFragment(
     OnCharacterClickListener,
     CallbackListener {
 
+    private lateinit var noResultScreen: View
     private lateinit var characterViewModel: CharacterViewModel
     private lateinit var characterListAdapter: CharacterListAdapter
     private lateinit var recycler: RecyclerView
     private lateinit var filterIcon: MenuItem
-    private var characterList = mutableListOf<Character>()
+    private var characterList = mutableListOf<Character?>()
     private var filter = Filter()
     private var loading = false
     private var onPause = false
@@ -58,11 +60,23 @@ class CharacterListFragment(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        noResultScreen = view.findViewById(R.id.no_result_found_layout)
+
         if (!onlyFavorites) setHasOptionsMenu(true)
 
         recycler = view.findViewById(R.id.recycler_character_list)
 
         val manager = GridLayoutManager(view.context, 2)
+        manager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                return if (characterList[position] != null) {
+                    1
+                } else {
+                    2
+                }
+            }
+        }
+
         characterListAdapter = CharacterListAdapter(characterList, this)
 
         recycler.apply {
@@ -81,6 +95,10 @@ class CharacterListFragment(
         if (characterList.isEmpty()) getCharacters()
 
         initInfiniteScroll()
+
+        noResultScreen.findViewById<Button>(R.id.clear_filter_button).setOnClickListener {
+            onDataReceived(Filter())
+        }
     }
 
     private fun updateCharacter() {
@@ -100,18 +118,32 @@ class CharacterListFragment(
 
     private fun getCharacters() {
         loading = true
+        characterListAdapter.addNullData()
         if (onlyFavorites) {
             characterViewModel.getFavoriteCharacters().observe(viewLifecycleOwner, {
+                characterListAdapter.removeNull()
                 characterList.addAll(it)
                 characterListAdapter.notifyDataSetChanged()
                 loading = false
             })
         } else {
             characterViewModel.getCharacters().observe(viewLifecycleOwner, {
+                characterListAdapter.removeNull()
                 characterList.addAll(it)
                 characterListAdapter.notifyDataSetChanged()
+                testNoResult()
                 loading = false
             })
+        }
+    }
+
+    private fun testNoResult() {
+        if (characterList.isEmpty()) {
+            recycler.visibility = View.GONE
+            noResultScreen.visibility = View.VISIBLE
+        } else {
+            recycler.visibility = View.VISIBLE
+            noResultScreen.visibility = View.GONE
         }
     }
 
@@ -140,18 +172,18 @@ class CharacterListFragment(
     }
 
     override fun onCharacterClick(position: Int) {
-        val bundle = bundleOf("CHARACTER_ID" to characterList[position].id)
+        val bundle = bundleOf("CHARACTER_ID" to characterList[position]!!.id)
         findNavController().navigate(R.id.characterDetailsFragment, bundle)
     }
 
     override fun onCharacterFavoriteClick(position: Int) {
-        characterViewModel.isFavorite(characterList[position].id)
+        characterViewModel.isFavorite(characterList[position]!!.id)
             .observe(viewLifecycleOwner, { isFavorite ->
                 if (isFavorite) {
-                    characterViewModel.removeFavorite(characterList[position].id)
+                    characterViewModel.removeFavorite(characterList[position]!!.id)
                         .observe(viewLifecycleOwner, {
                             if (it) {
-                                characterList[position].isFavorite = false
+                                characterList[position]!!.isFavorite = false
                                 if (onlyFavorites) {
                                     characterList.removeAt(position)
                                     characterListAdapter.notifyDataSetChanged()
@@ -161,7 +193,7 @@ class CharacterListFragment(
                             }
                         })
                 } else {
-                    val character = characterList[position]
+                    val character = characterList[position]!!
                     characterViewModel.addFavorite(
                         character.id,
                         character.name,
@@ -170,13 +202,13 @@ class CharacterListFragment(
                     )
                         .observe(viewLifecycleOwner, {
                             if (it) {
-                                characterList[position].isFavorite = true
+                                characterList[position]!!.isFavorite = true
                                 characterListAdapter.notifyItemChanged(position)
                             }
                         })
                 }
 
-                characterList[position].isFavorite = !characterList[position].isFavorite
+                characterList[position]!!.isFavorite = !characterList[position]!!.isFavorite
             })
     }
 

@@ -45,9 +45,9 @@ class StoryViewModel(
         emit(response.data.results)
     }
 
-    fun updateStories(stories: MutableList<Story>) = liveData(Dispatchers.IO) {
+    fun updateStories(stories: MutableList<Story?>) = liveData(Dispatchers.IO) {
         stories.forEach {
-            it.isFavorite = favoriteRepository.isFavorite(userId, it.id, ResourceType.STORY)
+            it!!.isFavorite = favoriteRepository.isFavorite(userId, it.id, ResourceType.STORY)
         }
 
         emit(true)
@@ -74,10 +74,10 @@ class StoryViewModel(
         emit(stories)
     }
 
-    fun updateFavoriteStories(stories: MutableList<Story>) = liveData(Dispatchers.IO) {
+    fun updateFavoriteStories(stories: MutableList<Story?>) = liveData(Dispatchers.IO) {
         val storiesToRemove = mutableListOf<Story>()
         stories.forEach {
-            val isFavorite = favoriteRepository.isFavorite(userId, it.id, ResourceType.STORY)
+            val isFavorite = favoriteRepository.isFavorite(userId, it!!.id, ResourceType.STORY)
             if (!isFavorite) storiesToRemove.add(it)
         }
         emit(storiesToRemove)

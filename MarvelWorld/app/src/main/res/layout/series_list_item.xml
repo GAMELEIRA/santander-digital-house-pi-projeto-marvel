@@ -27,7 +27,7 @@
                 android:layout_height="250dp"
                 android:contentDescription="@string/image_for_series_list_item"
                 android:scaleType="centerCrop"
-                tools:srcCompat="@drawable/ic_launcher_background" />
+                tools:srcCompat="@color/colorPrimary" />
 
             <ImageButton
                 android:id="@+id/series_list_favorite_button"

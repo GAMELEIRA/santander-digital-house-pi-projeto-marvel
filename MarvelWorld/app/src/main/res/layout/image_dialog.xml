@@ -12,7 +12,7 @@
         android:adjustViewBounds="true"
         android:contentDescription="@string/expanded_resource_image"
         android:scaleType="fitCenter"
-        tools:src="@drawable/ic_launcher_background" />
+        tools:src="@color/colorPrimary" />
 
     <ImageButton
         android:id="@+id/close_button"

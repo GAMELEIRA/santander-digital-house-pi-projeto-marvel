@@ -46,9 +46,9 @@ class SeriesViewModel(
         emit(response.data.results)
     }
 
-    fun updateSeries(series: MutableList<Series>) = liveData(Dispatchers.IO) {
+    fun updateSeries(series: MutableList<Series?>) = liveData(Dispatchers.IO) {
         series.forEach {
-            it.isFavorite = favoriteRepository.isFavorite(userId, it.id, ResourceType.SERIES)
+            it!!.isFavorite = favoriteRepository.isFavorite(userId, it.id, ResourceType.SERIES)
         }
 
         emit(true)
@@ -82,10 +82,10 @@ class SeriesViewModel(
         emit(series)
     }
 
-    fun updateFavoriteSeries(series: MutableList<Series>) = liveData(Dispatchers.IO) {
+    fun updateFavoriteSeries(series: MutableList<Series?>) = liveData(Dispatchers.IO) {
         val seriesToRemove = mutableListOf<Series>()
         series.forEach {
-            val isFavorite = favoriteRepository.isFavorite(userId, it.id, ResourceType.SERIES)
+            val isFavorite = favoriteRepository.isFavorite(userId, it!!.id, ResourceType.SERIES)
             if (!isFavorite) seriesToRemove.add(it)
         }
         emit(seriesToRemove)

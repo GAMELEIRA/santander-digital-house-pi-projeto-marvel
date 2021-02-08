@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.marvelworld.R
 import com.example.marvelworld.util.Constant
+import com.example.marvelworld.util.LoadingDialog
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
@@ -36,6 +37,8 @@ class SignUpFragment : Fragment() {
 
     private val auth by lazy { FirebaseAuth.getInstance() }
 
+    private lateinit var loadingDialog: LoadingDialog
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -45,6 +48,8 @@ class SignUpFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        loadingDialog = LoadingDialog(requireContext(), layoutInflater, getString(R.string.creating_account))
 
         tilName = view.findViewById(R.id.name_input_layout)
         tilEmail = view.findViewById(R.id.email_input_layout)
@@ -66,6 +71,7 @@ class SignUpFragment : Fragment() {
                     .trim()
 
             if (validateFields()) {
+                loadingDialog.startLoadingDialog()
                 createUserWithEmailAndPassword(email, password)
             }
         }
@@ -133,6 +139,7 @@ class SignUpFragment : Fragment() {
                     user.updateProfile(profileUpdates)
                     sendEmailVerification(user)
                 } else {
+                    loadingDialog.dismissDialog()
                     Toast.makeText(context, getString(R.string.registration_failed), Toast.LENGTH_SHORT)
                         .show()
                 }
@@ -157,6 +164,8 @@ class SignUpFragment : Fragment() {
                         Toast.LENGTH_SHORT
                     ).show()
                 }
+
+                loadingDialog.dismissDialog()
             }
     }
 }

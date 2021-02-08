@@ -11,33 +11,60 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.marvelworld.R
 import com.example.marvelworld.api.models.Image
 import com.example.marvelworld.serieslist.models.Series
+import com.example.marvelworld.util.Constant
 import com.google.android.material.card.MaterialCardView
 import com.squareup.picasso.Picasso
 
 class SeriesListAdapter(
-    private val seriesList: List<Series>,
+    private val seriesList: MutableList<Series?>,
     private val onSeriesClickListener: OnSeriesClickListener
-) : RecyclerView.Adapter<SeriesListAdapter.SeriesViewHolder>() {
+) : RecyclerView.Adapter<SeriesListAdapter.CustomViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SeriesViewHolder {
-        val view = LayoutInflater
-            .from(parent.context)
-            .inflate(R.layout.series_list_item, parent, false)
-
-        return SeriesViewHolder(view, parent.context)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomViewHolder {
+        return if (viewType == Constant.VIEW_TYPE_ITEM) {
+            val view = LayoutInflater
+                .from(parent.context)
+                .inflate(R.layout.series_list_item, parent, false)
+            SeriesViewHolder(view, parent.context)
+        } else {
+            val view = LayoutInflater
+                .from(parent.context)
+                .inflate(R.layout.recycler_progress_bar, parent, false)
+            ProgressBarViewHolder(view)
+        }
     }
 
-    override fun onBindViewHolder(holder: SeriesViewHolder, position: Int) {
-        val series = seriesList[position]
-        holder.bind(series, onSeriesClickListener)
+    override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
+        if (holder is SeriesViewHolder) {
+            val series = seriesList[position]!!
+            holder.bind(series, onSeriesClickListener)
+        }
     }
 
     override fun getItemCount() = seriesList.size
 
+    override fun getItemViewType(position: Int): Int {
+        return if (seriesList[position] != null) {
+            Constant.VIEW_TYPE_ITEM
+        } else {
+            Constant.VIEW_TYPE_LOADING
+        }
+    }
+
+    fun addNullData() {
+        seriesList.add(null)
+        notifyDataSetChanged()
+    }
+
+    fun removeNull() {
+        seriesList.removeAt(seriesList.size - 1)
+        notifyDataSetChanged()
+    }
+
     class SeriesViewHolder(
         view: View,
         private val context: Context
-    ) : RecyclerView.ViewHolder(view) {
+    ) : CustomViewHolder(view) {
         private val image: ImageView = view.findViewById(R.id.img_series_list_item)
         private val favoriteButton: ImageButton =
             view.findViewById(R.id.series_list_favorite_button)
@@ -99,4 +126,7 @@ class SeriesListAdapter(
             }
         }
     }
+
+    class ProgressBarViewHolder(view: View) : CustomViewHolder(view)
+    open class CustomViewHolder(view: View) : RecyclerView.ViewHolder(view)
 }

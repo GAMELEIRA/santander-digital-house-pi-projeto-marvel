@@ -14,5 +14,6 @@ object Constant {
     const val SING_IN_MODE_DEFAULT = -1
     const val SING_IN_MODE = "signInMode"
     const val SHARED_PREFERENCES = BuildConfig.APPLICATION_ID
-
+    const val VIEW_TYPE_ITEM = 1
+    const val VIEW_TYPE_LOADING = 2
 }

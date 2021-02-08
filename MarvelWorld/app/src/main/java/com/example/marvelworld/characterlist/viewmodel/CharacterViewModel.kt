@@ -45,9 +45,9 @@ class CharacterViewModel(
         emit(response.data.results)
     }
 
-    fun updateCharacters(characters: MutableList<Character>) = liveData(Dispatchers.IO) {
+    fun updateCharacters(characters: MutableList<Character?>) = liveData(Dispatchers.IO) {
         characters.forEach {
-            it.isFavorite = favoriteRepository.isFavorite(userId, it.id, ResourceType.CHARACTER)
+            it!!.isFavorite = favoriteRepository.isFavorite(userId, it.id, ResourceType.CHARACTER)
         }
 
         emit(true)
@@ -81,10 +81,10 @@ class CharacterViewModel(
         emit(characters)
     }
 
-    fun updateFavoriteCharacters(characters: MutableList<Character>) = liveData(Dispatchers.IO) {
+    fun updateFavoriteCharacters(characters: MutableList<Character?>) = liveData(Dispatchers.IO) {
         val charactersToRemove = mutableListOf<Character>()
         characters.forEach {
-            val isFavorite = favoriteRepository.isFavorite(userId, it.id, ResourceType.CHARACTER)
+            val isFavorite = favoriteRepository.isFavorite(userId, it!!.id, ResourceType.CHARACTER)
             if (!isFavorite) charactersToRemove.add(it)
         }
 

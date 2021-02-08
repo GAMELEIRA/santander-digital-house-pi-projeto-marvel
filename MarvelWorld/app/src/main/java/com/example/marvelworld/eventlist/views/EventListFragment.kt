@@ -2,6 +2,7 @@ package com.example.marvelworld.eventlist.views
 
 import android.os.Bundle
 import android.view.*
+import android.widget.Button
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -25,11 +26,12 @@ class EventListFragment(
     OnEventClickListener,
     CallbackListener {
 
+    private lateinit var noResultScreen: View
     private lateinit var eventViewModel: EventViewModel
     private lateinit var eventListAdapter: EventListAdapter
     private lateinit var recycler: RecyclerView
     private lateinit var filterIcon: MenuItem
-    private val eventList = mutableListOf<Event>()
+    private val eventList = mutableListOf<Event?>()
     private var filter = Filter()
     private var loading = false
     private var onPause = false
@@ -59,11 +61,23 @@ class EventListFragment(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        noResultScreen = view.findViewById(R.id.no_result_found_layout)
+
         if (!onlyFavorites) setHasOptionsMenu(true)
 
         recycler = view.findViewById(R.id.recycler_event_list)
 
         val manager = GridLayoutManager(view.context, 2)
+        manager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                return if (eventList[position] != null) {
+                    1
+                } else {
+                    2
+                }
+            }
+        }
+
         eventListAdapter = EventListAdapter(eventList, this)
 
         recycler.apply {
@@ -82,6 +96,10 @@ class EventListFragment(
         if (eventList.isEmpty()) getEvents()
 
         initInfiniteScroll()
+
+        noResultScreen.findViewById<Button>(R.id.clear_filter_button).setOnClickListener {
+            onDataReceived(Filter())
+        }
     }
 
     private fun updateEvents() {
@@ -101,18 +119,32 @@ class EventListFragment(
 
     private fun getEvents() {
         loading = true
+        eventListAdapter.addNullData()
         if (onlyFavorites) {
             eventViewModel.getFavoriteEvents().observe(viewLifecycleOwner, {
+                eventListAdapter.removeNull()
                 eventList.addAll(it)
                 eventListAdapter.notifyDataSetChanged()
                 loading = false
             })
         } else {
             eventViewModel.getEvents().observe(viewLifecycleOwner, {
+                eventListAdapter.removeNull()
                 eventList.addAll(it)
                 eventListAdapter.notifyDataSetChanged()
+                testNoResult()
                 loading = false
             })
+        }
+    }
+
+    private fun testNoResult() {
+        if (eventList.isEmpty()) {
+            recycler.visibility = View.GONE
+            noResultScreen.visibility = View.VISIBLE
+        } else {
+            recycler.visibility = View.VISIBLE
+            noResultScreen.visibility = View.GONE
         }
     }
 
@@ -144,18 +176,18 @@ class EventListFragment(
     }
 
     override fun onEventClick(position: Int) {
-        val bundle = bundleOf("EVENT_ID" to eventList[position].id)
+        val bundle = bundleOf("EVENT_ID" to eventList[position]!!.id)
         findNavController().navigate(R.id.eventDetailsFragment, bundle)
     }
 
     override fun onEventFavoriteClick(position: Int) {
-        eventViewModel.isFavorite(eventList[position].id)
+        eventViewModel.isFavorite(eventList[position]!!.id)
             .observe(viewLifecycleOwner, { isFavorite ->
                 if (isFavorite) {
-                    eventViewModel.removeFavorite(eventList[position].id)
+                    eventViewModel.removeFavorite(eventList[position]!!.id)
                         .observe(viewLifecycleOwner, {
                             if (it) {
-                                eventList[position].isFavorite = false
+                                eventList[position]!!.isFavorite = false
                                 if (onlyFavorites) {
                                     eventList.removeAt(position)
                                     eventListAdapter.notifyDataSetChanged()
@@ -165,7 +197,7 @@ class EventListFragment(
                             }
                         })
                 } else {
-                    val event = eventList[position]
+                    val event = eventList[position]!!
                     eventViewModel.addFavorite(
                         event.id,
                         event.title,
@@ -174,13 +206,13 @@ class EventListFragment(
                     )
                         .observe(viewLifecycleOwner, {
                             if (it) {
-                                eventList[position].isFavorite = true
+                                eventList[position]!!.isFavorite = true
                                 eventListAdapter.notifyItemChanged(position)
                             }
                         })
                 }
 
-                eventList[position].isFavorite = !eventList[position].isFavorite
+                eventList[position]!!.isFavorite = !eventList[position]!!.isFavorite
             })
     }
 

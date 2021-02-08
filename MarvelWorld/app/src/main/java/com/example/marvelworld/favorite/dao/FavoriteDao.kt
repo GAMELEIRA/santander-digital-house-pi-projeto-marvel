@@ -25,5 +25,5 @@ interface FavoriteDao {
     suspend fun isFavorite(userId: String, resourceId: Int, type: ResourceType): Boolean
 
     @Query("SELECT COUNT(1) FROM Favorite WHERE type = :type AND userId = :userId")
-    fun countFavorites(userId: String, type: ResourceType): Int
+    suspend fun countFavorites(userId: String, type: ResourceType): Int
 }

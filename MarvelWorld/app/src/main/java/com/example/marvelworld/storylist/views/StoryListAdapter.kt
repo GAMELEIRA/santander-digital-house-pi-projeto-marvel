@@ -9,32 +9,59 @@ import androidx.core.view.GestureDetectorCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.marvelworld.R
 import com.example.marvelworld.storylist.models.Story
+import com.example.marvelworld.util.Constant
 import com.google.android.material.card.MaterialCardView
 
 class StoryListAdapter(
-    private val storyList: List<Story>,
+    private val storyList: MutableList<Story?>,
     private val onStoryClickListener: OnStoryClickListener
-) : RecyclerView.Adapter<StoryListAdapter.StoryViewHolder>() {
+) : RecyclerView.Adapter<StoryListAdapter.CustomViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StoryViewHolder {
-        val view = LayoutInflater
-            .from(parent.context)
-            .inflate(R.layout.story_list_item, parent, false)
-
-        return StoryViewHolder(view, parent.context)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomViewHolder {
+        return if (viewType == Constant.VIEW_TYPE_ITEM) {
+            val view = LayoutInflater
+                .from(parent.context)
+                .inflate(R.layout.story_list_item, parent, false)
+            StoryViewHolder(view, parent.context)
+        } else {
+            val view = LayoutInflater
+                .from(parent.context)
+                .inflate(R.layout.recycler_progress_bar, parent, false)
+            ProgressBarViewHolder(view)
+        }
     }
 
-    override fun onBindViewHolder(holder: StoryViewHolder, position: Int) {
-        val story = storyList[position]
-        holder.bind(story, onStoryClickListener)
+    override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
+        if(holder is StoryViewHolder) {
+            val story = storyList[position]!!
+            holder.bind(story, onStoryClickListener)
+        }
     }
 
     override fun getItemCount() = storyList.size
 
+    override fun getItemViewType(position: Int): Int {
+        return if (storyList[position] != null) {
+            Constant.VIEW_TYPE_ITEM
+        } else {
+            Constant.VIEW_TYPE_LOADING
+        }
+    }
+
+    fun addNullData() {
+        storyList.add(null)
+        notifyDataSetChanged()
+    }
+
+    fun removeNull() {
+        storyList.removeAt(storyList.size - 1)
+        notifyDataSetChanged()
+    }
+
     class StoryViewHolder(
         view: View,
         private val context: Context
-    ) : RecyclerView.ViewHolder(view) {
+    ) : CustomViewHolder(view) {
         private val favoriteButton: ImageButton = view.findViewById(R.id.story_list_favorite_button)
         private val title: TextView = view.findViewById(R.id.story_list_item_title)
         private val cardView: MaterialCardView = view.findViewById(R.id.card)
@@ -92,4 +119,7 @@ class StoryListAdapter(
             }
         }
     }
+
+    class ProgressBarViewHolder(view: View) : CustomViewHolder(view)
+    open class CustomViewHolder(view: View) : RecyclerView.ViewHolder(view)
 }

@@ -9,6 +9,7 @@ import android.widget.Button
 import android.widget.Toast
 import com.example.marvelworld.R
 import com.example.marvelworld.util.Constant
+import com.example.marvelworld.util.LoadingDialog
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
@@ -20,6 +21,7 @@ class ResetPasswordFragment : Fragment() {
     private lateinit var tieEmail: TextInputEditText
     private lateinit var email: String
     private lateinit var resetPasswordButton: Button
+    private lateinit var loadingDialog: LoadingDialog
 
     private lateinit var authenticationController: AuthenticationController
     private val auth by lazy { FirebaseAuth.getInstance() }
@@ -34,6 +36,9 @@ class ResetPasswordFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        loadingDialog =
+            LoadingDialog(requireContext(), layoutInflater, getString(R.string.sending_email))
+
         tilEmail = view.findViewById(R.id.email_input_layout)
         tieEmail = view.findViewById(R.id.email_input)
         resetPasswordButton = view.findViewById((R.id.reset_password_button))
@@ -46,14 +51,30 @@ class ResetPasswordFragment : Fragment() {
             email = tieEmail.text.toString().trim()
 
             if (validateFields()) {
+                loadingDialog.startLoadingDialog()
                 auth.sendPasswordResetEmail(email)
-                Toast.makeText(
-                    context,
-                    getString(R.string.email_sent),
-                    Toast.LENGTH_SHORT
-                ).show()
+                    .addOnCompleteListener {
+                        if (it.isSuccessful) {
+                            Toast.makeText(
+                                context,
+                                getString(R.string.email_sent),
+                                Toast.LENGTH_SHORT
+                            )
+                                .show()
+                            auth.signOut()
+                        } else {
+                            Toast.makeText(
+                                context,
+                                getString(R.string.failed_send_email),
+                                Toast.LENGTH_LONG
+                            )
+                                .show()
+                            auth.signOut()
 
-                authenticationController.showSignInFragment()
+                        }
+                        loadingDialog.dismissDialog()
+                        authenticationController.showSignInFragment()
+                    }
             }
         }
     }

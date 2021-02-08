@@ -2,6 +2,7 @@ package com.example.marvelworld.serieslist.views
 
 import android.os.Bundle
 import android.view.*
+import android.widget.Button
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -24,11 +25,13 @@ class SeriesListFragment(
 ) : Fragment(),
     OnSeriesClickListener,
     CallbackListener {
+
+    private lateinit var noResultScreen: View
     private lateinit var seriesViewModel: SeriesViewModel
     private lateinit var seriesListAdapter: SeriesListAdapter
     private lateinit var recycler: RecyclerView
     private lateinit var filterIcon: MenuItem
-    private val seriesList = mutableListOf<Series>()
+    private val seriesList = mutableListOf<Series?>()
     private var filter = Filter()
     private var loading = false
     private var onPause = false
@@ -58,10 +61,22 @@ class SeriesListFragment(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        noResultScreen = view.findViewById(R.id.no_result_found_layout)
+
         if (!onlyFavorites) setHasOptionsMenu(true)
 
         recycler = view.findViewById(R.id.recycler_series_list)
         val manager = GridLayoutManager(view.context, 2)
+        manager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                return if (seriesList[position] != null) {
+                    1
+                } else {
+                    2
+                }
+            }
+        }
+
         seriesListAdapter = SeriesListAdapter(seriesList, this)
 
         recycler.apply {
@@ -80,6 +95,10 @@ class SeriesListFragment(
         if (seriesList.isEmpty()) getSeries()
 
         initInfiniteScroll()
+
+        noResultScreen.findViewById<Button>(R.id.clear_filter_button).setOnClickListener {
+            onDataReceived(Filter())
+        }
     }
 
     private fun updateSeries() {
@@ -99,18 +118,32 @@ class SeriesListFragment(
 
     private fun getSeries() {
         loading = true
+        seriesListAdapter.addNullData()
         if (onlyFavorites) {
             seriesViewModel.getFavoriteSeries().observe(viewLifecycleOwner, {
+                seriesListAdapter.removeNull()
                 seriesList.addAll(it)
                 seriesListAdapter.notifyDataSetChanged()
                 loading = false
             })
         } else {
             seriesViewModel.getSeries().observe(viewLifecycleOwner, {
+                seriesListAdapter.removeNull()
                 seriesList.addAll(it)
                 seriesListAdapter.notifyDataSetChanged()
+                testNoResult()
                 loading = false
             })
+        }
+    }
+
+    private fun testNoResult() {
+        if (seriesList.isEmpty()) {
+            recycler.visibility = View.GONE
+            noResultScreen.visibility = View.VISIBLE
+        } else {
+            recycler.visibility = View.VISIBLE
+            noResultScreen.visibility = View.GONE
         }
     }
 
@@ -142,18 +175,18 @@ class SeriesListFragment(
     }
 
     override fun onSeriesClick(position: Int) {
-        val bundle = bundleOf("SERIES_ID" to seriesList[position].id)
+        val bundle = bundleOf("SERIES_ID" to seriesList[position]!!.id)
         findNavController().navigate(R.id.seriesDetailsFragment, bundle)
     }
 
     override fun onSeriesFavoriteClick(position: Int) {
-        seriesViewModel.isFavorite(seriesList[position].id)
+        seriesViewModel.isFavorite(seriesList[position]!!.id)
             .observe(viewLifecycleOwner, { isFavorite ->
                 if (isFavorite) {
-                    seriesViewModel.removeFavorite(seriesList[position].id)
+                    seriesViewModel.removeFavorite(seriesList[position]!!.id)
                         .observe(viewLifecycleOwner, {
                             if (it) {
-                                seriesList[position].isFavorite = false
+                                seriesList[position]!!.isFavorite = false
                                 if (onlyFavorites) {
                                     seriesList.removeAt(position)
                                     seriesListAdapter.notifyDataSetChanged()
@@ -165,20 +198,20 @@ class SeriesListFragment(
                 } else {
                     val series = seriesList[position]
                     seriesViewModel.addFavorite(
-                        series.id,
+                        series!!.id,
                         series.title,
                         series.thumbnail.path,
                         series.thumbnail.extension
                     )
                         .observe(viewLifecycleOwner, {
                             if (it) {
-                                seriesList[position].isFavorite = true
+                                seriesList[position]!!.isFavorite = true
                                 seriesListAdapter.notifyItemChanged(position)
                             }
                         })
                 }
 
-                seriesList[position].isFavorite = !seriesList[position].isFavorite
+                seriesList[position]!!.isFavorite = !seriesList[position]!!.isFavorite
             })
     }
 

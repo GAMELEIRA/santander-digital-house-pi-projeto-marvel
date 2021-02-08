@@ -10,6 +10,7 @@ import android.widget.*
 import androidx.fragment.app.Fragment
 import com.example.marvelworld.R
 import com.example.marvelworld.util.Constant
+import com.example.marvelworld.util.LoadingDialog
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
@@ -42,6 +43,7 @@ class SignInFragment : Fragment() {
     private lateinit var facebookButton: ImageButton
     private lateinit var googleButton: ImageButton
     private lateinit var authenticationController: AuthenticationController
+    private lateinit var loadingDialog: LoadingDialog
 
     private val callbackManager by lazy { CallbackManager.Factory.create() }
     private val auth by lazy { FirebaseAuth.getInstance() }
@@ -55,6 +57,8 @@ class SignInFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        loadingDialog = LoadingDialog(requireContext(), layoutInflater, getString(R.string.loading))
 
         tilEmail = view.findViewById(R.id.email_input_layout)
         tieEmail = view.findViewById(R.id.email_input)
@@ -82,6 +86,7 @@ class SignInFragment : Fragment() {
                 view.findViewById<TextInputEditText>(R.id.password_input).text.toString().trim()
 
             if (validateFields()) {
+                loadingDialog.startLoadingDialog()
                 signInWithEmailAndPassword(email, password)
             }
         }
@@ -113,6 +118,7 @@ class SignInFragment : Fragment() {
 
         loginManager.registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
             override fun onSuccess(loginResult: LoginResult) {
+                loadingDialog.startLoadingDialog()
                 val credential: AuthCredential =
                     FacebookAuthProvider.getCredential(loginResult.accessToken.token)
                 firebaseAuth(credential, Constant.SING_IN_WITH_FACEBOOK)
@@ -141,6 +147,7 @@ class SignInFragment : Fragment() {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             if (task.isSuccessful) {
                 try {
+                    loadingDialog.startLoadingDialog()
                     val account = task.getResult(ApiException::class.java)!!
                     val credential = GoogleAuthProvider.getCredential(account.idToken!!, null)
                     firebaseAuth(credential, Constant.SING_IN_WITH_GOOGLE)
@@ -165,12 +172,10 @@ class SignInFragment : Fragment() {
                         authenticationController.startMainActivity()
                     }
                 } else {
+                    loadingDialog.dismissDialog()
                     Toast.makeText(context, getString(R.string.sing_in_failed), Toast.LENGTH_SHORT)
                         .show()
                 }
-            }
-            .addOnFailureListener {
-                Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
             }
     }
 
@@ -188,6 +193,7 @@ class SignInFragment : Fragment() {
                 } else {
                     Toast.makeText(context, R.string.auth_failed, Toast.LENGTH_SHORT).show()
                 }
+                loadingDialog.dismissDialog()
             }
     }
 

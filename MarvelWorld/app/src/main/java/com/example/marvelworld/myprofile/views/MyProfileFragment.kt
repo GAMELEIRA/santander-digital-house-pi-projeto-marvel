@@ -74,7 +74,7 @@ class MyProfileFragment : Fragment() {
             )
         ).get(MyProfileViewModel::class.java)
 
-        Picasso.get().load(user.photoUrl).into(userPhoto)
+        user.photoUrl?.run{ Picasso.get().load(this).into(userPhoto) }
         tieName.setText(user.displayName)
 
         uploadPhotoButton.setOnClickListener {

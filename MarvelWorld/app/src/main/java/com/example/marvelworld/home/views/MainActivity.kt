@@ -155,7 +155,9 @@ class MainActivity : AppCompatActivity(), OnUpdateProfile {
     }
 
     override fun updateHeader() {
-        Picasso.get().load(auth.currentUser!!.photoUrl).into(userPhoto)
+        auth.currentUser!!.photoUrl?.run {
+            Picasso.get().load(this).into(userPhoto)
+        }
         username.text = auth.currentUser!!.displayName
     }
 }
